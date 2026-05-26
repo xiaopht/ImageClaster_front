@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>schattdecor Sense Admin</title>
+  <style>
+    :root {
+      --sage: #84977c;
+      --ink: #303030;
+      --muted: #7d7d7d;
+      --paper: #f7f7f5;
+      --panel: #ececea;
+      --line: #d5d5d1;
+      --white: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+
+    @font-face {
+      font-family: "HarmonyOS Sans SC";
+      src: url("/fonts/HarmonyOS_Sans_SC_Regular.ttf") format("truetype");
+      font-weight: 400 900;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+
+    header {
+      padding: 34px 42px 28px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 24px;
+      background: var(--sage);
+      color: var(--white);
+    }
+
+    .brand-main {
+      display: block;
+      font-size: 42px;
+      font-weight: 900;
+      line-height: .92;
+    }
+
+    .brand-sub {
+      display: block;
+      margin-left: 150px;
+      margin-top: 6px;
+      font-size: 28px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    main {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 28px 24px 44px;
+    }
+
+    .panel {
+      margin-bottom: 18px;
+      padding: 18px;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .05);
+    }
+
+    .login-grid {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 40px;
+      padding: 0 12px;
+      color: var(--ink);
+      background: #f4f4f2;
+      border: 1px dashed #9c9c9a;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      height: 40px;
+      padding: 0 16px;
+      color: var(--white);
+      background: var(--sage);
+      border: 0;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    button.secondary {
+      color: var(--ink);
+      background: #e4e4e2;
+    }
+
+    button[disabled] {
+      opacity: .55;
+      cursor: not-allowed;
+    }
+
+    .status {
+      min-height: 20px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(120px, 1fr));
+      gap: 12px;
+    }
+
+    .metric {
+      padding: 16px;
+      background: var(--panel);
+      border-radius: 8px;
+    }
+
+    .metric-value {
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .metric-label {
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .tab {
+      color: var(--ink);
+      background: #e3e3e1;
+    }
+
+    .tab.active {
+      color: var(--white);
+      background: var(--sage);
+    }
+
+    .table-toolbar {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-hint {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--white);
+    }
+
+    table {
+      width: 100%;
+      min-width: 860px;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th,
+    td {
+      max-width: 280px;
+      padding: 12px 14px;
+      border-bottom: 1px solid #ecece9;
+      text-align: left;
+      vertical-align: top;
+      word-break: break-word;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #ededeb;
+      color: #555;
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .preview-link {
+      color: #365f54;
+      font-weight: 800;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .empty {
+      padding: 34px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .upload-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) auto;
+      gap: 12px;
+      align-items: end;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .preview-mask[hidden] {
+      display: none;
+    }
+
+    .preview-mask {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: rgba(28, 28, 28, .58);
+    }
+
+    .preview-card {
+      width: min(860px, 100%);
+      max-height: min(88vh, 920px);
+      overflow: hidden;
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: 0 18px 42px rgba(0, 0, 0, .22);
+    }
+
+    .preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .preview-title {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--ink);
+      font-size: 15px;
+      font-weight: 900;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .preview-close {
+      width: 40px;
+      min-width: 40px;
+      padding: 0;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .preview-body {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+    }
+
+    .preview-state {
+      min-height: 18px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .preview-image {
+      display: block;
+      width: 100%;
+      max-height: calc(88vh - 160px);
+      object-fit: contain;
+      background: #f4f4f2;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    @media (max-width: 900px) {
+      header {
+        padding: 28px 22px;
+        display: block;
+      }
+
+      .header-actions {
+        margin-top: 22px;
+        justify-content: flex-start;
+      }
+
+      .brand-main {
+        font-size: 34px;
+      }
+
+      .brand-sub {
+        margin-left: 110px;
+        font-size: 24px;
+      }
+
+      .login-grid,
+      .summary-grid,
+      .filters-grid,
+      .upload-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <span class="brand-main">schattdecor</span>
+      <span class="brand-sub">Sense Admin</span>
+    </div>
+    <div class="header-actions">
+      <button id="refreshBtn">刷新</button>
+      <button id="logoutBtn" class="secondary">退出</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="login-grid">
+        <label>
+          API 地址
+          <input id="apiBase" />
+        </label>
+        <label>
+          用户名
+          <input id="username" autocomplete="username" />
+        </label>
+        <label>
+          密码
+          <input id="password" type="password" autocomplete="current-password" />
+        </label>
+        <label>
+          内部注册码
+          <input id="accessCode" placeholder="创建 sales/admin 时填写" />
+        </label>
+        <label>
+          角色
+          <select id="role">
+            <option value="admin">admin</option>
+            <option value="sales">sales</option>
+          </select>
+        </label>
+      </div>
+      <div class="header-actions" style="justify-content:flex-start;margin-top:12px;">
+        <button id="loginBtn">登录</button>
+        <button id="registerBtn" class="secondary">创建内部账号</button>
+      </div>
+      <div id="status" class="status"></div>
+    </section>
+
+    <section class="panel">
+      <div id="summary" class="summary-grid"></div>
+    </section>
+
+    <section class="panel">
+      <div class="tabs" id="tabs">
+        <button class="tab active" data-name="events" data-endpoint="/api/admin/events">访问事件</button>
+        <button class="tab" data-name="feedback" data-endpoint="/api/admin/feedback">识别反馈</button>
+        <button class="tab" data-name="unmatched" data-endpoint="/api/admin/unmatched">未匹配记录</button>
+        <button class="tab" data-name="training" data-endpoint="/api/admin/training-data">训练数据</button>
+        <button class="tab" data-name="orders" data-endpoint="/api/admin/sample-orders">样品单</button>
+      </div>
+      <div class="table-toolbar">
+        <div class="filters-grid">
+          <label>
+            日期
+            <input id="filterDate" type="date" />
+          </label>
+          <label>
+            event_type
+            <select id="filterEventType">
+              <option value="">全部</option>
+            </select>
+          </label>
+          <label>
+            category
+            <select id="filterCategory">
+              <option value="">全部</option>
+            </select>
+          </label>
+          <label>
+            verdict
+            <select id="filterVerdict">
+              <option value="">全部</option>
+            </select>
+          </label>
+        </div>
+        <div class="toolbar-actions">
+          <button id="resetFiltersBtn" type="button" class="secondary">重置筛选</button>
+          <button id="exportCsvBtn" type="button" hidden>导出 CSV</button>
+          <span id="filterSummary" class="toolbar-hint">显示 0 / 0 条</span>
+        </div>
+      </div>
+      <div id="table" class="table-wrap"><div class="empty">登录后显示后台数据</div></div>
+
+      <form id="trainingForm" class="upload-row">
+        <label>
+          花色编号
+          <input name="pattern_id" placeholder="如 14-57204-002" />
+        </label>
+        <label>
+          分类
+          <input name="category" placeholder="木纹 / 石纹 / 抽象" />
+        </label>
+        <label>
+          备注
+          <input name="note" />
+        </label>
+        <label>
+          训练图片
+          <input name="file" type="file" accept="image/*" />
+        </label>
+        <button type="submit">上传训练数据</button>
+      </form>
+    </section>
+  </main>
+
+  <div id="previewMask" class="preview-mask" hidden>
+    <div class="preview-card" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
+      <div class="preview-head">
+        <div id="previewTitle" class="preview-title">图片预览</div>
+        <button id="previewCloseBtn" type="button" class="preview-close secondary" aria-label="关闭">×</button>
+      </div>
+      <div class="preview-body">
+        <div id="previewState" class="preview-state"></div>
+        <img id="previewImage" class="preview-image" alt="后台图片预览" />
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const defaultApiBase = location.protocol === 'file:' || location.port && location.port !== '8000'
+      ? 'http://127.0.0.1:8000'
+      : location.origin;
+
+    const state = {
+      apiBase: localStorage.getItem('xiaote_admin_api') || defaultApiBase,
+      token: localStorage.getItem('xiaote_admin_token') || '',
+      activeEndpoint: '/api/admin/events',
+      activeName: 'events',
+      tableItems: [],
+      filteredItems: [],
+      columns: [],
+      previewObjectUrl: ''
+    };
+
+    const $ = (id) => document.getElementById(id);
+    const exportableTabs = new Set(['feedback', 'unmatched', 'training']);
+
+    $('apiBase').value = state.apiBase;
+
+    function setStatus(text, isError = false) {
+      $('status').textContent = text;
+      $('status').style.color = isError ? '#9a3f36' : '#7d7d7d';
+    }
+
+    function headers(json = true) {
+      const value = {};
+      if (json) value['Content-Type'] = 'application/json';
+      if (state.token) value.Authorization = `Bearer ${state.token}`;
+      return value;
+    }
+
+    async function request(path, options = {}) {
+      const response = await fetch(`${state.apiBase}${path}`, {
+        ...options,
+        headers: { ...headers(options.json !== false), ...(options.headers || {}) }
+      });
+      const isJson = (response.headers.get('content-type') || '').includes('application/json');
+      const data = isJson ? await response.json() : await response.text();
+      if (!response.ok) {
+        throw new Error((data && data.detail) || `HTTP ${response.status}`);
+      }
+      return data;
+    }
+
+    async function authenticate(mode) {
+      state.apiBase = $('apiBase').value.trim().replace(/\/$/, '');
+      localStorage.setItem('xiaote_admin_api', state.apiBase);
+      const payload = {
+        username: $('username').value.trim(),
+        password: $('password').value
+      };
+      if (!payload.username || !payload.password) {
+        setStatus('请填写用户名和密码。', true);
+        return;
+      }
+      let endpoint = '/api/auth/login';
+      if (mode === 'register') {
+        endpoint = '/api/auth/register';
+        payload.role = $('role').value;
+        payload.access_code = $('accessCode').value.trim();
+      }
+      const data = await request(endpoint, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+      state.token = data.token;
+      localStorage.setItem('xiaote_admin_token', state.token);
+      setStatus(`已登录：${data.user.username}（${data.user.role}）`);
+      await loadAll();
+    }
+
+    async function loadAll() {
+      if (!state.token) {
+        setStatus('请先登录后台账号。');
+        return;
+      }
+      const summary = await request('/api/admin/summary');
+      renderSummary(summary);
+      await loadTable(state.activeEndpoint);
+    }
+
+    function renderSummary(data) {
+      const labels = [
+        ['users', '用户'],
+        ['events', '事件'],
+        ['feedback', '反馈'],
+        ['unmatched', '未匹配'],
+        ['training_data', '训练数据'],
+        ['sample_orders', '样品单'],
+        ['patterns', '花色库']
+      ];
+      $('summary').innerHTML = labels.map(([key, label]) => `
+        <div class="metric">
+          <div class="metric-value">${escapeHtml(data[key] ?? 0)}</div>
+          <div class="metric-label">${label}</div>
+        </div>
+      `).join('');
+    }
+
+    async function loadTable(endpoint) {
+      const data = await request(`${endpoint}?limit=100`);
+      state.tableItems = data.items || [];
+      state.columns = collectColumns(state.tableItems);
+      populateFilterOptions();
+      applyFilters();
+    }
+
+    function collectColumns(items) {
+      return Array.from(items.reduce((set, item) => {
+        Object.keys(item).forEach((key) => set.add(key));
+        return set;
+      }, new Set()));
+    }
+
+    function renderTable(items, columns) {
+      if (!items.length) {
+        $('table').innerHTML = `<div class="empty">${state.tableItems.length ? '暂无匹配数据' : '暂无数据'}</div>`;
+        return;
+      }
+      $('table').innerHTML = `
+        <table>
+          <thead><tr>${columns.map((key) => `<th>${escapeHtml(key)}</th>`).join('')}</tr></thead>
+          <tbody>
+            ${items.map((item) => `
+              <tr>${columns.map((key) => `<td>${renderCell(key, item[key])}</td>`).join('')}</tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function renderCell(key, value) {
+      if (key === 'image_path' && value) {
+        const text = escapeHtml(formatCell(value));
+        return `<a href="#" class="preview-link" data-image-path="${escapeHtml(String(value))}">${text}</a>`;
+      }
+      return escapeHtml(formatCell(value));
+    }
+
+    function formatCell(value) {
+      if (value == null) return '';
+      if (typeof value === 'object') return JSON.stringify(value);
+      return String(value);
+    }
+
+    function dateValue(item) {
+      const raw = item.created_at || item.updated_at || item.timestamp || '';
+      if (!raw) return '';
+      const text = String(raw);
+      if (/^\d{4}-\d{2}-\d{2}/.test(text)) return text.slice(0, 10);
+      const parsed = new Date(text);
+      if (Number.isNaN(parsed.getTime())) return '';
+      const year = parsed.getFullYear();
+      const month = String(parsed.getMonth() + 1).padStart(2, '0');
+      const day = String(parsed.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function populateFilterOptions() {
+      populateSelect('filterEventType', 'event_type');
+      populateSelect('filterCategory', 'category');
+      populateSelect('filterVerdict', 'verdict');
+      updateExportButton();
+    }
+
+    function populateSelect(id, field) {
+      const select = $(id);
+      const previous = select.value;
+      const values = Array.from(new Set(
+        state.tableItems
+          .map((item) => item[field])
+          .filter((value) => value != null && String(value).trim() !== '')
+          .map((value) => String(value))
+      )).sort((a, b) => a.localeCompare(b, 'zh-CN'));
+      select.innerHTML = `<option value="">全部</option>${values.map((value) => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join('')}`;
+      select.value = values.includes(previous) ? previous : '';
+    }
+
+    function applyFilters() {
+      const date = $('filterDate').value;
+      const eventType = $('filterEventType').value;
+      const category = $('filterCategory').value;
+      const verdict = $('filterVerdict').value;
+      state.filteredItems = state.tableItems.filter((item) => {
+        if (date && dateValue(item) !== date) return false;
+        if (eventType && String(item.event_type || '') !== eventType) return false;
+        if (category && String(item.category || '') !== category) return false;
+        if (verdict && String(item.verdict || '') !== verdict) return false;
+        return true;
+      });
+      renderTable(state.filteredItems, state.columns);
+      $('filterSummary').textContent = `显示 ${state.filteredItems.length} / ${state.tableItems.length} 条`;
+      updateExportButton();
+    }
+
+    function resetFilters() {
+      $('filterDate').value = '';
+      $('filterEventType').value = '';
+      $('filterCategory').value = '';
+      $('filterVerdict').value = '';
+      applyFilters();
+    }
+
+    function updateExportButton() {
+      const button = $('exportCsvBtn');
+      const exportable = Boolean(state.token) && exportableTabs.has(state.activeName);
+      button.hidden = !exportable;
+      button.disabled = !exportable || !state.filteredItems.length;
+    }
+
+    function exportVisibleCsv() {
+      if (!exportableTabs.has(state.activeName) || !state.filteredItems.length) return;
+      const headersRow = state.columns.map(csvValue).join(',');
+      const rows = state.filteredItems.map((item) => state.columns.map((key) => csvValue(formatCell(item[key]))).join(','));
+      const csv = `\uFEFF${[headersRow, ...rows].join('\r\n')}`;
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      const now = new Date();
+      const stamp = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+      link.href = url;
+      link.download = `${state.activeName}-${stamp}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setStatus(`已导出 ${state.filteredItems.length} 条 ${state.activeName} 数据。`);
+    }
+
+    function csvValue(value) {
+      const text = String(value == null ? '' : value);
+      return `"${text.replaceAll('"', '""')}"`;
+    }
+
+    async function openImagePreview(path) {
+      if (!path) return;
+      $('previewMask').hidden = false;
+      $('previewTitle').textContent = path;
+      $('previewState').textContent = '正在加载图片...';
+      $('previewImage').removeAttribute('src');
+      if (state.previewObjectUrl) {
+        URL.revokeObjectURL(state.previewObjectUrl);
+        state.previewObjectUrl = '';
+      }
+      const response = await fetch(`${state.apiBase}/api/admin/image-preview?path=${encodeURIComponent(path)}`, {
+        headers: headers(false)
+      });
+      if (!response.ok) {
+        throw new Error(`图片预览失败：HTTP ${response.status}`);
+      }
+      const blob = await response.blob();
+      state.previewObjectUrl = URL.createObjectURL(blob);
+      $('previewImage').src = state.previewObjectUrl;
+      $('previewState').textContent = '';
+    }
+
+    function closeImagePreview() {
+      $('previewMask').hidden = true;
+      $('previewState').textContent = '';
+      $('previewImage').removeAttribute('src');
+      if (state.previewObjectUrl) {
+        URL.revokeObjectURL(state.previewObjectUrl);
+        state.previewObjectUrl = '';
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    $('loginBtn').addEventListener('click', () => authenticate('login').catch((error) => setStatus(error.message, true)));
+    $('registerBtn').addEventListener('click', () => authenticate('register').catch((error) => setStatus(error.message, true)));
+    $('refreshBtn').addEventListener('click', () => loadAll().catch((error) => setStatus(error.message, true)));
+    $('logoutBtn').addEventListener('click', () => {
+      state.token = '';
+      localStorage.removeItem('xiaote_admin_token');
+      renderSummary({});
+      state.tableItems = [];
+      state.filteredItems = [];
+      state.columns = [];
+      $('table').innerHTML = '<div class="empty">登录后显示后台数据</div>';
+      resetFilters();
+      $('filterSummary').textContent = '显示 0 / 0 条';
+      closeImagePreview();
+      setStatus('已退出。');
+    });
+
+    $('tabs').addEventListener('click', (event) => {
+      const button = event.target.closest('button[data-endpoint]');
+      if (!button) return;
+      document.querySelectorAll('.tab').forEach((tab) => tab.classList.remove('active'));
+      button.classList.add('active');
+      state.activeEndpoint = button.dataset.endpoint;
+      state.activeName = button.dataset.name || 'events';
+      resetFilters();
+      loadTable(state.activeEndpoint).catch((error) => setStatus(error.message, true));
+    });
+
+    $('filterDate').addEventListener('change', applyFilters);
+    $('filterEventType').addEventListener('change', applyFilters);
+    $('filterCategory').addEventListener('change', applyFilters);
+    $('filterVerdict').addEventListener('change', applyFilters);
+    $('resetFiltersBtn').addEventListener('click', resetFilters);
+    $('exportCsvBtn').addEventListener('click', exportVisibleCsv);
+    $('previewCloseBtn').addEventListener('click', closeImagePreview);
+    $('previewMask').addEventListener('click', (event) => {
+      if (event.target === $('previewMask')) closeImagePreview();
+    });
+    $('table').addEventListener('click', (event) => {
+      const link = event.target.closest('a[data-image-path]');
+      if (!link) return;
+      event.preventDefault();
+      openImagePreview(link.dataset.imagePath).catch((error) => {
+        $('previewState').textContent = error.message;
+        setStatus(error.message, true);
+      });
+    });
+
+    $('trainingForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!state.token) {
+        setStatus('请先登录后台账号。', true);
+        return;
+      }
+      const form = new FormData(event.currentTarget);
+      if (!form.get('file') || !form.get('file').name) {
+        setStatus('请选择训练图片。', true);
+        return;
+      }
+      const response = await fetch(`${state.apiBase}/api/admin/training-data`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${state.token}` },
+        body: form
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.detail || `HTTP ${response.status}`);
+      event.currentTarget.reset();
+      setStatus(`训练数据已上传：${data.id}`);
+      state.activeEndpoint = '/api/admin/training-data';
+      state.activeName = 'training';
+      document.querySelectorAll('.tab').forEach((tab) => tab.classList.toggle('active', tab.dataset.endpoint === state.activeEndpoint));
+      await loadAll();
+    });
+
+    if (state.token) {
+      loadAll().catch((error) => setStatus(error.message, true));
+    } else {
+      renderSummary({});
+      setStatus('请输入测试账号进入本地演示后台；正式上线需连接具有角色校验和持久化能力的后端。');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,376 @@
+/* 客服页面画布：控制整页底色、字体与不可滚出容器的行为。 */
+.service-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f5f5f5;
+  color: #333333;
+  font-family: var(--font-family-body);
+  overflow: hidden;
+}
+
+/* 顶部绿色品牌栏：可调整头部高度、Logo 区与隐藏按钮之间的距离。 */
+.service-header {
+  flex: 0 0 188rpx;
+  height: 188rpx;
+  padding: 92rpx 28rpx 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  background: var(--color-primary-soft);
+  box-sizing: border-box;
+}
+
+/* 品牌主标文字：颜色、字号和字重。 */
+.service-brand-main {
+  color: #ffffff;
+  font-size: 37rpx;
+  font-weight: 900;
+  line-height: 0.9;
+}
+
+/* 品牌产品名：左/上偏移和字号可与主标位置配合调节。 */
+.service-brand-sub {
+  margin-left: 134rpx;
+  margin-top: 8rpx;
+  color: #ffffff;
+  font-size: 18rpx;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* 右上隐藏会话按钮：触摸宽高、上偏移、底色及字号。 */
+.hide-chat {
+  min-width: 166rpx;
+  height: 38rpx;
+  margin-top: -20rpx;
+  color: #777777;
+  background: #eeeeee;
+  border-radius: 5rpx;
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
+/* 聊天内容可滚动区：高度需为顶部栏、输入区和底栏预留空间。 */
+.chat-scroll {
+  flex: 1;
+  height: 0;
+  background: #f5f5f5;
+  box-sizing: border-box;
+}
+
+/* 聊天时间文字行：上下留白、颜色和字号。 */
+.time-row {
+  padding: 28rpx 0 20rpx;
+  color: #999999;
+  text-align: center;
+  font-size: 21rpx;
+  font-weight: 500;
+}
+
+/* 回到顶部浮层：top/right 控制页面锚点，宽高与字号控制按钮密度。 */
+.back-top {
+  position: fixed;
+  top: 218rpx;
+  right: 16rpx;
+  z-index: 3;
+  min-width: 106rpx;
+  height: 34rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: #c9c9c9;
+  border-radius: 5rpx;
+  font-size: 19rpx;
+  font-weight: 700;
+}
+
+/* 单条消息行：左右气泡与头像的基础排列。 */
+.message-row {
+  display: flex;
+  align-items: flex-start;
+  margin: 0 16rpx 24rpx;
+}
+
+/* 用户回复消息行的右对齐方式与上间距。 */
+.message-row.user {
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 10rpx;
+}
+
+/* 客服头像圆点：尺寸、右间距、品牌绿底色和品牌文字字号。 */
+.bot-avatar {
+  width: 84rpx;
+  height: 84rpx;
+  margin-right: 22rpx;
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: var(--color-primary-soft);
+  border-radius: 50%;
+  font-size: 14rpx;
+  font-weight: 900;
+}
+
+/* 用户头像占位：尺寸、左间距和径向渐变图形。 */
+.user-avatar {
+  width: 78rpx;
+  height: 78rpx;
+  margin-left: 14rpx;
+  flex: 0 0 auto;
+  background: radial-gradient(circle at 50% 38%, #ffffff 0 18rpx, transparent 19rpx),
+    radial-gradient(circle at 50% 84%, #ffffff 0 35rpx, transparent 36rpx),
+    #cfcfcf;
+  border: 2rpx solid #ffffff;
+  border-radius: 50%;
+}
+
+/* 气泡通用行距与盒模型。 */
+.bubble {
+  box-sizing: border-box;
+  line-height: 1.25;
+}
+
+/* 机器人气泡：绿色背景、尾角与文字排版。 */
+.bot-bubble {
+  position: relative;
+  max-width: 520rpx;
+  padding: 22rpx 22rpx 20rpx;
+  color: #ffffff;
+  background: var(--color-primary-soft);
+  border-radius: 6rpx;
+  font-size: 25rpx;
+  font-weight: 800;
+}
+
+/* 客服气泡左侧三角尾巴：left/top 控制位置，border 控制大小和颜色。 */
+.bot-bubble::before {
+  content: "";
+  position: absolute;
+  left: -13rpx;
+  top: 20rpx;
+  width: 0;
+  height: 0;
+  border-top: 12rpx solid transparent;
+  border-bottom: 12rpx solid transparent;
+  border-right: 14rpx solid var(--color-primary-soft);
+}
+
+/* 用户选择结果气泡：最小宽高、灰色背景和字号。 */
+.user-bubble {
+  min-width: 68rpx;
+  height: 66rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: #9a9a9a;
+  border-radius: 6rpx;
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+/* 选项及联系方式白色内嵌卡片：控制提问流程的操作密度。 */
+.choice-card,
+.contact-card {
+  margin-top: 18rpx;
+  padding: 20rpx 18rpx;
+  color: #8a8a8a;
+  background: #ffffff;
+  border-radius: 5rpx;
+  box-sizing: border-box;
+}
+
+/* 选项卡片的小标题颜色、字号与下间距。 */
+.choice-title {
+  margin-bottom: 12rpx;
+  color: var(--color-primary-soft);
+  font-size: 25rpx;
+  font-weight: 900;
+}
+
+/* 单个选项按钮：最大宽度、内边距、灰底、圆角及长文案行距。 */
+.choice-chip {
+  width: auto;
+  max-width: 100%;
+  min-height: 39rpx;
+  margin: 0 0 10rpx;
+  padding: 0 15rpx;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  color: #777777;
+  background: #d9d9d9;
+  border-radius: 6rpx;
+  font-size: 21rpx;
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: left;
+}
+
+/* 已完成步骤的选项仍保留在聊天记录中，但降低亮度并不可重复触发。 */
+.choice-chip[disabled] {
+  opacity: 0.72;
+}
+
+/* 地区选项卡片底部留白。 */
+.region-card {
+  padding-bottom: 16rpx;
+}
+
+/* 地区按钮网格的换行与间距。 */
+.region-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10rpx;
+}
+
+/* 地区单项固定宽度及文字居中。 */
+.region-chip {
+  width: 116rpx;
+  margin: 0;
+  justify-content: center;
+  text-align: center;
+}
+
+/* 联系方式文字字号与行距。 */
+.contact-card {
+  color: #8a8a8a;
+  font-size: 23rpx;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+/* 联系复制按钮组间距与居中方式。 */
+.contact-actions {
+  margin-top: 16rpx;
+  display: flex;
+  justify-content: center;
+  gap: 14rpx;
+}
+
+/* 复制联系方式按钮的高度、内边距、底色和字号。 */
+.contact-copy {
+  height: 42rpx;
+  padding: 0 17rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  color: #ffffff;
+  background: var(--color-primary-soft);
+  border-radius: 5rpx;
+  font-size: 21rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* 复制按钮文字视觉微调：增大 translateY 数值会让文字继续向下移动。 */
+.contact-copy-label {
+  display: block;
+  line-height: 1;
+  transform: translateY(2rpx);
+}
+
+/* 底部输入栏：固定在聊天区域下方，支持用户键入职业或区域编号。 */
+.chat-input {
+  flex: 0 0 68rpx;
+  height: 68rpx;
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 8rpx 18rpx;
+  background: #ffffff;
+  border-top: 1rpx solid #dddddd;
+  box-sizing: border-box;
+}
+
+/* 输入栏左侧语音占位按钮：设计稿保留的视觉入口，当前数字问答不启用语音。 */
+.input-icon {
+  width: 42rpx;
+  height: 42rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #9a9a9a;
+  background: transparent;
+  font-size: 30rpx;
+  border-radius: 50%;
+}
+
+/* 数字输入框：用户可输入职业/区域编号，回车会直接发送。 */
+.input-field {
+  flex: 1;
+  height: 44rpx;
+  padding: 0 18rpx;
+  color: #999999;
+  background: #f2f2f2;
+  border-radius: 5rpx;
+  font-size: 22rpx;
+}
+
+/* 发送按钮：与输入框同高，便于在开发者工具中点击完成对话测试。 */
+.send-button {
+  min-width: 82rpx;
+  height: 44rpx;
+  padding: 0 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: var(--color-primary-soft);
+  border-radius: 5rpx;
+  font-size: 21rpx;
+  font-weight: 800;
+}
+
+/* 输入为空时发送按钮置灰，避免提交空消息。 */
+.send-button[disabled] {
+  color: #a7a7a7;
+  background: #e4e4e4;
+}
+
+/* 消息列表末尾留白：使最后一张联系人卡不紧贴输入栏。 */
+.chat-end {
+  height: 18rpx;
+}
+
+/* 页面自绘底部导航：客服页不是原生 tabBar 页面，点击后跳回对应主页面。 */
+.service-tabbar {
+  flex: 0 0 150rpx;
+  height: 150rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: var(--color-tabbar-bg);
+  border-top: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+/* 客服页自绘底栏单个入口：高度、文字颜色及字号。 */
+.service-tabbar-item {
+  flex: 1;
+  height: 150rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #8b8b8b;
+  font-size: 19rpx;
+  line-height: 1.1;
+}
+
+/* 自绘底栏当前选中入口的品牌色。 */
+.service-tabbar-item.active {
+  color: var(--color-primary);
+}
+
+/* 自绘底栏图标宽高与图标到文字的间距。 */
+.service-tabbar-icon {
+  width: 40rpx;
+  height: 40rpx;
+  margin-bottom: 5rpx;
+}

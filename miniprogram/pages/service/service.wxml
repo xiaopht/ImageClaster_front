@@ -1,0 +1,101 @@
+<view class="service-page">
+  <!-- 顶部品牌栏：背景、高度与右侧隐藏按钮可在 service.wxss 的 .service-header 中调整。 -->
+  <view class="service-header">
+    <view class="service-brand">
+      <view class="service-brand-main">{{brand.main}}</view>
+      <view class="service-brand-sub">{{brand.products.sense}}</view>
+    </view>
+    <button class="hide-chat" bindtap="goMine">{{text.serviceHideChat}}</button>
+  </view>
+
+  <!-- 聊天滚动区域：messages 按真实发送顺序追加，输入数字后会自动滚到新回复。 -->
+  <scroll-view class="chat-scroll" scroll-y="{{true}}" scroll-top="{{scrollTop}}" scroll-with-animation="{{true}}">
+    <view class="time-row">{{text.serviceDate}}</view>
+    <view class="back-top">{{text.serviceBackTop}}</view>
+
+    <block wx:for="{{messages}}" wx:key="id">
+      <view wx:if="{{item.type === 'assistantText'}}" class="message-row assistant">
+        <view class="bot-avatar">schattdecor</view>
+        <view class="bubble bot-bubble">{{text[item.textKey]}}</view>
+      </view>
+
+      <view wx:elif="{{item.type === 'occupationPrompt'}}" class="message-row assistant">
+        <view class="bot-avatar">schattdecor</view>
+        <view class="bubble bot-bubble">
+          {{text.serviceOccupationPrompt}}
+          <view class="choice-card">
+            <view class="choice-title">{{text.serviceOccupationTitle}}</view>
+            <block wx:for="{{occupationOptions}}" wx:key="id">
+              <button class="choice-chip" disabled="{{step !== 'occupation'}}" data-id="{{item.id}}" bindtap="chooseOccupation">{{item.id}}. {{item.label}}</button>
+            </block>
+          </view>
+        </view>
+      </view>
+
+      <view wx:elif="{{item.type === 'user'}}" class="message-row user">
+        <view class="user-bubble">{{item.value}}</view>
+        <view class="user-avatar"></view>
+      </view>
+
+      <view wx:elif="{{item.type === 'regionPrompt'}}" class="message-row assistant">
+        <view class="bot-avatar">schattdecor</view>
+        <view class="bubble bot-bubble">
+          {{text.serviceRegionPrompt}}
+          <view class="choice-card region-card">
+            <view class="choice-title">{{text.serviceRegionTitle}}</view>
+            <view class="region-grid">
+              <block wx:for="{{regionOptions}}" wx:key="id">
+                <button class="choice-chip region-chip" disabled="{{step !== 'region'}}" data-id="{{item.id}}" bindtap="chooseRegion">{{item.id}}. {{item.label}}</button>
+              </block>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <view wx:elif="{{item.type === 'contact'}}" class="message-row assistant">
+        <view class="bot-avatar">schattdecor</view>
+        <view class="bubble bot-bubble">
+          {{text.serviceContactIntro}}
+          <view class="contact-card">
+            <view>{{text.serviceContactRegion}}: {{contact.region}}</view>
+            <view>{{text.serviceContactName}}: {{contact.name}}</view>
+            <view>{{text.serviceContactPhone}}: {{contact.phone}}</view>
+            <view>{{text.serviceContactEmail}}: {{contact.email}}</view>
+            <view class="contact-actions">
+              <button class="contact-copy" data-type="phone" bindtap="copyContact">
+                <text class="contact-copy-label">{{text.serviceCopyPhone}}</text>
+              </button>
+              <button class="contact-copy" data-type="full" bindtap="copyContact">
+                <text class="contact-copy-label">{{text.serviceCopyFull}}</text>
+              </button>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+    <view class="chat-end"></view>
+  </scroll-view>
+
+  <!-- 可输入对话栏：键盘发送与右侧发送按钮均会提交简要数字回复。 -->
+  <view class="chat-input">
+    <button class="input-icon" disabled="{{true}}">●</button>
+    <input class="input-field" type="number" maxlength="1" value="{{inputValue}}" placeholder="{{text.serviceInputPlaceholder}}" confirm-type="send" bindinput="handleInput" bindconfirm="sendMessage" />
+    <button class="send-button" disabled="{{!canSend}}" bindtap="sendMessage">{{text.serviceSend}}</button>
+  </view>
+
+  <!-- 客服页内的底部导航外观：页面并非 tabBar 页面，点击时切回原生底栏页面。 -->
+  <view class="service-tabbar">
+    <view class="service-tabbar-item" bindtap="goHome">
+      <image class="service-tabbar-icon" src="/assets/tabbar/home-normal.png" mode="aspectFit" />
+      <view>{{text.homeTab}}</view>
+    </view>
+    <view class="service-tabbar-item" bindtap="goCamera">
+      <image class="service-tabbar-icon" src="/assets/tabbar/camera-normal.png" mode="aspectFit" />
+      <view>{{text.cameraTab}}</view>
+    </view>
+    <view class="service-tabbar-item active" bindtap="goMine">
+      <image class="service-tabbar-icon" src="/assets/tabbar/user-active.png" mode="aspectFit" />
+      <view>{{text.mineTab}}</view>
+    </view>
+  </view>
+</view>

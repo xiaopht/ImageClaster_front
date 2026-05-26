@@ -1,0 +1,1111 @@
+/* 全局主题参数：这里集中修改页面底色、品牌绿、文字色、线条色、收藏黄和全局字体。 */
+page {
+  --color-page-bg: #f5f5f5;
+  --color-soft-page-bg: #f7f7f5;
+  --color-panel-bg: #e2e2e2;
+  --color-upload-bg: #e2e2e2;
+  --color-tabbar-bg: #eaeaea;
+  --color-primary: #82947a;
+  --color-primary-soft: #84977c;
+  --color-primary-dark: #74866d;
+  --color-text-strong: #333333;
+  --color-text-muted: #8d8d8d;
+  --color-text-light: #ffffff;
+  --color-line: #999999;
+  --color-card: #ffffff;
+  --color-tag-dark: rgba(72, 72, 72, 0.68);
+  --color-mask: rgba(0, 0, 0, 0.66);
+  --color-star: #e3c96f;
+  --font-family-base: "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-family-title: var(--font-family-base);
+  --font-family-body: var(--font-family-base);
+  --font-family-number: var(--font-family-base);
+  --font-family-button: var(--font-family-base);
+
+  min-height: 100vh;
+  background: var(--color-page-bg);
+  color: var(--color-text-strong);
+  font-size: 28rpx;
+  line-height: 1.35;
+  font-family: var(--font-family-body);
+}
+
+/* 通用页面容器：padding 控制拍摄页等标准页面距离边缘与底部 tabBar 的留白。 */
+.page {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 42rpx 30rpx 170rpx;
+}
+
+/* 所有按钮基础外观：圆角、默认字号和字体会影响全站按钮。 */
+button {
+  margin: 0;
+  padding: 0;
+  border-radius: 8rpx;
+  border: 0;
+  font-size: 28rpx;
+  line-height: 1;
+  font-family: var(--font-family-button);
+}
+
+/* 移除微信按钮自带边框，以设计稿按钮底色/圆角为准。 */
+button::after {
+  border: 0;
+}
+
+/* 表单输入字体：修改后反馈、联系、注册输入框会统一变化。 */
+input,
+textarea {
+  font-family: var(--font-family-body);
+}
+
+/* CSS 图标基础盒子：width/height 以调用者的字号或单独覆盖尺寸为准。 */
+.ui-icon {
+  display: block;
+  flex: 0 0 auto;
+  width: 1em;
+  height: 1em;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* 内联 SVG 图标资源：替换下列 background-image 可改变搜索、按钮、收藏和翻页的实际图形/颜色。 */
+.icon-search {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Ccircle%20cx%3D%2240%22%20cy%3D%2240%22%20r%3D%2227%22%20fill%3D%22none%22%20stroke%3D%22%23333333%22%20stroke-width%3D%228%22%2F%3E%3Cpath%20d%3D%22M61%2061%2082%2082%22%20fill%3D%22none%22%20stroke%3D%22%23333333%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.icon-reset {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cpath%20d%3D%22M76%2031A32%2032%200%201%200%2081%2052%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M76%2016v20H56%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.icon-camera-muted {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20112%2096%22%3E%3Cpath%20d%3D%22M30%2024h12l6-10h18l6%2010h12a14%2014%200%200%201%2014%2014v36a14%2014%200%200%201-14%2014H30a14%2014%200%200%201-14-14V38a14%2014%200%200%201%2014-14Z%22%20fill%3D%22none%22%20stroke%3D%22%238d8d8d%22%20stroke-width%3D%227%22%2F%3E%3Ccircle%20cx%3D%2256%22%20cy%3D%2256%22%20r%3D%2218%22%20fill%3D%22none%22%20stroke%3D%22%238d8d8d%22%20stroke-width%3D%227%22%2F%3E%3Ccircle%20cx%3D%2282%22%20cy%3D%2238%22%20r%3D%224%22%20fill%3D%22%238d8d8d%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.icon-service {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20112%20112%22%3E%3Cpath%20d%3D%22M27%2034h58a12%2012%200%200%201%2012%2012v26a12%2012%200%200%201-12%2012H57L40%2098V84H27a12%2012%200%200%201-12-12V46a12%2012%200%200%201%2012-12Z%22%20fill%3D%22%23ffffff%22%2F%3E%3Ccircle%20cx%3D%2242%22%20cy%3D%2259%22%20r%3D%225%22%20fill%3D%22%2382947a%22%2F%3E%3Ccircle%20cx%3D%2256%22%20cy%3D%2259%22%20r%3D%225%22%20fill%3D%22%2382947a%22%2F%3E%3Ccircle%20cx%3D%2270%22%20cy%3D%2259%22%20r%3D%225%22%20fill%3D%22%2382947a%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.icon-home-active {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cpath%20d%3D%22M14%2047%2048%2017l34%2030%22%20fill%3D%22none%22%20stroke%3D%22%2382947a%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M26%2045v34h16V59h12v20h16V45%22%20fill%3D%22%2382947a%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.icon-profile-muted {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Ccircle%20cx%3D%2248%22%20cy%3D%2230%22%20r%3D%2217%22%20fill%3D%22%23999999%22%2F%3E%3Cpath%20d%3D%22M20%2082c3-19%2015-29%2028-29s25%2010%2028%2029Z%22%20fill%3D%22%23999999%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.icon-favorite {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cpath%20d%3D%22m48%2010%2011%2025%2027%203-20%2018%205%2027-23-14-23%2014%205-27-20-18%2027-3Z%22%20fill%3D%22%23ffffff%22%20stroke%3D%22%23999999%22%20stroke-width%3D%223%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.icon-favorite-on {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cpath%20d%3D%22m48%2010%2011%2025%2027%203-20%2018%205%2027-23-14-23%2014%205-27-20-18%2027-3Z%22%20fill%3D%22%23e3c96f%22%20stroke%3D%22%23967f33%22%20stroke-width%3D%223%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.icon-close-white {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cpath%20d%3D%22M24%2024%2072%2072M72%2024%2024%2072%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.icon-close-muted {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cpath%20d%3D%22M24%2024%2072%2072M72%2024%2024%2072%22%20stroke%3D%22%23898989%22%20stroke-width%3D%227%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.icon-arrow-right {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cpath%20d%3D%22M31%2024h33v33%22%20fill%3D%22none%22%20stroke%3D%22%2382947a%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3Cpath%20d%3D%22M64%2024%2031%2057%22%20fill%3D%22none%22%20stroke%3D%22%2382947a%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.icon-prev {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cpath%20d%3D%22M60%2020%2032%2048l28%2028%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%2210%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E");
+}
+
+.icon-next {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cpath%20d%3D%22M36%2020%2064%2048%2036%2076%22%20fill%3D%22none%22%20stroke%3D%22%23ffffff%22%20stroke-width%3D%2210%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E");
+}
+
+/* 顶部品牌行：gap 与 margin-bottom 控制品牌和右侧操作按钮及下方内容的间距。 */
+.brand {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24rpx;
+  margin-bottom: 36rpx;
+}
+
+/* 品牌主文字：font-size/weight/line-height 控制字号、粗细与压缩程度。 */
+.brand-main {
+  display: block;
+  color: var(--color-text-strong);
+  font-size: 58rpx;
+  font-family: var(--font-family-title);
+  font-weight: 900;
+  line-height: 0.9;
+}
+
+/* 品牌副文字：margin-left/top 控制相对 Logo 偏移，font-size 控制视觉等级。 */
+.brand-sub {
+  display: block;
+  margin-left: 220rpx;
+  margin-top: 10rpx;
+  color: #444444;
+  font-size: 42rpx;
+  font-family: var(--font-family-title);
+  font-weight: 400;
+  line-height: 1;
+}
+
+/* 绿色图标按钮：尺寸、内边距、渐变、圆角用于拍摄等顶部操作。 */
+.icon-button {
+  min-width: 128rpx;
+  height: 62rpx;
+  padding: 0 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  color: var(--color-text-light);
+  background: linear-gradient(180deg, var(--color-primary-soft), var(--color-primary));
+  border-radius: 8rpx;
+  box-shadow: inset 0 -2rpx 0 rgba(0, 0, 0, 0.08);
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+/* 顶部按钮按下反馈：位移和透明度可调触摸质感。 */
+.icon-button:active {
+  transform: translateY(1rpx);
+  opacity: 0.9;
+}
+
+/* 文字符号图标备用字号。 */
+.icon {
+  font-size: 34rpx;
+  line-height: 1;
+}
+
+/* 通用主操作按钮：宽高、外边距、渐变及阴影影响拍摄页开始搜索按钮。 */
+.primary-button {
+  width: 72%;
+  height: 104rpx;
+  margin: 56rpx auto 46rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--color-primary-soft), var(--color-primary));
+  color: var(--color-text-light);
+  border-radius: 10rpx;
+  box-shadow: 0 14rpx 24rpx rgba(116, 134, 109, 0.2), inset 0 -4rpx 0 rgba(0, 0, 0, 0.08);
+  font-size: 42rpx;
+  font-weight: 900;
+}
+
+/* 主操作按钮按下态：位移和阴影深浅。 */
+.primary-button:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 8rpx 14rpx rgba(116, 134, 109, 0.18), inset 0 3rpx 0 rgba(0, 0, 0, 0.08);
+}
+
+/* 禁用态可见度。 */
+.primary-button[disabled] {
+  opacity: 0.72;
+}
+
+/* 主按钮文字居中占位方式。 */
+.primary-button .button-label {
+  flex: 1;
+  text-align: center;
+}
+
+/* 主按钮右端箭头区域：width/height/margin 控制白色尾块大小与位置。 */
+.primary-button .button-arrow {
+  width: 94rpx;
+  height: 78rpx;
+  margin-right: 14rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--color-primary);
+  border-radius: 8rpx;
+  font-size: 48rpx;
+}
+
+/* SVG 箭头在尾块内的显示尺寸。 */
+.primary-button .button-arrow .ui-icon {
+  width: 54rpx;
+  height: 54rpx;
+}
+
+/* 通用区块标题：影响匹配方式、结果等一级标题。 */
+.section-title {
+  color: var(--color-text-strong);
+  font-size: 42rpx;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
+/* 通用弱化文字：影响数量提示和辅助信息。 */
+.muted {
+  color: var(--color-text-muted);
+  font-size: 24rpx;
+}
+
+/* 通用浅色面板：padding/边框/圆角影响匹配模式等容器。 */
+.soft-panel {
+  background: var(--color-soft-page-bg);
+  border: 2rpx solid var(--color-line);
+  border-radius: 8rpx;
+  padding: 34rpx 28rpx 38rpx;
+}
+
+/* 通用横排列：gap 影响同一行控件的水平间距。 */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+/* 空列表提示：padding 与字号决定收藏/历史为空时的留白。 */
+.empty {
+  padding: 44rpx 0;
+  color: #8a8a8a;
+  text-align: center;
+  font-size: 28rpx;
+}
+
+/* 花色网格容器：space-between 配合卡片 width 形成两列间隙。 */
+.pattern-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* 通用花色卡片：width、行距、圆角、阴影会作用于所有页面，局部覆盖见各页 wxss。 */
+.pattern-card {
+  position: relative;
+  width: 48.5%;
+  margin-bottom: 24rpx;
+  overflow: hidden;
+  background: var(--color-card);
+  border: 1rpx solid #d6d6d2;
+  border-radius: 8rpx;
+  box-sizing: border-box;
+  box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.12);
+}
+
+/* 花色卡片按下时的轻微位移反馈。 */
+.pattern-card:active {
+  transform: translateY(1rpx);
+}
+
+/* 通用花色缩略图：height 是缩略图纵向比例核心参数。 */
+.pattern-image {
+  width: 100%;
+  height: 360rpx;
+  display: block;
+  background: #dededb;
+}
+
+/* 小图右上收藏按钮：top/right/width/height 控制位置和触摸区域。 */
+.star {
+  position: absolute;
+  top: 18rpx;
+  right: 18rpx;
+  z-index: 2;
+  width: 58rpx;
+  height: 58rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-light);
+  background: transparent;
+  text-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.4);
+  font-size: 54rpx;
+}
+
+/* 已收藏时的主题颜色；实际黄色 SVG 也由下方规则替换。 */
+.star.on {
+  color: var(--color-star);
+}
+
+/* 小图收藏星形尺寸及阴影。 */
+.star .star-icon {
+  width: 56rpx;
+  height: 56rpx;
+  filter: drop-shadow(0 2rpx 6rpx rgba(0, 0, 0, 0.35));
+}
+
+/* 所有页面统一的黄色收藏态图标：同时覆盖小图和大图收藏按钮。 */
+.star.on .star-icon,
+.detail-favorite.on .star-icon {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cpath%20d%3D%22m48%2010%2011%2025%2027%203-20%2018%205%2027-23-14-23%2014%205-27-20-18%2027-3Z%22%20fill%3D%22%23e3c96f%22%20stroke%3D%22%23967f33%22%20stroke-width%3D%223%22%2F%3E%3C%2Fsvg%3E");
+}
+
+/* 缩略图分类标签：right/bottom 决定覆盖位置，padding/字号决定标签大小。 */
+.pattern-tag {
+  position: absolute;
+  right: 18rpx;
+  bottom: 136rpx;
+  min-width: 78rpx;
+  padding: 8rpx 12rpx;
+  color: var(--color-text-light);
+  background: var(--color-tag-dark);
+  border-radius: 6rpx;
+  font-size: 24rpx;
+  text-align: center;
+}
+
+/* 卡片白色信息区：min-height、padding、gap 调整名称与操作按钮密度。 */
+.pattern-meta {
+  min-height: 116rpx;
+  padding: 22rpx 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12rpx;
+  background: var(--color-card);
+}
+
+/* 花色名称：max-width 和省略策略控制长名称展示长度。 */
+.pattern-name {
+  max-width: 200rpx;
+  color: #303030;
+  font-size: 28rpx;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 花色编号：上间距、字号、数字字体。 */
+.pattern-code {
+  margin-top: 6rpx;
+  color: #3f3f3f;
+  font-size: 24rpx;
+  font-family: var(--font-family-number);
+}
+
+/* 卡片底部“更多颜色”：最小宽高、内边距、底色与文字大小。 */
+.more-button {
+  min-width: 116rpx;
+  height: 58rpx;
+  padding: 0 14rpx;
+  color: #777777;
+  background: #e8e8e8;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+
+/* 视觉截图使用的模拟底栏：手动预览依赖 app.json 的原生 tabBar。 */
+.visual-tabbar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 18;
+  height: 150rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: var(--color-tabbar-bg);
+  border-top: 1rpx solid rgba(0, 0, 0, 0.04);
+}
+
+/* 模拟底栏每个入口的文字与纵向排列。 */
+.visual-tabbar-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #8b8b8b;
+  font-size: 20rpx;
+  line-height: 1.2;
+}
+
+/* 模拟底栏选中项颜色。 */
+.visual-tabbar-item.active {
+  color: var(--color-primary);
+}
+
+/* 模拟底栏图片图标尺寸。 */
+.visual-tabbar-icon {
+  width: 42rpx;
+  height: 42rpx;
+  margin-bottom: 8rpx;
+}
+
+/* 可拖动客服浮钮外观：width/height 必须与 index.js 的 SERVICE_FLOAT_STYLE 相同；位置由触摸逻辑写入 left/top。 */
+.service {
+  position: fixed;
+  z-index: 20;
+  width: 112rpx;
+  height: 92rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-light);
+  background: var(--color-primary-soft);
+  border-radius: 56rpx 56rpx 16rpx 16rpx;
+  box-shadow: 0 10rpx 24rpx rgba(116, 134, 109, 0.26);
+  font-size: 20rpx;
+  font-weight: 800;
+}
+
+/* 客服浮钮内图标大小及其和文字的间距。 */
+.service-icon {
+  width: 42rpx;
+  height: 42rpx;
+  margin-bottom: 4rpx;
+  font-size: 34rpx;
+  line-height: 1;
+}
+
+/* 客服浮钮关闭圆点：top/right 调节其挂在浮钮右上角的位置。 */
+.service-close {
+  position: absolute;
+  top: -12rpx;
+  right: -8rpx;
+  width: 34rpx;
+  height: 34rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #808080;
+  background: #ffffff;
+  border: 2rpx solid #8c8c8c;
+  border-radius: 50%;
+  font-size: 26rpx;
+}
+
+/* 客服浮钮关闭图形尺寸。 */
+.service-close .ui-icon {
+  width: 22rpx;
+  height: 22rpx;
+}
+
+/* 大图遮罩：background 控制背景暗度，z-index 控制弹层覆盖顺序。 */
+.detail-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 60;
+  overflow: hidden;
+  background: var(--color-mask);
+}
+
+/* 大图页舞台：参照 AI识图_01-5，保留上方关闭操作区，主花色图在屏幕中下部大幅展示。 */
+.detail-viewer {
+  position: absolute;
+  top: 336rpx;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.detail-image-stage {
+  position: relative;
+  width: calc(100vw - 60rpx);
+  height: 1010rpx;
+  max-height: none;
+  overflow: hidden;
+  background: #d8d8d5;
+  border-radius: 12rpx;
+}
+
+.detail-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 用户要求新增的单花色 PDF 入口：位于大图打开后的左上角，不占用图片底部操作区。 */
+.detail-pdf {
+  position: absolute;
+  top: 266rpx;
+  left: 30rpx;
+  z-index: 63;
+  width: 94rpx;
+  height: 52rpx;
+  color: #656565;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 6rpx;
+  font-size: 22rpx;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 大图关闭按钮：与设计稿右上方独立白色关闭图标位置对应。 */
+.detail-close {
+  position: absolute;
+  top: 258rpx;
+  right: 30rpx;
+  z-index: 63;
+  width: 68rpx;
+  height: 68rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: transparent;
+  font-size: 62rpx;
+  font-weight: 300;
+}
+
+.detail-close .ui-icon {
+  width: 48rpx;
+  height: 48rpx;
+}
+
+/* 大图左右翻页按钮：top/尺寸/背景透明度影响图片两侧浮层按钮。 */
+.detail-arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 62;
+  width: 76rpx;
+  height: 76rpx;
+  margin-top: -38rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  font-size: 54rpx;
+  font-weight: 300;
+}
+
+/* 翻页箭头图形尺寸。 */
+.detail-arrow .ui-icon {
+  width: 46rpx;
+  height: 46rpx;
+}
+
+/* 大图左翻页按钮离图片左侧距离。 */
+.detail-prev {
+  left: 22rpx;
+}
+
+/* 大图右翻页按钮离图片右侧距离。 */
+.detail-next {
+  right: 22rpx;
+}
+
+/* 图片底部内嵌操作区：只负责把“更多颜色”严格放在图片中线；星标在按钮左侧独立定位。 */
+.detail-actions {
+  position: absolute;
+  right: 0;
+  bottom: 22rpx;
+  left: 0;
+  z-index: 62;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 大图收藏星标按钮：right: calc(50% + 100rpx) 表示位于居中“更多颜色”按钮左侧。 */
+.detail-favorite {
+  position: absolute;
+  right: calc(50% + 100rpx);
+  width: 70rpx;
+  height: 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.72);
+  background: transparent;
+  font-size: 56rpx;
+  line-height: 1;
+  text-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.32);
+}
+
+/* 大图已收藏时的主题色。 */
+.detail-favorite.on {
+  color: var(--color-star);
+}
+
+/* 大图收藏星形图形大小。 */
+.detail-favorite .star-icon {
+  width: 56rpx;
+  height: 56rpx;
+  filter: drop-shadow(0 4rpx 10rpx rgba(0, 0, 0, 0.32));
+}
+
+/* 大图“更多颜色”按钮：宽高、透明白底、圆角与字号按标准页的紧凑比例。 */
+.detail-more {
+  min-width: 162rpx;
+  height: 48rpx;
+  padding: 0 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  color: #777777;
+  background: rgba(255, 255, 255, 0.92);
+  border-radius: 8rpx;
+  font-size: 23rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+
+/* “更多颜色”文字视觉微调：增大 translateY 数值会使文字继续向下移动。 */
+.detail-more-label {
+  display: block;
+  line-height: 1;
+  transform: translateY(2rpx);
+}
+
+/* 花色名称、编号和序号置于图片下方的深色遮罩中；设计稿没有匹配度附加行。 */
+.detail-info {
+  margin-top: 32rpx;
+  color: #ffffff;
+  text-align: center;
+}
+
+/* 大图花色名称字号与行距：按标准页缩小文字比例。 */
+.detail-name {
+  font-size: 33rpx;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+/* 大图花色编号间距、字号和数字字体：按标准页缩小文字比例。 */
+.detail-code {
+  margin-top: 6rpx;
+  color: #ffffff;
+  font-size: 27rpx;
+  font-family: var(--font-family-number);
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+/* 保留的匹配度文案样式：若恢复匹配度行可在此调节。 */
+.detail-confidence {
+  margin-top: 14rpx;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 20rpx;
+  font-weight: 700;
+}
+
+/* 大图当前序号位置、颜色透明度和字号：较名称保持更弱的层级。 */
+.detail-count {
+  margin-top: 20rpx;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 22rpx;
+  font-weight: 900;
+}
+
+/* 结果页反馈横条：边距、内边距和背景影响提示条体积。 */
+.feedback-bar {
+  margin: 0 0 28rpx;
+  padding: 20rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18rpx;
+  background: #eeeeec;
+  border: 1rpx solid #cfcfcb;
+  border-radius: 8rpx;
+  box-sizing: border-box;
+}
+
+/* 反馈提示文字：flex 和字号控制按钮前剩余空间。 */
+.feedback-text {
+  flex: 1;
+  min-width: 0;
+  color: #444444;
+  font-size: 26rpx;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+/* 反馈按钮组间距。 */
+.feedback-actions {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+/* 反馈按钮通用触摸面积、圆角及字号。 */
+.feedback-button {
+  min-width: 116rpx;
+  height: 58rpx;
+  padding: 0 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* “准确”按钮底色。 */
+.feedback-good {
+  color: #ffffff;
+  background: var(--color-primary-soft);
+}
+
+/* “不准确/未找到”按钮底色。 */
+.feedback-bad {
+  color: #666666;
+  background: #ffffff;
+}
+
+/* 反馈按钮请求中透明度。 */
+.feedback-button[disabled] {
+  opacity: 0.72;
+}
+
+/* 弹窗遮罩共用参数：padding 控制弹窗离屏幕边缘距离，背景透明度控制压暗程度。 */
+.feedback-mask,
+.lead-mask,
+.auth-mask,
+.unmatched-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 92;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 42rpx;
+  background: rgba(0, 0, 0, 0.58);
+  box-sizing: border-box;
+}
+
+/* 联系弹窗覆盖层级。 */
+.lead-mask {
+  z-index: 94;
+}
+
+/* 未匹配提示覆盖层级。 */
+.unmatched-mask {
+  z-index: 96;
+}
+
+/* 表单弹窗主体：max-width、padding、圆角调整反馈/联系/账号弹窗尺寸。 */
+.feedback-card,
+.lead-card,
+.auth-card,
+/* 无匹配弹窗专属尺寸与内容居中。 */
+.unmatched-card {
+  width: 100%;
+  max-width: 650rpx;
+  padding: 34rpx;
+  background: var(--color-soft-page-bg);
+  border-radius: 8rpx;
+  box-sizing: border-box;
+}
+
+.unmatched-card {
+  max-width: 466rpx;
+  min-height: 292rpx;
+  margin-top: 76rpx;
+  padding: 64rpx 36rpx 42rpx;
+  text-align: center;
+  border-radius: 8rpx;
+}
+
+/* 无匹配弹窗标题字号与颜色。 */
+.unmatched-title {
+  color: #8e8e8e;
+  font-size: 30rpx;
+  font-weight: 900;
+  line-height: 1.15;
+}
+
+/* 无匹配弹窗正文段落间距、字号与行距。 */
+.unmatched-copy {
+  margin-top: 22rpx;
+  color: #8e8e8e;
+  font-size: 23rpx;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+/* 无匹配确认按钮尺寸和品牌绿色背景。 */
+.unmatched-confirm {
+  width: 112rpx;
+  height: 54rpx;
+  margin: 34rpx auto 0;
+  padding: 0 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background: var(--color-primary-soft);
+  border-radius: 6rpx;
+  font-size: 24rpx;
+  font-weight: 900;
+}
+
+/* 评分弹窗主体：固定宽度、上偏移、内边距与背景。 */
+.satisfaction-card {
+  width: 466rpx;
+  margin-top: 70rpx;
+  padding: 50rpx 50rpx 40rpx;
+  background: #f7f7f5;
+  border-radius: 8rpx;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* 星级评分行内间距。 */
+.rating-stars {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+}
+
+/* 单颗评分星触摸尺寸和未选颜色。 */
+.rating-star {
+  width: 58rpx;
+  height: 58rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c9c9c9;
+  background: transparent;
+  font-size: 54rpx;
+  line-height: 1;
+}
+
+/* 选中的评分星颜色。 */
+.rating-star.active {
+  color: var(--color-primary-soft);
+}
+
+/* 评分弹窗提示文字的上间距与字号。 */
+.satisfaction-copy {
+  margin-top: 24rpx;
+  color: #8e8e8e;
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+/* 评分弹窗下方操作按钮组间距。 */
+.satisfaction-actions {
+  margin-top: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18rpx;
+}
+
+/* “不再提醒”和“确认”的共用高度、圆角及字号。 */
+.dont-remind-button,
+.satisfaction-confirm {
+  height: 54rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6rpx;
+  font-size: 23rpx;
+  font-weight: 900;
+}
+
+/* “不再提醒”按钮宽度、图标间距与底色。 */
+.dont-remind-button {
+  width: 178rpx;
+  gap: 8rpx;
+  color: #ffffff;
+  background: #989898;
+}
+
+/* “不再提醒”单选点大小。 */
+.dont-remind-dot {
+  width: 30rpx;
+  height: 30rpx;
+  background: #eeeeee;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+/* “不再提醒”选中态圆点线宽和填充色。 */
+.dont-remind-button.checked .dont-remind-dot {
+  border: 6rpx solid #eeeeee;
+  background: var(--color-primary-soft);
+}
+
+/* 评分确认按钮宽度和绿色底色。 */
+.satisfaction-confirm {
+  min-width: 112rpx;
+  padding: 0 28rpx;
+  color: #ffffff;
+  background: var(--color-primary-soft);
+}
+
+/* 表单弹窗标题行：margin-bottom 与左右排列控制标题和关闭按钮距离。 */
+.feedback-head,
+.lead-head,
+.auth-head {
+  margin-bottom: 26rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 表单弹窗标题字号。 */
+.feedback-title,
+.lead-title,
+/* 注册登录标题的单独字号覆盖。 */
+.auth-title {
+  color: var(--color-text-strong);
+  font-size: 38rpx;
+  font-weight: 900;
+}
+
+.auth-title {
+  font-size: 40rpx;
+}
+
+/* 表单弹窗关闭按钮触摸尺寸和关闭符号字号。 */
+.feedback-close,
+.lead-close,
+.auth-close {
+  width: 68rpx;
+  height: 68rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777777;
+  background: transparent;
+  font-size: 56rpx;
+  font-weight: 300;
+}
+
+/* 表单弹窗关闭图标实际尺寸。 */
+.feedback-close .ui-icon,
+.lead-close .ui-icon,
+.auth-close .ui-icon {
+  width: 42rpx;
+  height: 42rpx;
+}
+
+/* 表单字段通用宽度、水平内边距、边框、圆角与字号。 */
+.feedback-input,
+.feedback-textarea,
+.lead-input,
+.lead-textarea,
+.auth-input {
+  width: 100%;
+  padding: 0 22rpx;
+  color: var(--color-text-strong);
+  background: #ffffff;
+  border: 1rpx solid #d6d6d2;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+/* 单行输入框高度与字段之间的距离。 */
+.feedback-input,
+.lead-input,
+.auth-input {
+  height: 78rpx;
+  margin-bottom: 18rpx;
+}
+
+/* 反馈多行备注输入框高度、顶部内边距与行距。 */
+.feedback-textarea {
+  height: 168rpx;
+  padding-top: 20rpx;
+  line-height: 1.35;
+}
+
+/* 联系销售备注输入框高度、顶部内边距与行距。 */
+.lead-textarea {
+  height: 178rpx;
+  padding-top: 20rpx;
+  line-height: 1.35;
+}
+
+/* 表单底部按钮行上间距和按钮之间的距离。 */
+.feedback-dialog-actions,
+.lead-actions {
+  margin-top: 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+}
+
+/* 表单按钮通用高度、圆角和字号。 */
+.feedback-cancel,
+.feedback-submit,
+.lead-cancel,
+.lead-submit,
+.lead-done {
+  height: 76rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  font-weight: 900;
+}
+
+/* 双按钮等分宽度。 */
+.feedback-cancel,
+.feedback-submit,
+.lead-cancel,
+.lead-submit {
+  flex: 1;
+}
+
+/* 取消按钮弱化配色。 */
+.feedback-cancel,
+.lead-cancel {
+  color: #666666;
+  background: #e5e5e1;
+}
+
+/* 提交/完成按钮品牌绿色配色。 */
+.feedback-submit,
+.lead-submit,
+.lead-done {
+  color: #ffffff;
+  background: var(--color-primary-soft);
+}
+
+/* 联系字段标签间距、颜色和字号。 */
+.lead-label {
+  margin: 0 0 10rpx;
+  color: #555555;
+  font-size: 26rpx;
+  font-weight: 900;
+}
+
+/* 已返回销售联系人信息的单行卡片尺寸、边框和换行规则。 */
+.lead-contact-row {
+  margin-bottom: 16rpx;
+  padding: 18rpx 20rpx;
+  color: var(--color-text-strong);
+  background: #ffffff;
+  border: 1rpx solid #d6d6d2;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  line-height: 1.3;
+  word-break: break-all;
+}
+
+/* 联系完成按钮占满弹窗宽度并与信息行分隔。 */
+.lead-done {
+  width: 100%;
+  margin-top: 24rpx;
+}

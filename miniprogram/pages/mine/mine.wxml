@@ -1,0 +1,215 @@
+<!-- 我的页整体容器：本页覆盖了通用 .page 的左右/顶部 padding，具体见 mine.wxss。 -->
+<view class="page">
+  <!-- 顶部绿色个人区：背景色、高度感、内部留白由 .mine-hero 控制。 -->
+  <view class="mine-hero">
+    <!-- 顶部品牌与客服行：客服固定显示在右上角，点击进入客服页面。 -->
+    <view class="mine-brand">
+      <!-- 白色品牌文字：颜色覆盖由 .hero-brand / .hero-sub 控制。 -->
+      <view>
+        <text class="brand-main hero-brand">{{brand.main}}</text>
+        <text class="brand-sub hero-sub">{{brand.products.sense}}</text>
+      </view>
+      <!-- 固定客服入口：位置和文字样式由 `.hero-service` 控制。 -->
+      <button class="hero-service" bindtap="contactService">{{icons.service}} {{text.customerService}}</button>
+    </view>
+    <!-- 个人信息卡片：灰色卡片高度、圆角、与品牌区距离由 .profile-card 控制。 -->
+    <view class="profile-card">
+      <!-- 头像占位：圆形尺寸、颜色由 .avatar 控制。 -->
+      <view class="avatar">{{icons.profileAvatar}}</view>
+      <!-- 用户名与角色：占位宽度、字号由 .profile-main 控制。 -->
+        <view class="profile-main">
+          <view class="profile-name">{{displayName}}</view>
+          <view wx:if="{{roleLabelVisible}}" class="profile-role">{{roleLabel}}</view>
+        </view>
+      <!-- 账号与语言操作：按钮尺寸由 .profile-tools 控制。 -->
+      <view class="profile-tools">
+        <button wx:if="{{authEntryVisible}}" class="auth-entry" data-mode="login" bindtap="openAuth">{{isVisitor ? text.loginRegister : text.switchAccount}}</button>
+        <button class="language" bindtap="toggleLanguage">{{text.languageSwitch}}</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 收藏/历史切换和分享按钮所在行：整体左右布局由 .mine-actions 控制。 -->
+  <view class="mine-actions">
+    <!-- Tab 容器：两个 Tab 之间的间距由 .tabs 控制。 -->
+    <view class="tabs">
+      <!-- 我的收藏 Tab：普通态 .tab，选中态 .tab.active。 -->
+      <view class="tab {{activeTab == tabs.favorites ? 'active' : ''}}" data-tab="{{tabs.favorites}}" bindtap="switchTab">{{text.favorites}}</view>
+      <!-- 浏览记录 Tab：普通态 .tab，选中态 .tab.active。 -->
+      <view class="tab {{activeTab == tabs.history ? 'active' : ''}}" data-tab="{{tabs.history}}" bindtap="switchTab">{{text.history}}</view>
+    </view>
+    <!-- 分享按钮：样式与刷新按钮共用 .share-button / .mini-button。 -->
+    <button class="share-button" open-type="share">{{text.share}}</button>
+  </view>
+
+  <!-- 收藏列表面板：灰底、内边距、圆角由 .mine-panel 控制。 -->
+  <view wx:if="{{activeTab == tabs.favorites}}" class="mine-panel">
+    <!-- 收藏面板工具栏：只展示收藏数量；行高和左右布局由 .mine-toolbar 控制。 -->
+    <view class="mine-toolbar">
+      <view class="muted">{{text.favoritesCountPrefix}}{{favorites.length}}{{text.favoritesCountSuffix}}</view>
+    </view>
+    <!-- 收藏花色网格：复用全局 .pattern-grid / .pattern-card 卡片样式。 -->
+    <view wx:if="{{favorites.length}}" class="pattern-grid">
+      <block wx:for="{{favorites}}" wx:key="pattern_id">
+        <!-- 收藏花色卡片：点击打开大图。 -->
+        <view class="pattern-card" data-source="favorites" data-index="{{index}}" bindtap="openItem">
+          <!-- 花色图片：高度由 .pattern-image 控制。 -->
+          <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" />
+          <!-- 收藏星标：小图右上角按钮；黄色态由 .star.on 控制，再点会取消收藏。 -->
+          <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" catchtap="favorite">{{icons.favorite}}</button>
+          <!-- 分类标签：位置、背景由 .pattern-tag 控制。 -->
+          <view class="pattern-tag">{{item.categoryLabel}}</view>
+          <!-- 名称编号区：底部白色信息区由 .pattern-meta 控制。 -->
+          <view class="pattern-meta">
+            <view>
+              <view class="pattern-name">{{item.nameText}}</view>
+              <view class="pattern-code">{{item.idText}}</view>
+            </view>
+            <button class="more-button" data-id="{{item.pattern_id}}" catchtap="moreColors">{{text.moreColors}}</button>
+          </view>
+        </view>
+      </block>
+    </view>
+    <!-- 收藏空状态：文案位置和字号由 app.wxss 的 .empty 控制。 -->
+    <view wx:else class="empty">{{text.emptyFavorites}}</view>
+  </view>
+
+  <!-- 浏览记录面板：布局与收藏一致，只展示浏览过的花色。 -->
+  <view wx:if="{{activeTab == tabs.history}}" class="mine-panel">
+    <!-- 浏览记录工具栏：左侧数量，右侧刷新按钮。 -->
+    <view class="mine-toolbar">
+      <view class="muted">{{text.recentPrefix}}{{history.length}}{{text.recentSuffix}}</view>
+      <!-- 刷新按钮：尺寸、颜色由 .mini-button 控制。 -->
+      <button class="mini-button" bindtap="loadHistory">{{text.refresh}}</button>
+    </view>
+    <!-- 浏览记录花色网格：与收藏卡片同样的视觉布局。 -->
+    <view wx:if="{{history.length}}" class="pattern-grid">
+      <block wx:for="{{history}}" wx:key="pattern_id">
+        <!-- 浏览记录卡片：点击仅查看大图，不再次记录或改变当前浏览顺序。 -->
+        <view class="pattern-card" data-source="history" data-index="{{index}}" bindtap="openItem">
+          <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" />
+          <!-- 浏览记录里的收藏星标：用于显示/切换该花色收藏状态。 -->
+          <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" catchtap="favorite">{{icons.favorite}}</button>
+          <view class="pattern-tag">{{item.categoryLabel}}</view>
+          <view class="pattern-meta">
+            <view>
+              <view class="pattern-name">{{item.nameText}}</view>
+              <view class="pattern-code">{{item.idText}}</view>
+            </view>
+            <button class="more-button" data-id="{{item.pattern_id}}" catchtap="moreColors">{{text.moreColors}}</button>
+          </view>
+        </view>
+      </block>
+    </view>
+    <!-- 浏览记录空状态。 -->
+    <view wx:else class="empty">{{text.emptyHistory}}</view>
+  </view>
+
+  <!-- 花色大图弹层：我的页收藏和浏览记录共用这套大图结构。 -->
+  <view wx:if="{{detailVisible && selectedItem}}" class="detail-mask" catchtap="closeDetail">
+    <!-- 大图左上角单花色 PDF 按钮，保留在弹层内。 -->
+    <button class="detail-pdf" catchtap="exportPdf">{{text.pdfShort}}</button>
+    <!-- 大图右上角关闭图标：尺寸和位置统一使用 app.wxss 的 `.detail-close .ui-icon`。 -->
+    <button class="detail-close" catchtap="closeDetail">
+      <view class="ui-icon icon-close-white"></view>
+    </button>
+    <!-- 大图主体容器：上方间距由 .detail-viewer 控制。 -->
+    <view class="detail-viewer" catchtap="noop">
+      <!-- 大图图片舞台：宽高、圆角由 .detail-image-stage 控制。 -->
+      <view class="detail-image-stage">
+        <image class="detail-image" mode="aspectFill" src="{{selectedItem.imageSrc}}" />
+        <!-- 左右切换按钮：图形尺寸由 `.detail-arrow .ui-icon` 控制。 -->
+        <button wx:if="{{detailTotal > 1}}" class="detail-arrow detail-prev" catchtap="prevDetail">
+          <view class="ui-icon icon-prev"></view>
+        </button>
+        <button wx:if="{{detailTotal > 1}}" class="detail-arrow detail-next" catchtap="nextDetail">
+          <view class="ui-icon icon-next"></view>
+        </button>
+        <!-- 大图底部操作区：收藏星标和更多颜色按钮。 -->
+        <view class="detail-actions">
+          <button class="detail-favorite {{selectedItem.favorited ? 'on' : ''}}" data-id="{{selectedItem.pattern_id}}" data-index="{{selectedIndex}}" catchtap="favorite">
+            <view class="ui-icon icon-favorite star-icon"></view>
+          </button>
+          <button class="detail-more" data-id="{{selectedItem.pattern_id}}" catchtap="moreColors">
+            <text class="detail-more-label">{{text.moreColors}}</text>
+          </button>
+        </view>
+      </view>
+      <!-- 大图下方信息区：花色名称、编号、序号。 -->
+      <view class="detail-info">
+        <view class="detail-name">{{selectedItem.nameText}}</view>
+        <view class="detail-code">{{selectedItem.idText}}</view>
+        <view class="detail-count">{{detailCountText}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 登录/注册弹窗：用户名密码账号入口，注册时可填写内部访问码创建 sales。 -->
+  <view wx:if="{{authVisible}}" class="auth-mask" catchtap="closeAuth">
+    <view class="auth-card" catchtap="noop">
+      <view class="auth-head">
+        <view class="auth-title">{{authMode == authModes.register ? text.authRegisterTitle : text.authLoginTitle}}</view>
+        <button class="auth-close" catchtap="closeAuth">{{icons.close}}</button>
+      </view>
+      <view class="auth-tabs">
+        <view class="auth-tab {{authMode == authModes.login ? 'active' : ''}}" data-mode="{{authModes.login}}" catchtap="switchAuthMode">{{text.authLogin}}</view>
+        <view class="auth-tab {{authMode == authModes.register ? 'active' : ''}}" data-mode="{{authModes.register}}" catchtap="switchAuthMode">{{text.authRegister}}</view>
+      </view>
+      <input class="auth-input" value="{{authUsername}}" placeholder="{{text.authUsername}}" bindinput="onAuthUsername" />
+      <input class="auth-input" password="{{true}}" value="{{authPassword}}" placeholder="{{text.authPassword}}" bindinput="onAuthPassword" />
+      <block wx:if="{{authMode == authModes.register}}">
+        <input class="auth-input" value="{{authAccessCode}}" placeholder="{{text.authAccessCode}}" bindinput="onAuthAccessCode" />
+      </block>
+      <button class="auth-submit" loading="{{authLoading}}" disabled="{{authLoading}}" bindtap="submitAuth">
+        {{authMode == authModes.register ? text.authRegister : text.authLogin}}
+      </button>
+      <button wx:if="{{authMode == authModes.login}}" class="auth-switch" data-mode="{{authModes.register}}" catchtap="switchAuthMode">{{text.authGoRegister}}</button>
+      <button wx:else class="auth-switch" data-mode="{{authModes.login}}" catchtap="switchAuthMode">{{text.authGoLogin}}</button>
+    </view>
+  </view>
+
+  <!-- 进一步沟通弹窗：收集线索并展示销售联系方式。 -->
+  <view wx:if="{{leadVisible}}" class="lead-mask" catchtap="closeLeadDialog">
+    <view class="lead-card" catchtap="noop">
+      <view class="lead-head">
+        <view class="lead-title">{{leadContact ? text.leadContactTitle : text.leadTitle}}</view>
+        <button class="lead-close" catchtap="closeLeadDialog">{{icons.close}}</button>
+      </view>
+      <block wx:if="{{!leadContact}}">
+        <view class="lead-label">{{text.leadIndustry}}</view>
+        <input class="lead-input" value="{{leadIndustry}}" placeholder="{{text.leadIndustry}}" bindinput="onLeadIndustry" />
+        <view class="lead-label">{{text.leadRegion}}</view>
+        <input class="lead-input" value="{{leadRegion}}" placeholder="{{text.leadRegion}}" bindinput="onLeadRegion" />
+        <view class="lead-label">{{text.leadNote}}</view>
+        <textarea class="lead-textarea" value="{{leadNote}}" placeholder="{{text.leadNote}}" bindinput="onLeadNote" maxlength="{{leadNoteMaxLength}}" />
+        <view class="lead-actions">
+          <button class="lead-cancel" catchtap="closeLeadDialog">{{text.leadCancel}}</button>
+          <button class="lead-submit" loading="{{leadLoading}}" disabled="{{leadLoading}}" bindtap="submitLead">{{text.leadSubmit}}</button>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="lead-contact-row">{{text.leadContactName}}：{{leadContact.name}}</view>
+        <view class="lead-contact-row">{{text.leadContactPhone}}：{{leadContact.phone}}</view>
+        <view class="lead-contact-row">{{text.leadContactEmail}}：{{leadContact.email}}</view>
+        <view class="lead-contact-row">{{text.leadContactWechat}}：{{leadContact.wechat}}</view>
+        <button class="lead-done" catchtap="closeLeadDialog">{{text.leadDone}}</button>
+      </block>
+    </view>
+  </view>
+
+  <!-- 自动化截图专用底栏：真实使用仍依赖微信系统 tabBar，避免手动预览出现两行底栏。 -->
+  <view wx:if="{{visualSyntheticTabbar}}" class="visual-tabbar">
+    <view class="visual-tabbar-item">
+      <image class="visual-tabbar-icon" src="/assets/tabbar/home-normal.png" mode="aspectFit" />
+      <view>{{text.homeTab}}</view>
+    </view>
+    <view class="visual-tabbar-item">
+      <image class="visual-tabbar-icon" src="/assets/tabbar/camera-normal.png" mode="aspectFit" />
+      <view>{{text.cameraTab}}</view>
+    </view>
+    <view class="visual-tabbar-item active">
+      <image class="visual-tabbar-icon" src="/assets/tabbar/user-active.png" mode="aspectFit" />
+      <view>{{text.mineTab}}</view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,178 @@
+/* 拍摄页主拍摄框：控制高度、虚线边框、灰底和内容居中。 */
+.shoot-box {
+  position: relative;
+  height: 720rpx;
+  margin-bottom: 22rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: #e9e9e8;
+  border: 2rpx dashed #949494;
+  border-radius: 8rpx;
+  box-sizing: border-box;
+}
+
+/* 拍摄/上传后的图片预览：控制预览图宽高和圆角。 */
+.shoot-preview {
+  width: 76%;
+  height: 660rpx;
+  border-radius: 8rpx;
+}
+
+/* 拍摄框空状态图标：控制图标大小和灰色。 */
+.camera-icon {
+  color: #878787;
+  font-size: 112rpx;
+  line-height: 1;
+}
+
+/* 拍摄框空状态主标题：控制字号、粗细、顶部距离。 */
+.upload-title {
+  margin-top: 38rpx;
+  color: #3d3d3d;
+  font-size: 44rpx;
+  font-weight: 800;
+}
+
+/* 拍摄框空状态副标题：控制字号、颜色和顶部距离。 */
+.upload-sub {
+  margin-top: 18rpx;
+  color: #878787;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+/* “点击可更换图片”提示条：控制预览图底部提示的位置、宽度和半透明底色。 */
+.change-strip {
+  position: absolute;
+  left: 50%;
+  bottom: 30rpx;
+  transform: translateX(-50%);
+  width: 76%;
+  height: 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #878787;
+  background: rgba(255, 255, 255, 0.55);
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
+/* 辅助分类整体容器：控制换行、按钮间距和上下外边距。 */
+.segment {
+  margin: 0 8rpx 28rpx;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: 10rpx;
+  overflow: visible;
+}
+
+/* 辅助分类标题和按钮共用：控制高度、边框、文字居中。 */
+.segment-label,
+.segment-item {
+  min-height: 68rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1rpx solid #999;
+  box-sizing: border-box;
+  font-size: 26rpx;
+  font-weight: 800;
+  text-align: center;
+  line-height: 1.15;
+}
+
+/* 辅助分类标题条：控制整行标题背景、字号、高度。 */
+.segment-label {
+  flex: 0 0 100%;
+  height: 64rpx;
+  color: #fff;
+  background: #9a9a9a;
+  border-radius: 8rpx;
+  font-size: 30rpx;
+}
+
+/* 辅助分类单个按钮：控制宽度弹性、内边距和白底。 */
+.segment-item {
+  flex: 1 1 112rpx;
+  padding: 0 8rpx;
+  color: #2d2d2d;
+  background: #fff;
+  border-radius: 8rpx;
+}
+
+/* 辅助分类选中态：控制绿色背景和白字。 */
+.segment-item.active {
+  color: #fff;
+  background: #84977c;
+  border-color: #84977c;
+}
+
+/* 匹配模式行：控制单选圆点与文字间距。 */
+.mode-row {
+  margin-top: 42rpx;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+}
+
+/* 单选圆点外圈。 */
+.radio {
+  width: 52rpx;
+  height: 52rpx;
+  border: 4rpx solid #84977c;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+/* 单选圆点选中内心。 */
+.radio.checked::after {
+  content: "";
+  width: 28rpx;
+  height: 28rpx;
+  margin: 8rpx;
+  display: block;
+  background: #84977c;
+  border-radius: 50%;
+}
+
+/* 匹配模式名称文字。 */
+.mode-name {
+  color: #333;
+  font-size: 38rpx;
+  font-weight: 900;
+}
+
+/* 匹配模式说明文字。 */
+.mode-desc {
+  color: #8d8d8d;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+/* 搜索/识别状态提示。 */
+.status-line {
+  margin: -16rpx 0 34rpx;
+  color: #777;
+  text-align: center;
+  font-size: 26rpx;
+}
+
+/* 结果标题行：左标题右数量。 */
+.results-head {
+  margin: 30rpx 0 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 结果数量文字。 */
+.result-count {
+  color: #333;
+  font-size: 32rpx;
+  font-weight: 800;
+}

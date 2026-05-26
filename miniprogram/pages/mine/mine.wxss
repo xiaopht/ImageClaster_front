@@ -1,0 +1,384 @@
+/* 我的页页面容器覆盖：去掉通用左右/顶部 padding，让绿色头部贴边。 */
+.page {
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+}
+
+/* 顶部绿色区域：控制背景色、顶部留白、左右内边距。 */
+.mine-hero {
+  padding: 92rpx 30rpx 0;
+  background: #84977c;
+}
+
+/* 绿色区内品牌与固定客服入口的左右布局。 */
+.mine-brand {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+/* 我的页品牌文字改为白色。 */
+.hero-brand,
+.hero-sub {
+  color: #fff;
+}
+
+.hero-brand {
+  font-size: 38rpx;
+  line-height: 0.9;
+}
+
+.hero-sub {
+  margin-left: 136rpx;
+  margin-top: 7rpx;
+  font-size: 18rpx;
+  line-height: 1;
+}
+
+/* 右上角固定客服按钮：控制透明背景、尺寸、字号和点击范围。 */
+.hero-service {
+  min-width: 132rpx;
+  height: 54rpx;
+  color: #fff;
+  background: transparent;
+  font-size: 24rpx;
+  font-weight: 800;
+}
+
+/* 个人信息灰色卡片：控制高度、上边距、圆角、内部横向排列。 */
+.profile-card {
+  height: 122rpx;
+  margin-top: 132rpx;
+  padding: 0 30rpx;
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  background: #d9d9d8;
+  border-radius: 14rpx 14rpx 0 0;
+}
+
+/* 头像圆形占位：控制圆形大小、背景、符号大小。 */
+.avatar {
+  width: 66rpx;
+  height: 66rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #c7c7c7;
+  background: #fff;
+  border-radius: 50%;
+  font-size: 42rpx;
+}
+
+/* 用户信息区：控制名称和角色的纵向排列。 */
+.profile-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* 用户名文字：控制占用宽度、颜色、字号。 */
+.profile-name {
+  width: 100%;
+  color: #8e8e8e;
+  font-size: 28rpx;
+  font-weight: 900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 角色标签：显示访客或 sales 等本地角色。 */
+.profile-role {
+  margin-top: 8rpx;
+  padding: 5rpx 12rpx;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  background: #84977c;
+  border-radius: 8rpx;
+  font-size: 19rpx;
+  font-weight: 800;
+}
+
+/* 账号与语言操作区：右侧按钮竖排。 */
+.profile-tools {
+  width: 150rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  gap: 12rpx;
+}
+
+/* 登录/注册入口按钮。 */
+.auth-entry {
+  height: 46rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: #84977c;
+  font-size: 19rpx;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+/* 语言切换按钮：控制尺寸、字号和对齐方式。 */
+.language {
+  height: 42rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  background: transparent;
+  font-size: 22rpx;
+  font-weight: 800;
+}
+
+/* Tab 与分享按钮所在行：控制左右内边距、上下间距和排列。 */
+.mine-actions {
+  padding: 58rpx 30rpx 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 收藏/浏览记录 Tab 容器：控制两个 Tab 的间距。 */
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 28rpx;
+}
+
+/* 单个 Tab 普通态：控制内边距、字号、圆角。 */
+.tab {
+  padding: 14rpx 24rpx;
+  color: #333;
+  font-size: 28rpx;
+  font-weight: 900;
+  border-radius: 8rpx 8rpx 0 0;
+}
+
+/* 单个 Tab 选中态：控制绿色背景和白字。 */
+.tab.active {
+  color: #fff;
+  background: #84977c;
+}
+
+/* 分享按钮和刷新按钮共用样式：控制高度、内边距、绿色背景。 */
+/* 分享按钮和刷新按钮：height 控制按钮高度，flex 对齐控制文字居中位置。 */
+.share-button,
+.mini-button {
+  height: 54rpx;
+  padding: 0 18rpx;
+  display: flex;
+  align-items: center;       /* 调整文字上下位置：垂直居中 */
+  justify-content: center;   /* 调整文字左右位置：水平居中 */
+  box-sizing: border-box;
+  color: #fff;
+  background: #84977c;
+  font-size: 24rpx;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* 收藏/浏览记录灰底面板：控制外边距、内边距、背景、圆角。 */
+.mine-panel {
+  margin: 0 30rpx;
+  padding: 16rpx 16rpx 34rpx;
+  background: #e1e1df;
+  border-radius: 8rpx;
+}
+
+/* 面板顶部工具栏：控制数量文字和刷新按钮的左右布局。 */
+.mine-toolbar {
+  margin-bottom: 0;
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 旧版历史列表样式：当前浏览记录已改为花色卡片，保留供需要列表布局时复用。 */
+.history-list {
+  background: #fff;
+  border-radius: 8rpx;
+}
+
+/* 旧版历史列表单行：如果以后要恢复“操作记录列表”，可调整这里。 */
+.history-item {
+  padding: 24rpx 26rpx;
+  border-bottom: 1rpx solid #e5e5e2;
+}
+
+/* 旧版历史列表最后一行去掉分割线。 */
+.history-item:last-child {
+  border-bottom: 0;
+}
+
+/* 旧版历史列表动作文字。 */
+.history-action {
+  color: #333;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+/* 账号弹窗遮罩。 */
+.auth-mask {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 42rpx;
+  background: rgba(0, 0, 0, 0.58);
+  box-sizing: border-box;
+}
+
+/* 账号弹窗主体。 */
+.auth-card {
+  width: 100%;
+  max-width: 650rpx;
+  padding: 34rpx;
+  background: #f7f7f5;
+  border-radius: 8rpx;
+  box-sizing: border-box;
+}
+
+/* 弹窗标题行。 */
+.auth-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 26rpx;
+}
+
+/* 账号弹窗标题字号和字重。 */
+.auth-title {
+  color: #333;
+  font-size: 40rpx;
+  font-weight: 900;
+}
+
+/* 账号弹窗关闭按钮触摸范围与符号尺寸。 */
+.auth-close {
+  width: 68rpx;
+  height: 68rpx;
+  color: #777;
+  background: transparent;
+  font-size: 56rpx;
+  font-weight: 300;
+}
+
+/* 登录/注册切换。 */
+.auth-tabs {
+  display: flex;
+  margin-bottom: 24rpx;
+  background: #e5e5e1;
+  border-radius: 8rpx;
+  overflow: hidden;
+}
+
+.auth-tab {
+  flex: 1;
+  height: 70rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #777;
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+/* 登录/注册当前标签的品牌色选中态。 */
+.auth-tab.active {
+  color: #fff;
+  background: #84977c;
+}
+
+/* 账号输入框：高度、间距、内边距、边框和字号。 */
+.auth-input {
+  height: 78rpx;
+  margin-bottom: 18rpx;
+  padding: 0 22rpx;
+  color: #333;
+  background: #fff;
+  border: 1rpx solid #d6d6d2;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+  box-sizing: border-box;
+}
+
+/* 提交登录/注册按钮：高度、上间距、绿色背景和文字尺寸。 */
+.auth-submit {
+  height: 82rpx;
+  margin-top: 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: #84977c;
+  border-radius: 8rpx;
+  font-size: 32rpx;
+  font-weight: 900;
+}
+
+/* 请求进行时的按钮透明度。 */
+.auth-submit[disabled] {
+  opacity: 0.72;
+}
+
+/* 切换“去注册/去登录”的次要按钮。 */
+.auth-switch {
+  height: 64rpx;
+  margin-top: 18rpx;
+  color: #676767;
+  background: transparent;
+  font-size: 26rpx;
+  font-weight: 800;
+}
+
+/* 我的页卡片覆盖：调整收藏与浏览记录中两列花色的卡片宽度、行距和圆角。 */
+.mine-panel .pattern-card {
+  width: 48.5%;
+  margin-bottom: 18rpx;
+  border-radius: 6rpx;
+  box-shadow: none;
+}
+
+/* 我的页花色缩略图高度：决定收藏/浏览卡片的图片比例。 */
+.mine-panel .pattern-image {
+  height: 360rpx;
+}
+
+/* 我的页花色信息区高度感及左右留白。 */
+.mine-panel .pattern-meta {
+  min-height: 62rpx;
+  padding: 7rpx 10rpx;
+}
+
+/* 我的页花色名称字号与行高。 */
+.mine-panel .pattern-name {
+  font-size: 22rpx;
+  line-height: 1.05;
+}
+
+/* 我的页花色编号字号及与名称的距离。 */
+.mine-panel .pattern-code {
+  margin-top: 2rpx;
+  font-size: 18rpx;
+}
+
+/* 我的页“更多颜色”按钮尺寸及字号。 */
+.mine-panel .more-button {
+  min-width: 86rpx;
+  height: 34rpx;
+  font-size: 18rpx;
+}

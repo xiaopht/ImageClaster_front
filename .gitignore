@@ -1,0 +1,25 @@
+# Local IDE state
+miniprogram/project.private.config.json
+.DS_Store
+.idea/
+.vscode/
+
+# Runtime/generated data
+__pycache__/
+*.pyc
+*.log
+*.sqlite3
+runtime_data/
+uploads/
+
+# Dependencies and reports
+node_modules/
+coverage/
+
+# Intentionally excluded from the no-model application release
+models/
+models_cache/
+precomputed_features/
+data/reference_data/
+model_evaluation/
+supervised_metric_learning/

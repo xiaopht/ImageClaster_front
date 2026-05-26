@@ -1,0 +1,170 @@
+<!-- 拍摄页整体页面容器：通用页面 padding 和背景由 app.wxss 的 .page 控制。 -->
+<view class="page">
+  <!-- 顶部品牌区：左侧 schattdecor/Vision，右侧拍摄按钮；整体布局由 app.wxss 的 .brand 控制。 -->
+  <view class="brand">
+    <!-- 品牌文字：主标题和副标题样式由 .brand-main / .brand-sub 控制。 -->
+    <view>
+      <text class="brand-main">{{brand.main}}</text>
+      <text class="brand-sub">{{brand.products.vision}}</text>
+    </view>
+    <!-- 拍摄按钮：尺寸、绿色背景、圆角由 .icon-button 控制。 -->
+    <button class="icon-button" bindtap="chooseImage">
+      <text class="icon">{{icons.camera}}</text>
+      <text>{{text.shoot}}</text>
+    </button>
+  </view>
+
+  <!-- 拍摄/上传主区域：高度、虚线边框、灰底由 camera.wxss 的 .shoot-box 控制。 -->
+  <view class="shoot-box" bindtap="chooseImage">
+    <block wx:if="{{imagePath}}">
+      <!-- 已拍摄/上传图片预览：宽高和圆角由 .shoot-preview 控制。 -->
+      <image class="shoot-preview" mode="aspectFit" src="{{imagePath}}" />
+      <!-- 更换图片提示条：底部位置、宽度、半透明背景由 .change-strip 控制。 -->
+      <view class="change-strip">{{text.uploadChange}}</view>
+    </block>
+    <block wx:else>
+      <!-- 空状态相机图标：大小和颜色由 .camera-icon 控制。 -->
+      <view class="camera-icon">{{icons.camera}}</view>
+      <!-- 空状态主标题：字号、上边距由 .upload-title 控制。 -->
+      <view class="upload-title">{{text.shootUpload}}</view>
+      <!-- 空状态副标题：字号、颜色由 .upload-sub 控制。 -->
+      <view class="upload-sub">{{text.shootSub}}</view>
+    </block>
+  </view>
+
+  <!-- 辅助分类匹配：整体换行和选项间距由 .segment 控制。 -->
+  <view class="segment">
+    <!-- 分类标题条：高度、背景、字号由 .segment-label 控制。 -->
+    <view class="segment-label">{{text.auxCategory}}</view>
+    <block wx:for="{{categoryOptions}}" wx:key="value">
+      <!-- 分类按钮：普通态 .segment-item，选中态 .segment-item.active。 -->
+      <view class="segment-item {{category == item.value ? 'active' : ''}}" data-value="{{item.value}}" bindtap="selectCategory">{{item.label}}</view>
+    </block>
+  </view>
+
+  <!-- 匹配区域模式面板：灰底卡片样式来自 app.wxss 的 .soft-panel。 -->
+  <view class="soft-panel mode-panel">
+    <!-- 面板标题：通用标题大小由 .section-title 控制。 -->
+    <view class="section-title">{{text.matchMode}}</view>
+    <!-- 自动检测选项：行距、图文间隔由 .mode-row 控制。 -->
+    <view class="mode-row" data-mode="{{matchModes.auto}}" bindtap="selectMode">
+      <!-- 单选圆点：外圈由 .radio，内点由 .radio.checked::after 控制。 -->
+      <view class="radio {{matchMode == matchModes.auto ? 'checked' : ''}}"></view>
+      <view>
+        <text class="mode-name">{{text.autoDetect}}</text>
+        <text class="mode-desc">{{text.autoDetectDesc}}</text>
+      </view>
+    </view>
+    <!-- 使用全图选项：结构同自动检测。 -->
+    <view class="mode-row" data-mode="{{matchModes.full}}" bindtap="selectMode">
+      <view class="radio {{matchMode == matchModes.full ? 'checked' : ''}}"></view>
+      <view>
+        <text class="mode-name">{{text.fullImage}}</text>
+        <text class="mode-desc">{{text.fullImageDesc}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 开始搜索按钮：通用大按钮样式由 app.wxss 的 .primary-button 控制。 -->
+  <button class="primary-button" loading="{{loading}}" disabled="{{loading}}" bindtap="startSearch">
+    <text class="button-label">{{text.startSearch}}</text>
+    <text class="button-arrow">{{icons.startArrow}}</text>
+  </button>
+
+  <!-- 状态提示：识别中、错误或无结果文案；位置由 .status-line 控制。 -->
+  <view wx:if="{{message}}" class="status-line">{{message}}</view>
+
+  <!-- 识别反馈条：仅图片识别返回 recognition_id 后显示。 -->
+  <view wx:if="{{feedbackVisible && !feedbackSubmitted}}" class="feedback-bar">
+    <view class="feedback-text">{{text.feedbackPrompt}}</view>
+    <view class="feedback-actions">
+      <button wx:if="{{results.length}}" class="feedback-button feedback-good" loading="{{feedbackLoading}}" disabled="{{feedbackLoading}}" bindtap="submitPositiveFeedback">{{text.feedbackAccurate}}</button>
+      <button class="feedback-button feedback-bad" disabled="{{feedbackLoading}}" bindtap="openFeedbackDialog">{{results.length ? text.feedbackWrong : text.feedbackNotFound}}</button>
+    </view>
+  </view>
+
+  <!-- 识别结果区域：有结果时显示标题行和花色网格。 -->
+  <view wx:if="{{results.length}}">
+    <!-- 结果标题行：左右布局由 .results-head 控制。 -->
+    <view class="results-head">
+      <view class="section-title">{{text.results}}</view>
+      <view class="result-count">{{text.foundPrefix}}{{resultCount}}{{text.foundSuffix}}</view>
+    </view>
+    <!-- 花色卡片网格：列宽和间距由 app.wxss 的 .pattern-grid / .pattern-card 控制。 -->
+    <view class="pattern-grid">
+      <block wx:for="{{results}}" wx:key="pattern_id">
+        <!-- 单张花色卡片：点击打开大图。 -->
+        <view class="pattern-card" data-index="{{index}}" bindtap="openDetail">
+          <!-- 花色小图：高度由 .pattern-image 控制，mode 控制裁切。 -->
+          <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" />
+          <!-- 收藏星标：右上角位置和大小由 .star 控制；黄色态由 .star.on 控制。 -->
+          <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" data-index="{{index}}" catchtap="favorite">{{icons.favorite}}</button>
+          <!-- 分类标签：右下标签位置和背景由 .pattern-tag 控制。 -->
+          <view class="pattern-tag">{{item.categoryLabel}}</view>
+          <!-- 卡片底部名称编号区：高度、内边距由 .pattern-meta 控制。 -->
+          <view class="pattern-meta">
+            <view>
+              <view class="pattern-name">{{item.nameText}}</view>
+              <view class="pattern-code">{{item.idText}}</view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 花色大图弹层：遮罩、图片舞台、按钮位置均在 app.wxss 的 detail-* 样式中调整。 -->
+  <view wx:if="{{detailVisible && selectedItem}}" class="detail-mask" catchtap="closeDetail">
+    <!-- 大图左上角 PDF 按钮。 -->
+    <button class="detail-pdf" catchtap="exportPdf">{{text.pdfShort}}</button>
+    <!-- 大图右上角关闭图标：尺寸和位置统一使用 app.wxss 的 `.detail-close .ui-icon`。 -->
+    <button class="detail-close" catchtap="closeDetail">
+      <view class="ui-icon icon-close-white"></view>
+    </button>
+    <!-- 大图主体容器：控制弹层内容距顶部的位置。 -->
+    <view class="detail-viewer" catchtap="noop">
+      <!-- 图片舞台：控制大图宽高和圆角。 -->
+      <view class="detail-image-stage">
+        <image class="detail-image" mode="aspectFill" src="{{selectedItem.imageSrc}}" />
+        <!-- 左右切换按钮：只在结果超过 1 个时显示。 -->
+        <button wx:if="{{results.length > 1}}" class="detail-arrow detail-prev" catchtap="prevDetail">
+          <view class="ui-icon icon-prev"></view>
+        </button>
+        <button wx:if="{{results.length > 1}}" class="detail-arrow detail-next" catchtap="nextDetail">
+          <view class="ui-icon icon-next"></view>
+        </button>
+        <!-- 大图底部操作区：收藏星标和更多颜色按钮。 -->
+        <view class="detail-actions">
+          <button class="detail-favorite {{selectedItem.favorited ? 'on' : ''}}" data-id="{{selectedItem.pattern_id}}" data-index="{{selectedIndex}}" catchtap="favorite">
+            <view class="ui-icon icon-favorite star-icon"></view>
+          </button>
+          <button class="detail-more" data-id="{{selectedItem.pattern_id}}" catchtap="moreColors">
+            <text class="detail-more-label">{{text.moreColors}}</text>
+          </button>
+        </view>
+      </view>
+      <!-- 大图下方文字信息区：名称、编号、当前序号。 -->
+      <view class="detail-info">
+        <view class="detail-name">{{selectedItem.nameText}}</view>
+        <view class="detail-code">{{selectedItem.idText}}</view>
+        <view class="detail-count">{{detailCountText}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 不准反馈弹窗：可补充正确花色编号和备注。 -->
+  <view wx:if="{{feedbackDialogVisible}}" class="feedback-mask" catchtap="closeFeedbackDialog">
+    <view class="feedback-card" catchtap="noop">
+      <view class="feedback-head">
+        <view class="feedback-title">{{text.feedbackDialogTitle}}</view>
+        <button class="feedback-close" catchtap="closeFeedbackDialog">{{icons.close}}</button>
+      </view>
+      <input class="feedback-input" value="{{feedbackCorrectPatternId}}" placeholder="{{text.feedbackCorrectPattern}}" bindinput="onFeedbackCorrectPattern" />
+      <textarea class="feedback-textarea" value="{{feedbackNote}}" placeholder="{{text.feedbackNote}}" bindinput="onFeedbackNote" maxlength="{{feedbackNoteMaxLength}}" />
+      <view class="feedback-dialog-actions">
+        <button class="feedback-cancel" catchtap="closeFeedbackDialog">{{text.feedbackCancel}}</button>
+        <button class="feedback-submit" loading="{{feedbackLoading}}" disabled="{{feedbackLoading}}" bindtap="submitNegativeFeedback">{{text.feedbackSubmit}}</button>
+      </view>
+    </view>
+  </view>
+</view>

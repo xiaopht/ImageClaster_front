@@ -1,0 +1,242 @@
+<view class="home-page">
+  <!-- 隐藏的原生导航标题占位：需要启用自定义页头时，在 index.wxss 调整 `.home-nav` 显示方式。 -->
+  <view class="home-nav">
+    <view class="home-nav-title">{{brand.main}} {{brand.products.sense}}</view>
+  </view>
+
+  <view class="home-content">
+    <!-- 首页品牌区：Logo 宽度与顶部位置在 `.home-brand` 中调节。 -->
+    <view class="brand home-brand">
+      <view class="brand-lockup">
+        <image class="brand-logo-image" src="/assets/logo/schattdecor-sense.png" mode="widthFix" />
+      </view>
+    </view>
+
+    <!-- 搜索操作行：重置按钮位于搜索栏右侧，尺寸、间距和对齐由 `.search-row` / `.reset-button` 控制。 -->
+    <view class="search-row">
+      <!-- 文本搜索栏：高度、边框、输入字号由 `.search-box` 和 `.search-input` 控制。 -->
+      <view wx:if="{{searchBoxVisible}}" class="search-box">
+        <view class="ui-icon icon-search search-icon"></view>
+        <input class="search-input" value="{{query}}" placeholder="{{text.searchPlaceholder}}" placeholder-class="search-placeholder" bindinput="onQuery" confirm-type="search" bindconfirm="startSearch" />
+      </view>
+      <button class="icon-button reset-button" bindtap="reset">
+        <view class="ui-icon icon-reset reset-icon"></view>
+        <text>{{text.reset}}</text>
+      </button>
+    </view>
+
+    <!-- 图片上传/预览主区域：三个状态的面积与留白可在 `.upload-box`、`.image-fold-strip` 中调整。 -->
+    <view wx:if="{{imagePanelMode == 'full'}}" class="upload-box {{imagePath ? 'upload-box-filled' : ''}}" bindtap="chooseImage">
+      <block wx:if="{{imagePath}}">
+        <image class="upload-preview" mode="aspectFit" src="{{imagePath}}" />
+        <view class="change-strip">{{text.uploadChange}}</view>
+        <button class="crop-button" catchtap="noop">{{text.cropImage}}</button>
+      </block>
+      <block wx:else>
+        <view class="ui-icon icon-camera-muted upload-camera-icon"></view>
+        <view class="upload-title">{{text.uploadTitle}}</view>
+        <view class="upload-sub">{{text.uploadSub}}</view>
+      </block>
+    </view>
+
+    <view wx:elif="{{imagePanelMode == 'compact'}}" class="upload-box upload-box-compact" bindtap="chooseImage">
+      <view class="image-fold-label">{{text.foldImage}}</view>
+      <image class="upload-preview compact-preview" mode="aspectFit" src="{{imagePath}}" />
+      <view class="change-strip">{{text.uploadChange}}</view>
+      <button class="crop-button" catchtap="noop">{{text.cropImage}}</button>
+    </view>
+
+    <view wx:elif="{{imagePanelMode == 'strip'}}" class="image-fold-strip">
+      <text>{{text.expandImage}}</text>
+    </view>
+
+    <!-- 辅助分类选项：按钮宽度、选中颜色及一行容量由 `.segment*` 调整。 -->
+    <view wx:if="{{controlsVisible}}" class="segment">
+      <view class="segment-label">{{text.auxCategory}}</view>
+      <block wx:for="{{categoryOptions}}" wx:key="value">
+        <view class="segment-item {{category == item.value ? 'active' : ''}}" data-value="{{item.value}}" bindtap="selectCategory">{{item.label}}</view>
+      </block>
+    </view>
+
+    <!-- 匹配模式面板：圆点、文本层级、面板间距分别由 `.radio`、`.mode-*` 控制。 -->
+    <view wx:if="{{controlsVisible}}" class="soft-panel mode-panel">
+      <view class="section-title">{{text.matchMode}}</view>
+      <view class="mode-row" data-mode="{{matchModes.auto}}" bindtap="selectMode">
+        <view class="radio {{matchMode == matchModes.auto ? 'checked' : ''}}"></view>
+        <view class="mode-copy">
+          <text class="mode-name">{{text.autoDetect}}</text>
+          <text class="mode-desc">{{text.autoDetectDesc}}</text>
+        </view>
+      </view>
+      <view class="mode-row" data-mode="{{matchModes.full}}" bindtap="selectMode">
+        <view class="radio {{matchMode == matchModes.full ? 'checked' : ''}}"></view>
+        <view class="mode-copy">
+          <text class="mode-name">{{text.fullImage}}</text>
+          <text class="mode-desc">{{text.fullImageDesc}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 主要操作按钮：宽高、上下留白和右侧箭头块可在 `.start-button` 中微调。 -->
+    <button wx:if="{{controlsVisible}}" class="primary-button start-button" loading="{{loading}}" disabled="{{loading}}" bindtap="startSearch">
+      <text class="button-label">{{text.startSearch}}</text>
+      <view class="button-arrow">
+        <view class="ui-icon icon-arrow-right"></view>
+      </view>
+    </button>
+
+    <view wx:if="{{message}}" class="status-line">{{message}}</view>
+
+    <!-- 结果反馈提示栏：共用样式位于 app.wxss 的 `.feedback-*`。 -->
+    <view wx:if="{{feedbackVisible && !feedbackSubmitted}}" class="feedback-bar">
+      <view class="feedback-text">{{text.feedbackPrompt}}</view>
+      <view class="feedback-actions">
+        <button wx:if="{{results.length}}" class="feedback-button feedback-good" loading="{{feedbackLoading}}" disabled="{{feedbackLoading}}" bindtap="submitPositiveFeedback">{{text.feedbackAccurate}}</button>
+        <button class="feedback-button feedback-bad" disabled="{{feedbackLoading}}" bindtap="openFeedbackDialog">{{results.length ? text.feedbackWrong : text.feedbackNotFound}}</button>
+      </view>
+    </view>
+
+    <!-- 花色结果卡片：图片比例、分类标签与收藏角标由 index.wxss 对通用 `.pattern-*` 的覆盖决定。 -->
+    <view wx:if="{{results.length}}">
+      <view class="results-head {{imagePath ? 'results-head-image' : ''}}">
+        <view class="section-title">{{text.results}}</view>
+        <view class="result-count">{{text.foundPrefix}}{{resultCount}}{{text.foundSuffix}}</view>
+      </view>
+      <view class="pattern-grid">
+        <block wx:for="{{results}}" wx:key="pattern_id">
+          <view class="pattern-card" data-index="{{index}}" bindtap="openDetail">
+            <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" />
+            <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" data-index="{{index}}" catchtap="favorite">
+              <view class="ui-icon icon-favorite star-icon"></view>
+            </button>
+            <view class="pattern-tag">{{item.categoryLabel}}</view>
+            <view class="pattern-meta">
+              <view class="pattern-copy">
+                <view class="pattern-name">{{item.nameText}}</view>
+                <view class="pattern-code">{{item.idText}}</view>
+              </view>
+              <button class="more-button" data-id="{{item.pattern_id}}" catchtap="moreColors">{{text.moreColors}}</button>
+            </view>
+          </view>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 可拖动客服浮钮：轻触/拖动统一由 touch 事件判断，避免拖动捕获使 tap 无法跳转。 -->
+  <view wx:if="{{serviceVisible && servicePositionReady}}" class="service" style="left: {{serviceLeft}}px; top: {{serviceTop}}px;" catchtouchstart="startServiceDrag" catchtouchmove="moveServiceDrag" catchtouchend="endServiceDrag">
+    <!-- 关闭圆点独立拦截 touchstart，避免外层拖动手势吞掉点击。 -->
+    <view class="service-close" catchtouchstart="hideService" catchtap="hideService">
+      <view class="ui-icon icon-close-muted"></view>
+    </view>
+    <view class="ui-icon icon-service service-icon"></view>
+    <view>{{text.customerService}}</view>
+  </view>
+
+  <!-- 自动化截图专用底栏：只由截图脚本显式打开，用来补齐开发者工具原生截图缺失的系统 tabBar。 -->
+  <view wx:if="{{visualSyntheticTabbar}}" class="visual-tabbar">
+    <view class="visual-tabbar-item active">
+      <image class="visual-tabbar-icon" src="/assets/tabbar/home-active.png" mode="aspectFit" />
+      <view>{{text.homeTab}}</view>
+    </view>
+    <view class="visual-tabbar-item">
+      <image class="visual-tabbar-icon" src="/assets/tabbar/camera-normal.png" mode="aspectFit" />
+      <view>{{text.cameraTab}}</view>
+    </view>
+    <view class="visual-tabbar-item">
+      <image class="visual-tabbar-icon" src="/assets/tabbar/user-normal.png" mode="aspectFit" />
+      <view>{{text.mineTab}}</view>
+    </view>
+  </view>
+
+  <!-- 花色大图层：严格对应 AI识图_01-5，PDF、关闭、主图、收藏和翻页位置均在 app.wxss `.detail-*` 调整。 -->
+  <view wx:if="{{detailVisible && selectedItem}}" class="detail-mask" catchtap="closeDetail">
+    <button class="detail-pdf" catchtap="exportPdf">{{text.pdfShort}}</button>
+    <button class="detail-close" catchtap="closeDetail">
+      <view class="ui-icon icon-close-white"></view>
+    </button>
+    <view class="detail-viewer" catchtap="noop">
+      <view class="detail-image-stage">
+        <image class="detail-image" mode="aspectFill" src="{{selectedItem.imageSrc}}" />
+        <button wx:if="{{results.length > 1}}" class="detail-arrow detail-prev" catchtap="prevDetail">
+          <view class="ui-icon icon-prev"></view>
+        </button>
+        <button wx:if="{{results.length > 1}}" class="detail-arrow detail-next" catchtap="nextDetail">
+          <view class="ui-icon icon-next"></view>
+        </button>
+        <view class="detail-actions">
+          <button class="detail-favorite {{selectedItem.favorited ? 'on' : ''}}" data-id="{{selectedItem.pattern_id}}" data-index="{{selectedIndex}}" catchtap="favorite">
+            <view class="ui-icon icon-favorite star-icon"></view>
+          </button>
+          <button class="detail-more" data-id="{{selectedItem.pattern_id}}" catchtap="moreColors">
+            <text class="detail-more-label">{{text.moreColors}}</text>
+          </button>
+        </view>
+      </view>
+      <view class="detail-info">
+        <view class="detail-name">{{selectedItem.nameText}}</view>
+        <view class="detail-code">{{selectedItem.idText}}</view>
+        <view class="detail-count">{{detailCountText}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 评分弹窗：尺寸、星级与按钮样式位于 app.wxss 的 `.satisfaction-*`。 -->
+  <view wx:if="{{feedbackDialogVisible}}" class="feedback-mask" catchtap="noop">
+    <view class="satisfaction-card" catchtap="noop">
+      <view class="rating-stars">
+        <block wx:for="{{feedbackStars}}" wx:key="*this">
+          <button class="rating-star {{item <= feedbackRating ? 'active' : ''}}" data-rating="{{item}}" catchtap="selectFeedbackRating">★</button>
+        </block>
+      </view>
+      <view class="satisfaction-copy">{{text.feedbackSatisfaction}}</view>
+      <view class="satisfaction-actions">
+        <button class="dont-remind-button {{feedbackDontRemind ? 'checked' : ''}}" catchtap="toggleFeedbackDontRemind">
+          <view class="dont-remind-dot"></view>
+          <text>{{text.feedbackDontRemind}}</text>
+        </button>
+        <button class="satisfaction-confirm" loading="{{feedbackLoading}}" disabled="{{feedbackLoading}}" catchtap="submitRatingFeedback">{{text.feedbackConfirm}}</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 未匹配提示弹窗：视觉参数位于 app.wxss 的 `.unmatched-*`。 -->
+  <view wx:if="{{unmatchedDialogVisible}}" class="unmatched-mask" catchtap="noop">
+    <view class="unmatched-card" catchtap="noop">
+      <view class="unmatched-title">{{text.dataUnmatchedTitle}}</view>
+      <view class="unmatched-copy">{{text.dataUnmatchedDialogText}}</view>
+      <button class="unmatched-confirm" catchtap="closeUnmatchedDialog">{{text.dataUnmatchedConfirm}}</button>
+    </view>
+  </view>
+
+  <!-- 联系销售弹窗：视觉参数位于 app.wxss 的 `.lead-*`，字段文案位于 i18n。 -->
+  <view wx:if="{{leadVisible}}" class="lead-mask" catchtap="closeLeadDialog">
+    <view class="lead-card" catchtap="noop">
+      <view class="lead-head">
+        <view class="lead-title">{{leadContact ? text.leadContactTitle : text.leadTitle}}</view>
+        <button class="lead-close" catchtap="closeLeadDialog">
+          <view class="ui-icon icon-close-muted"></view>
+        </button>
+      </view>
+      <block wx:if="{{!leadContact}}">
+        <view class="lead-label">{{text.leadIndustry}}</view>
+        <input class="lead-input" value="{{leadIndustry}}" placeholder="{{text.leadIndustry}}" bindinput="onLeadIndustry" />
+        <view class="lead-label">{{text.leadRegion}}</view>
+        <input class="lead-input" value="{{leadRegion}}" placeholder="{{text.leadRegion}}" bindinput="onLeadRegion" />
+        <view class="lead-label">{{text.leadNote}}</view>
+        <textarea class="lead-textarea" value="{{leadNote}}" placeholder="{{text.leadNote}}" bindinput="onLeadNote" maxlength="{{leadNoteMaxLength}}" />
+        <view class="lead-actions">
+          <button class="lead-cancel" catchtap="closeLeadDialog">{{text.leadCancel}}</button>
+          <button class="lead-submit" loading="{{leadLoading}}" disabled="{{leadLoading}}" bindtap="submitLead">{{text.leadSubmit}}</button>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="lead-contact-row">{{text.leadContactName}}：{{leadContact.name}}</view>
+        <view class="lead-contact-row">{{text.leadContactPhone}}：{{leadContact.phone}}</view>
+        <view class="lead-contact-row">{{text.leadContactEmail}}：{{leadContact.email}}</view>
+        <view class="lead-contact-row">{{text.leadContactWechat}}：{{leadContact.wechat}}</view>
+        <button class="lead-done" catchtap="closeLeadDialog">{{text.leadDone}}</button>
+      </block>
+    </view>
+  </view>
+</view>

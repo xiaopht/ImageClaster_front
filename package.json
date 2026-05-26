@@ -1,0 +1,7 @@
+{
+  "name": "schatt-ai-wechat-app",
+  "private": true,
+  "scripts": {
+    "check:miniapp": "node tools/check-miniprogram.js"
+  }
+}
