@@ -30,6 +30,7 @@ CATEGORY_ALIASES = {
     "石纹": {"石纹", "stone", "stone texture"},
     "素色": {"素色", "solid", "plain", "unicolor", "uni color"},
 }
+NO_AUXILIARY_CATEGORIES = {"", "不使用", "不使用辅助", "none", "no auxiliary", "off"}
 BROWSE_ACTIONS = {"view", "browse", "open_pattern", "view_pattern"}
 FULL_PATTERN_ID_RE = re.compile(r"^\d{2}-\d{5}-\d{3}$")
 SALES_CONTACT = {
@@ -69,8 +70,15 @@ def catalog() -> list[dict]:
     return items
 
 
+def normalize_category_filter(category: str = "") -> str:
+    raw = (category or "").strip()
+    if raw.lower() in NO_AUXILIARY_CATEGORIES:
+        return ""
+    return raw
+
+
 def category_terms(category: str) -> set[str]:
-    raw = (category or "").strip().lower()
+    raw = normalize_category_filter(category).lower()
     if not raw:
         return set()
     for canonical, aliases in CATEGORY_ALIASES.items():
@@ -156,8 +164,9 @@ def keyword_score(item: dict, query: str) -> int:
 def find_items(query: str = "", limit: int = 5, category: str = "", search_mode: str = "auto") -> list[dict]:
     q = query.strip().lower()
     items = catalog()
-    if category:
-        items = [item for item in items if matches_category(item, category)]
+    category_filter = normalize_category_filter(category)
+    if category_filter:
+        items = [item for item in items if matches_category(item, category_filter)]
     result_limit = max(1, min(limit, 50))
     if not q:
         return items[:result_limit]

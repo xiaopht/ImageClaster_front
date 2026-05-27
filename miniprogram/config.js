@@ -216,6 +216,7 @@ const CATEGORY_VALUES = {
 
 // 分类选项配置：影响辅助分类按钮的展示顺序和标签来源。
 const CATEGORY_OPTIONS = [
+  { labelKey: 'noAux', value: CATEGORY_VALUES.empty },
   { labelKey: 'wood', value: CATEGORY_VALUES.wood },
   { labelKey: 'abstract', value: CATEGORY_VALUES.abstract },
   { labelKey: 'stone', value: CATEGORY_VALUES.stone },
@@ -318,7 +319,7 @@ const I18N_DICTIONARIES = {
     uploadTitle: '点击、拖拽或拍摄上传图片',
     uploadSub: '支持 JPG、PNG、WEBP 格式',
     auxCategory: '辅助分类匹配',
-    noAux: '不使用辅助',
+    noAux: '不使用',
     wood: '木纹',
     abstract: '抽象',
     stone: '石纹',
