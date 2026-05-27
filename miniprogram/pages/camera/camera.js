@@ -53,7 +53,20 @@ Page({
       this.applyVisualState(this.data.visualState);
       return;
     }
-    this.refreshFavoriteState();
+    this.openHomeCaptureShortcut();
+  },
+
+  // 底栏“拍照”是首页上传区域的快捷入口：回到首页后由首页调用同一套选图流程。
+  openHomeCaptureShortcut() {
+    const app = getApp();
+    app.globalData.openHomeImagePicker = true;
+    wx.switchTab({
+      url: config.ROUTES.index,
+      fail: (error) => {
+        app.globalData.openHomeImagePicker = false;
+        this.showError(error);
+      }
+    });
   },
 
   applyLanguage() {

@@ -5,7 +5,9 @@
       <view class="service-brand-main">{{brand.main}}</view>
       <view class="service-brand-sub">{{brand.products.sense}}</view>
     </view>
-    <button class="hide-chat" bindtap="goMine">{{text.serviceHideChat}}</button>
+    <button class="hide-chat" bindtap="goMine">
+      <text class="hide-chat-label">{{text.serviceHideChat}}</text>
+    </button>
   </view>
 
   <!-- 聊天滚动区域：messages 按真实发送顺序追加，输入数字后会自动滚到新回复。 -->

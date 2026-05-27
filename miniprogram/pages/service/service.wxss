@@ -44,11 +44,24 @@
   min-width: 166rpx;
   height: 38rpx;
   margin-top: -20rpx;
+  padding: 0 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   color: #777777;
   background: #eeeeee;
   border-radius: 5rpx;
   font-size: 22rpx;
   font-weight: 700;
+  line-height: 1;
+}
+
+/* 隐藏按钮文字微调：如仍感觉偏上，可增大 translateY 数值使文字继续向下移动。 */
+.hide-chat-label {
+  display: block;
+  line-height: 1;
+  transform: translateY(1rpx);
 }
 
 /* 聊天内容可滚动区：高度需为顶部栏、输入区和底栏预留空间。 */

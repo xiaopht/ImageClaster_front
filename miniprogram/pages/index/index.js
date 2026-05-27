@@ -122,6 +122,20 @@ Page({
       return;
     }
     this.refreshFavoriteState();
+    this.openPendingHomeImagePicker();
+  },
+
+  // 消费底栏“拍照”的一次性请求，复用红框上传区域的选图/拍照和预览状态逻辑。
+  openPendingHomeImagePicker() {
+    const app = getApp();
+    if (!app.globalData.openHomeImagePicker) return;
+    app.globalData.openHomeImagePicker = false;
+    const openPicker = () => this.chooseImage();
+    if (wx.nextTick) {
+      wx.nextTick(openPicker);
+      return;
+    }
+    setTimeout(openPicker, 0);
   },
 
   applyLanguage() {

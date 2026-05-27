@@ -10,7 +10,9 @@ const DEFAULT_APP_STATE = {
   token: '',
   user: null,
   language: DEFAULT_LANGUAGE,
-  fontLoaded: false
+  fontLoaded: false,
+  // 底部“拍照”页写入的一次性标记，由首页消费后立即恢复为 false。
+  openHomeImagePicker: false
 };
 
 // 本地缓存键名：影响登录态、语言、接口地址和开发 openid 的读取与写入。
