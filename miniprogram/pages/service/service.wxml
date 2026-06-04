@@ -88,15 +88,15 @@
   <!-- 客服页内的底部导航外观：页面并非 tabBar 页面，点击时切回原生底栏页面。 -->
   <view class="service-tabbar">
     <view class="service-tabbar-item" bindtap="goHome">
-      <image class="service-tabbar-icon" src="/assets/tabbar/home-normal.png" mode="aspectFit" />
+      <view class="service-tabbar-icon svg-icon-home-normal"></view>
       <view>{{text.homeTab}}</view>
     </view>
     <view class="service-tabbar-item" bindtap="goCamera">
-      <image class="service-tabbar-icon" src="/assets/tabbar/camera-normal.png" mode="aspectFit" />
+      <view class="service-tabbar-icon svg-icon-camera-normal"></view>
       <view>{{text.cameraTab}}</view>
     </view>
     <view class="service-tabbar-item active" bindtap="goMine">
-      <image class="service-tabbar-icon" src="/assets/tabbar/user-active.png" mode="aspectFit" />
+      <view class="service-tabbar-icon svg-icon-mine-active"></view>
       <view>{{text.mineTab}}</view>
     </view>
   </view>

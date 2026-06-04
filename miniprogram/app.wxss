@@ -1,12 +1,14 @@
+@import "./styles/svg-path-icons.wxss";
+
 /* 全局主题参数：这里集中修改页面底色、品牌绿、文字色、线条色、收藏黄和全局字体。 */
 page {
-  --color-page-bg: #f5f5f5;
+  --color-page-bg: #f7f7f5;
   --color-soft-page-bg: #f7f7f5;
   --color-panel-bg: #e2e2e2;
   --color-upload-bg: #e2e2e2;
   --color-tabbar-bg: #eaeaea;
-  --color-primary: #82947a;
-  --color-primary-soft: #84977c;
+  --color-primary: #82947b;
+  --color-primary-soft: #82947b;
   --color-primary-dark: #74866d;
   --color-text-strong: #333333;
   --color-text-muted: #8d8d8d;
@@ -16,7 +18,7 @@ page {
   --color-tag-dark: rgba(72, 72, 72, 0.68);
   --color-mask: rgba(0, 0, 0, 0.66);
   --color-star: #e3c96f;
-  --font-family-base: "HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-family-base: "HarmonyOS Sans SC", "Helvetica Neue", Arial, sans-serif;
   --font-family-title: var(--font-family-base);
   --font-family-body: var(--font-family-base);
   --font-family-number: var(--font-family-base);
@@ -84,7 +86,7 @@ textarea {
 }
 
 .icon-service {
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20112%20112%22%3E%3Cpath%20d%3D%22M27%2034h58a12%2012%200%200%201%2012%2012v26a12%2012%200%200%201-12%2012H57L40%2098V84H27a12%2012%200%200%201-12-12V46a12%2012%200%200%201%2012-12Z%22%20fill%3D%22%23ffffff%22%2F%3E%3Ccircle%20cx%3D%2242%22%20cy%3D%2259%22%20r%3D%225%22%20fill%3D%22%2382947a%22%2F%3E%3Ccircle%20cx%3D%2256%22%20cy%3D%2259%22%20r%3D%225%22%20fill%3D%22%2382947a%22%2F%3E%3Ccircle%20cx%3D%2270%22%20cy%3D%2259%22%20r%3D%225%22%20fill%3D%22%2382947a%22%2F%3E%3C%2Fsvg%3E");
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20112%20112%22%3E%3Cpath%20d%3D%22M24%2057a32%2032%200%200%201%2064%200%22%20fill%3D%22none%22%20stroke%3D%22%23fff%22%20stroke-width%3D%228%22%20stroke-linecap%3D%22round%22/%3E%3Cpath%20d%3D%22M20%2057h12a7%207%200%200%201%207%207v12a7%207%200%200%201-7%207H20zM92%2057H80a7%207%200%200%200-7%207v12a7%207%200%200%200%207%207h12z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M32%2040h48a14%2014%200%200%201%2014%2014v24a14%2014%200%200%201-14%2014H59L43%20104V92H32a14%2014%200%200%201-14-14V54a14%2014%200%200%201%2014-14z%22%20fill%3D%22%23fff%22/%3E%3Ccircle%20cx%3D%2245%22%20cy%3D%2266%22%20r%3D%225%22%20fill%3D%22%2384977c%22/%3E%3Ccircle%20cx%3D%2256%22%20cy%3D%2266%22%20r%3D%225%22%20fill%3D%22%2384977c%22/%3E%3Ccircle%20cx%3D%2267%22%20cy%3D%2266%22%20r%3D%225%22%20fill%3D%22%2384977c%22/%3E%3C/svg%3E");
 }
 
 .icon-home-active {
@@ -154,21 +156,21 @@ textarea {
   line-height: 1;
 }
 
-/* 绿色图标按钮：尺寸、内边距、渐变、圆角用于拍摄等顶部操作。 */
+/* 绿色图标按钮：按 SVG 中“重置”等紧凑按钮提取，主要控制宽高、圆角、字号。 */
 .icon-button {
-  min-width: 128rpx;
-  height: 62rpx;
-  padding: 0 20rpx;
+  min-width: 105rpx;
+  height: 40rpx;
+  padding: 0 14rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8rpx;
+  gap: 5rpx;
   color: var(--color-text-light);
-  background: linear-gradient(180deg, var(--color-primary-soft), var(--color-primary));
-  border-radius: 8rpx;
-  box-shadow: inset 0 -2rpx 0 rgba(0, 0, 0, 0.08);
-  font-size: 28rpx;
+  background: var(--color-primary-soft);
+  border-radius: 7rpx;
+  font-size: 22rpx;
   font-weight: 800;
+  line-height: 1;
 }
 
 /* 顶部按钮按下反馈：位移和透明度可调触摸质感。 */
@@ -183,27 +185,27 @@ textarea {
   line-height: 1;
 }
 
-/* 通用主操作按钮：宽高、外边距、渐变及阴影影响拍摄页开始搜索按钮。 */
+/* 通用主操作按钮：按首页 SVG 的“开始搜索”按钮提取尺寸。 */
 .primary-button {
-  width: 72%;
-  height: 104rpx;
+  width: 385rpx;
+  height: 87rpx;
   margin: 56rpx auto 46rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  background: linear-gradient(180deg, var(--color-primary-soft), var(--color-primary));
+  background: var(--color-primary-soft);
   color: var(--color-text-light);
-  border-radius: 10rpx;
-  box-shadow: 0 14rpx 24rpx rgba(116, 134, 109, 0.2), inset 0 -4rpx 0 rgba(0, 0, 0, 0.08);
-  font-size: 42rpx;
+  border-radius: 9rpx;
+  box-shadow: 0 10rpx 18rpx rgba(116, 134, 109, 0.2);
+  font-size: 28rpx;
   font-weight: 900;
 }
 
 /* 主操作按钮按下态：位移和阴影深浅。 */
 .primary-button:active {
   transform: translateY(2rpx);
-  box-shadow: 0 8rpx 14rpx rgba(116, 134, 109, 0.18), inset 0 3rpx 0 rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6rpx 12rpx rgba(116, 134, 109, 0.18);
 }
 
 /* 禁用态可见度。 */
@@ -217,24 +219,24 @@ textarea {
   text-align: center;
 }
 
-/* 主按钮右端箭头区域：width/height/margin 控制白色尾块大小与位置。 */
+/* 主按钮右端箭头区域：按 SVG 白色箭头块 72.6rpx 提取。 */
 .primary-button .button-arrow {
-  width: 94rpx;
-  height: 78rpx;
-  margin-right: 14rpx;
+  width: 73rpx;
+  height: 73rpx;
+  margin-right: 7rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.88);
+  background-color: rgba(255, 255, 255, 0.88);
   color: var(--color-primary);
-  border-radius: 8rpx;
-  font-size: 48rpx;
+  border-radius: 9rpx;
+  font-size: 40rpx;
 }
 
 /* SVG 箭头在尾块内的显示尺寸。 */
 .primary-button .button-arrow .ui-icon {
-  width: 54rpx;
-  height: 54rpx;
+  width: 34rpx;
+  height: 34rpx;
 }
 
 /* 通用区块标题：影响匹配方式、结果等一级标题。 */
@@ -339,7 +341,7 @@ textarea {
 /* 所有页面统一的黄色收藏态图标：同时覆盖小图和大图收藏按钮。 */
 .star.on .star-icon,
 .detail-favorite.on .star-icon {
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2096%2096%22%3E%3Cpath%20d%3D%22m48%2010%2011%2025%2027%203-20%2018%205%2027-23-14-23%2014%205-27-20-18%2027-3Z%22%20fill%3D%22%23e3c96f%22%20stroke%3D%22%23967f33%22%20stroke-width%3D%223%22%2F%3E%3C%2Fsvg%3E");
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%221124%20936%2064%2062%22%3E%3Cpath%20d%3D%22M1158.76%2C941.15l7.11%2C15.1%2C16.56%2C2.09c2.02.25%2C2.82%2C2.74%2C1.34%2C4.13l-12.17%2C11.43%2C3.13%2C16.4c.38%2C2-1.74%2C3.53-3.52%2C2.55l-14.63-8.04-14.63%2C8.04c-1.78.98-3.9-.56-3.52-2.55l3.13-16.4-12.17-11.43c-1.48-1.39-.67-3.88%2C1.34-4.13l16.56-2.09%2C7.11-15.1c.87-1.84%2C3.48-1.84%2C4.35%2C0Z%22%20fill%3D%22%23e5c880%22%2F%3E%3C%2Fsvg%3E");
 }
 
 /* 缩略图分类标签：right/bottom 决定覆盖位置，padding/字号决定标签大小。 */
@@ -388,14 +390,26 @@ textarea {
 
 /* 卡片底部“更多颜色”：最小宽高、内边距、底色与文字大小。 */
 .more-button {
-  min-width: 116rpx;
-  height: 58rpx;
-  padding: 0 14rpx;
+  min-width: 106rpx;
+  height: 35rpx;
+  padding: 0 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   color: #777777;
   background: #e8e8e8;
-  border-radius: 8rpx;
-  font-size: 24rpx;
+  border-radius: 7rpx;
+  font-size: 19rpx;
   font-weight: 700;
+  line-height: 1;
+}
+
+/* “更多颜色”按钮文字：单独微调用于修正微信 button 默认文字偏移。 */
+.more-button-label {
+  display: block;
+  line-height: 1;
+  transform: translateY(1rpx);
 }
 
 /* 视觉截图使用的模拟底栏：手动预览依赖 app.json 的原生 tabBar。 */
@@ -405,7 +419,7 @@ textarea {
   bottom: 0;
   left: 0;
   z-index: 18;
-  height: 150rpx;
+  height: 152rpx;
   display: flex;
   align-items: center;
   justify-content: space-around;
@@ -422,7 +436,7 @@ textarea {
   justify-content: center;
   color: #8b8b8b;
   font-size: 20rpx;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 /* 模拟底栏选中项颜色。 */
@@ -441,15 +455,15 @@ textarea {
 .service {
   position: fixed;
   z-index: 20;
-  width: 112rpx;
-  height: 92rpx;
+  width: 114rpx;
+  height: 88rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   color: var(--color-text-light);
   background: var(--color-primary-soft);
-  border-radius: 56rpx 56rpx 16rpx 16rpx;
+  border-radius: 40rpx;
   box-shadow: 0 10rpx 24rpx rgba(116, 134, 109, 0.26);
   font-size: 20rpx;
   font-weight: 800;
@@ -457,8 +471,8 @@ textarea {
 
 /* 客服浮钮内图标大小及其和文字的间距。 */
 .service-icon {
-  width: 42rpx;
-  height: 42rpx;
+  width: 46rpx;
+  height: 46rpx;
   margin-bottom: 4rpx;
   font-size: 34rpx;
   line-height: 1;
@@ -502,7 +516,7 @@ textarea {
 /* 大图页舞台：参照 AI识图_01-5，保留上方关闭操作区，主花色图在屏幕中下部大幅展示。 */
 .detail-viewer {
   position: absolute;
-  top: 336rpx;
+  top: 337rpx;
   right: 0;
   left: 0;
   bottom: 0;
@@ -513,12 +527,12 @@ textarea {
 
 .detail-image-stage {
   position: relative;
-  width: calc(100vw - 60rpx);
-  height: 1010rpx;
+  width: calc(100vw - 78rpx);
+  height: 876rpx;
   max-height: none;
   overflow: hidden;
   background: #d8d8d5;
-  border-radius: 12rpx;
+  border-radius: 9rpx;
 }
 
 .detail-image {
@@ -548,7 +562,7 @@ textarea {
 /* 大图关闭按钮：与设计稿右上方独立白色关闭图标位置对应。 */
 .detail-close {
   position: absolute;
-  top: 258rpx;
+  top: 250rpx;
   right: 30rpx;
   z-index: 63;
   width: 68rpx;
@@ -587,8 +601,8 @@ textarea {
 
 /* 翻页箭头图形尺寸。 */
 .detail-arrow .ui-icon {
-  width: 46rpx;
-  height: 46rpx;
+  width: 50rpx;
+  height: 58rpx;
 }
 
 /* 大图左翻页按钮离图片左侧距离。 */
@@ -601,11 +615,20 @@ textarea {
   right: 22rpx;
 }
 
+/* 左右箭头用重新居中的 SVG 裁切框，微调 2rpx 让视觉中心落在圆心。 */
+.detail-prev .ui-icon {
+  transform: translateX(2rpx);
+}
+
+.detail-next .ui-icon {
+  transform: translateX(-2rpx);
+}
+
 /* 图片底部内嵌操作区：只负责把“更多颜色”严格放在图片中线；星标在按钮左侧独立定位。 */
 .detail-actions {
   position: absolute;
   right: 0;
-  bottom: 22rpx;
+  bottom: 27rpx;
   left: 0;
   z-index: 62;
   display: flex;
@@ -616,9 +639,9 @@ textarea {
 /* 大图收藏星标按钮：right: calc(50% + 100rpx) 表示位于居中“更多颜色”按钮左侧。 */
 .detail-favorite {
   position: absolute;
-  right: calc(50% + 100rpx);
-  width: 70rpx;
-  height: 70rpx;
+  right: calc(50% + 96rpx);
+  width: 64rpx;
+  height: 64rpx;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -636,15 +659,15 @@ textarea {
 
 /* 大图收藏星形图形大小。 */
 .detail-favorite .star-icon {
-  width: 56rpx;
-  height: 56rpx;
+  width: 52rpx;
+  height: 52rpx;
   filter: drop-shadow(0 4rpx 10rpx rgba(0, 0, 0, 0.32));
 }
 
 /* 大图“更多颜色”按钮：宽高、透明白底、圆角与字号按标准页的紧凑比例。 */
 .detail-more {
-  min-width: 162rpx;
-  height: 48rpx;
+  min-width: 160rpx;
+  height: 38rpx;
   padding: 0 18rpx;
   display: flex;
   align-items: center;
@@ -652,8 +675,8 @@ textarea {
   box-sizing: border-box;
   color: #777777;
   background: rgba(255, 255, 255, 0.92);
-  border-radius: 8rpx;
-  font-size: 23rpx;
+  border-radius: 7rpx;
+  font-size: 20rpx;
   font-weight: 900;
   line-height: 1;
 }
@@ -662,12 +685,12 @@ textarea {
 .detail-more-label {
   display: block;
   line-height: 1;
-  transform: translateY(2rpx);
+  transform: translateY(1rpx);
 }
 
 /* 花色名称、编号和序号置于图片下方的深色遮罩中；设计稿没有匹配度附加行。 */
 .detail-info {
-  margin-top: 32rpx;
+  margin-top: 30rpx;
   color: #ffffff;
   text-align: center;
 }
@@ -699,7 +722,7 @@ textarea {
 
 /* 大图当前序号位置、颜色透明度和字号：较名称保持更弱的层级。 */
 .detail-count {
-  margin-top: 20rpx;
+  margin-top: 17rpx;
   color: rgba(255, 255, 255, 0.62);
   font-size: 22rpx;
   font-weight: 900;
@@ -738,14 +761,14 @@ textarea {
 
 /* 反馈按钮通用触摸面积、圆角及字号。 */
 .feedback-button {
-  min-width: 116rpx;
-  height: 58rpx;
+  min-width: 113rpx;
+  height: 51rpx;
   padding: 0 16rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8rpx;
-  font-size: 24rpx;
+  border-radius: 7rpx;
+  font-size: 22rpx;
   font-weight: 900;
   white-space: nowrap;
 }
@@ -838,8 +861,8 @@ textarea {
 
 /* 无匹配确认按钮尺寸和品牌绿色背景。 */
 .unmatched-confirm {
-  width: 112rpx;
-  height: 54rpx;
+  width: 113rpx;
+  height: 51rpx;
   margin: 34rpx auto 0;
   padding: 0 22rpx;
   display: flex;
@@ -847,8 +870,8 @@ textarea {
   justify-content: center;
   color: #ffffff;
   background: var(--color-primary-soft);
-  border-radius: 6rpx;
-  font-size: 24rpx;
+  border-radius: 7rpx;
+  font-size: 22rpx;
   font-weight: 900;
 }
 
@@ -910,18 +933,18 @@ textarea {
 /* “不再提醒”和“确认”的共用高度、圆角及字号。 */
 .dont-remind-button,
 .satisfaction-confirm {
-  height: 54rpx;
+  height: 51rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6rpx;
+  border-radius: 7rpx;
   font-size: 23rpx;
   font-weight: 900;
 }
 
 /* “不再提醒”按钮宽度、图标间距与底色。 */
 .dont-remind-button {
-  width: 178rpx;
+  width: 224rpx;
   gap: 8rpx;
   color: #ffffff;
   background: #989898;
@@ -944,7 +967,7 @@ textarea {
 
 /* 评分确认按钮宽度和绿色底色。 */
 .satisfaction-confirm {
-  min-width: 112rpx;
+  min-width: 113rpx;
   padding: 0 28rpx;
   color: #ffffff;
   background: var(--color-primary-soft);
@@ -1050,12 +1073,12 @@ textarea {
 .lead-cancel,
 .lead-submit,
 .lead-done {
-  height: 76rpx;
+  height: 51rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8rpx;
-  font-size: 28rpx;
+  border-radius: 7rpx;
+  font-size: 23rpx;
   font-weight: 900;
 }
 
@@ -1109,3 +1132,4 @@ textarea {
   width: 100%;
   margin-top: 24rpx;
 }
+

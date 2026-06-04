@@ -9,7 +9,7 @@
     </view>
     <!-- 拍摄按钮：尺寸、绿色背景、圆角由 .icon-button 控制。 -->
     <button class="icon-button" bindtap="chooseImage">
-      <text class="icon">{{icons.camera}}</text>
+      <view class="ui-icon icon-camera-muted icon"></view>
       <text>{{text.shoot}}</text>
     </button>
   </view>
@@ -24,7 +24,7 @@
     </block>
     <block wx:else>
       <!-- 空状态相机图标：大小和颜色由 .camera-icon 控制。 -->
-      <view class="camera-icon">{{icons.camera}}</view>
+      <view class="ui-icon icon-camera-muted camera-icon"></view>
       <!-- 空状态主标题：字号、上边距由 .upload-title 控制。 -->
       <view class="upload-title">{{text.shootUpload}}</view>
       <!-- 空状态副标题：字号、颜色由 .upload-sub 控制。 -->
@@ -68,7 +68,9 @@
   <!-- 开始搜索按钮：通用大按钮样式由 app.wxss 的 .primary-button 控制。 -->
   <button class="primary-button" loading="{{loading}}" disabled="{{loading}}" bindtap="startSearch">
     <text class="button-label">{{text.startSearch}}</text>
-    <text class="button-arrow">{{icons.startArrow}}</text>
+    <view class="button-arrow">
+      <view class="ui-icon icon-arrow-right"></view>
+    </view>
   </button>
 
   <!-- 状态提示：识别中、错误或无结果文案；位置由 .status-line 控制。 -->
@@ -98,7 +100,9 @@
           <!-- 花色小图：高度由 .pattern-image 控制，mode 控制裁切。 -->
           <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" />
           <!-- 收藏星标：右上角位置和大小由 .star 控制；黄色态由 .star.on 控制。 -->
-          <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" data-index="{{index}}" catchtap="favorite">{{icons.favorite}}</button>
+          <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" data-index="{{index}}" catchtap="favorite">
+            <view class="ui-icon icon-favorite star-icon"></view>
+          </button>
           <!-- 分类标签：右下标签位置和背景由 .pattern-tag 控制。 -->
           <view class="pattern-tag">{{item.categoryLabel}}</view>
           <!-- 卡片底部名称编号区：高度、内边距由 .pattern-meta 控制。 -->
@@ -157,7 +161,9 @@
     <view class="feedback-card" catchtap="noop">
       <view class="feedback-head">
         <view class="feedback-title">{{text.feedbackDialogTitle}}</view>
-        <button class="feedback-close" catchtap="closeFeedbackDialog">{{icons.close}}</button>
+        <button class="feedback-close" catchtap="closeFeedbackDialog">
+          <view class="ui-icon icon-close-muted"></view>
+        </button>
       </view>
       <input class="feedback-input" value="{{feedbackCorrectPatternId}}" placeholder="{{text.feedbackCorrectPattern}}" bindinput="onFeedbackCorrectPattern" />
       <textarea class="feedback-textarea" value="{{feedbackNote}}" placeholder="{{text.feedbackNote}}" bindinput="onFeedbackNote" maxlength="{{feedbackNoteMaxLength}}" />

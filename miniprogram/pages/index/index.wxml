@@ -8,7 +8,7 @@
     <!-- 首页品牌区：Logo 宽度与顶部位置在 `.home-brand` 中调节。 -->
     <view class="brand home-brand">
       <view class="brand-lockup">
-        <image class="brand-logo-image" src="/assets/logo/schattdecor-sense.png" mode="widthFix" />
+        <view class="brand-logo-vector svg-logo-sense"></view>
       </view>
     </view>
 
@@ -20,7 +20,7 @@
         <input class="search-input" value="{{query}}" placeholder="{{text.searchPlaceholder}}" placeholder-class="search-placeholder" bindinput="onQuery" confirm-type="search" bindconfirm="startSearch" />
       </view>
       <button class="icon-button reset-button" bindtap="reset">
-        <view class="ui-icon icon-reset reset-icon"></view>
+        <view class="ui-icon svg-icon-reset-arrows reset-icon"></view>
         <text>{{text.reset}}</text>
       </button>
     </view>
@@ -33,7 +33,7 @@
         <button class="crop-button" catchtap="noop">{{text.cropImage}}</button>
       </block>
       <block wx:else>
-        <view class="ui-icon icon-camera-muted upload-camera-icon"></view>
+        <view class="ui-icon svg-icon-upload-camera upload-camera-icon"></view>
         <view class="upload-title">{{text.uploadTitle}}</view>
         <view class="upload-sub">{{text.uploadSub}}</view>
       </block>
@@ -80,9 +80,7 @@
     <!-- 主要操作按钮：宽高、上下留白和右侧箭头块可在 `.start-button` 中微调。 -->
     <button wx:if="{{controlsVisible}}" class="primary-button start-button" loading="{{loading}}" disabled="{{loading}}" bindtap="startSearch">
       <text class="button-label">{{text.startSearch}}</text>
-      <view class="button-arrow">
-        <view class="ui-icon icon-arrow-right"></view>
-      </view>
+      <view class="button-arrow svg-icon-start-arrow-box"></view>
     </button>
 
     <view wx:if="{{message}}" class="status-line">{{message}}</view>
@@ -115,7 +113,9 @@
                 <view class="pattern-name">{{item.nameText}}</view>
                 <view class="pattern-code">{{item.idText}}</view>
               </view>
-              <button class="more-button" data-id="{{item.pattern_id}}" catchtap="moreColors">{{text.moreColors}}</button>
+              <button class="more-button" data-id="{{item.pattern_id}}" catchtap="moreColors">
+                <text class="more-button-label">{{text.moreColors}}</text>
+              </button>
             </view>
           </view>
         </block>
@@ -129,22 +129,22 @@
     <view class="service-close" catchtouchstart="hideService" catchtap="hideService">
       <view class="ui-icon icon-close-muted"></view>
     </view>
-    <view class="ui-icon icon-service service-icon"></view>
+    <view class="ui-icon svg-icon-service service-icon"></view>
     <view>{{text.customerService}}</view>
   </view>
 
   <!-- 自动化截图专用底栏：只由截图脚本显式打开，用来补齐开发者工具原生截图缺失的系统 tabBar。 -->
   <view wx:if="{{visualSyntheticTabbar}}" class="visual-tabbar">
     <view class="visual-tabbar-item active">
-      <image class="visual-tabbar-icon" src="/assets/tabbar/home-active.png" mode="aspectFit" />
+      <view class="visual-tabbar-icon svg-icon-home-active"></view>
       <view>{{text.homeTab}}</view>
     </view>
     <view class="visual-tabbar-item">
-      <image class="visual-tabbar-icon" src="/assets/tabbar/camera-normal.png" mode="aspectFit" />
+      <view class="visual-tabbar-icon svg-icon-camera-normal"></view>
       <view>{{text.cameraTab}}</view>
     </view>
     <view class="visual-tabbar-item">
-      <image class="visual-tabbar-icon" src="/assets/tabbar/user-normal.png" mode="aspectFit" />
+      <view class="visual-tabbar-icon svg-icon-mine-normal"></view>
       <view>{{text.mineTab}}</view>
     </view>
   </view>

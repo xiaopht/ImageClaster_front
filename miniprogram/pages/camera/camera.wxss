@@ -63,68 +63,68 @@
 
 /* 辅助分类整体容器：控制换行、按钮间距和上下外边距。 */
 .segment {
-  margin: 0 8rpx 28rpx;
+  margin: 0 8rpx 21rpx;
   display: flex;
-  flex-wrap: wrap;
   align-items: stretch;
-  gap: 10rpx;
-  overflow: visible;
+  justify-content: flex-start;
+  overflow: hidden;
+  border-radius: 8rpx;
 }
 
-/* 辅助分类标题和按钮共用：控制高度、边框、文字居中。 */
+/* 辅助分类标题和按钮共用：按首页 SVG 分类条提取为 40rpx 高。 */
 .segment-label,
 .segment-item {
-  min-height: 68rpx;
+  height: 40rpx;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1rpx solid #999;
+  border: 1rpx solid var(--color-line);
   box-sizing: border-box;
-  font-size: 26rpx;
-  font-weight: 800;
+  font-size: 19rpx;
+  font-weight: 900;
   text-align: center;
-  line-height: 1.15;
+  line-height: 1.08;
 }
 
-/* 辅助分类标题条：控制整行标题背景、字号、高度。 */
+/* 辅助分类标题条：控制标题背景、宽度和字号。 */
 .segment-label {
-  flex: 0 0 100%;
-  height: 64rpx;
+  flex: 0 0 150rpx;
+  padding: 0 8rpx;
   color: #fff;
   background: #9a9a9a;
-  border-radius: 8rpx;
-  font-size: 30rpx;
+  font-size: 19rpx;
 }
 
 /* 辅助分类单个按钮：控制宽度弹性、内边距和白底。 */
 .segment-item {
-  flex: 1 1 112rpx;
-  padding: 0 8rpx;
+  flex: 0 0 90rpx;
+  margin-left: -1rpx;
+  padding: 0 6rpx;
   color: #2d2d2d;
   background: #fff;
-  border-radius: 8rpx;
 }
 
 /* 辅助分类选中态：控制绿色背景和白字。 */
 .segment-item.active {
   color: #fff;
-  background: #84977c;
-  border-color: #84977c;
+  background: var(--color-primary-soft);
+  border-color: var(--color-primary-soft);
 }
 
 /* 匹配模式行：控制单选圆点与文字间距。 */
 .mode-row {
-  margin-top: 42rpx;
+  margin-top: 34rpx;
   display: flex;
   align-items: center;
-  gap: 20rpx;
+  gap: 12rpx;
 }
 
 /* 单选圆点外圈。 */
 .radio {
-  width: 52rpx;
-  height: 52rpx;
-  border: 4rpx solid #84977c;
+  width: 28rpx;
+  height: 28rpx;
+  border: 2rpx solid var(--color-primary-soft);
   border-radius: 50%;
   box-sizing: border-box;
 }
@@ -132,25 +132,25 @@
 /* 单选圆点选中内心。 */
 .radio.checked::after {
   content: "";
-  width: 28rpx;
-  height: 28rpx;
-  margin: 8rpx;
+  width: 16rpx;
+  height: 16rpx;
+  margin: 4rpx;
   display: block;
-  background: #84977c;
+  background: var(--color-primary-soft);
   border-radius: 50%;
 }
 
 /* 匹配模式名称文字。 */
 .mode-name {
   color: #333;
-  font-size: 38rpx;
+  font-size: 24rpx;
   font-weight: 900;
 }
 
 /* 匹配模式说明文字。 */
 .mode-desc {
   color: #8d8d8d;
-  font-size: 30rpx;
+  font-size: 18rpx;
   font-weight: 700;
 }
 

@@ -96,7 +96,8 @@ function categoryLabel(value, language) {
 
 // 应用底部导航文案：影响语言切换后 TabBar 的即时显示。
 function applyTabBar(language) {
-  const dict = text(language);
+  const normalized = normalizeLanguage(language);
+  const dict = text(normalized);
   config.TAB_BAR_LABEL_KEYS.forEach((labelKey, index) => {
     try {
       wx.setTabBarItem({ index, text: dict[labelKey] });
@@ -104,6 +105,14 @@ function applyTabBar(language) {
       // 部分开发者工具场景中，页面会早于 tabbar 就绪，此处保持静默兜底。
     }
   });
+  try {
+    const pages = getCurrentPages();
+    const current = pages[pages.length - 1];
+    const tabBar = current && current.getTabBar ? current.getTabBar() : null;
+    if (tabBar && tabBar.setLanguage) tabBar.setLanguage(normalized);
+  } catch (error) {
+    // 自定义 tabBar 尚未挂载时保持静默；下一次页面 show 会自动刷新文案。
+  }
 }
 
 module.exports = {

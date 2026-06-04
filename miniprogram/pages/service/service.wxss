@@ -1,4 +1,6 @@
 /* 客服页面画布：控制整页底色、字体与不可滚出容器的行为。 */
+@import "../../styles/svg-path-icons.wxss";
+
 .service-page {
   height: 100vh;
   display: flex;
@@ -41,18 +43,18 @@
 
 /* 右上隐藏会话按钮：触摸宽高、上偏移、底色及字号。 */
 .hide-chat {
-  min-width: 166rpx;
-  height: 38rpx;
-  margin-top: -20rpx;
+  min-width: 168rpx;
+  height: 36rpx;
+  margin-top: 42rpx;
   padding: 0 12rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
   color: #777777;
-  background: #eeeeee;
-  border-radius: 5rpx;
-  font-size: 22rpx;
+  background: #f5f5f5;
+  border-radius: 7rpx;
+  font-size: 20rpx;
   font-weight: 700;
   line-height: 1;
 }
@@ -61,7 +63,7 @@
 .hide-chat-label {
   display: block;
   line-height: 1;
-  transform: translateY(1rpx);
+  transform: translateY(2rpx);
 }
 
 /* 聊天内容可滚动区：高度需为顶部栏、输入区和底栏预留空间。 */
@@ -87,14 +89,14 @@
   top: 218rpx;
   right: 16rpx;
   z-index: 3;
-  min-width: 106rpx;
+  min-width: 117rpx;
   height: 34rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
-  background: #c9c9c9;
-  border-radius: 5rpx;
+  background: #c4c4c4;
+  border-radius: 7rpx;
   font-size: 19rpx;
   font-weight: 700;
 }
@@ -151,11 +153,11 @@
 /* 机器人气泡：绿色背景、尾角与文字排版。 */
 .bot-bubble {
   position: relative;
-  max-width: 520rpx;
+  max-width: 478rpx;
   padding: 22rpx 22rpx 20rpx;
   color: #ffffff;
   background: var(--color-primary-soft);
-  border-radius: 6rpx;
+  border-radius: 7rpx;
   font-size: 25rpx;
   font-weight: 800;
 }
@@ -182,7 +184,7 @@
   justify-content: center;
   color: #ffffff;
   background: #9a9a9a;
-  border-radius: 6rpx;
+  border-radius: 7rpx;
   font-size: 28rpx;
   font-weight: 800;
 }
@@ -194,7 +196,7 @@
   padding: 20rpx 18rpx;
   color: #8a8a8a;
   background: #ffffff;
-  border-radius: 5rpx;
+  border-radius: 7rpx;
   box-sizing: border-box;
 }
 
@@ -210,7 +212,7 @@
 .choice-chip {
   width: auto;
   max-width: 100%;
-  min-height: 39rpx;
+  min-height: 41rpx;
   margin: 0 0 10rpx;
   padding: 0 15rpx;
   display: inline-flex;
@@ -218,7 +220,7 @@
   justify-content: flex-start;
   color: #777777;
   background: #d9d9d9;
-  border-radius: 6rpx;
+  border-radius: 7rpx;
   font-size: 21rpx;
   font-weight: 800;
   line-height: 1.15;
@@ -244,7 +246,7 @@
 
 /* 地区单项固定宽度及文字居中。 */
 .region-chip {
-  width: 116rpx;
+  width: 119rpx;
   margin: 0;
   justify-content: center;
   text-align: center;
@@ -268,7 +270,8 @@
 
 /* 复制联系方式按钮的高度、内边距、底色和字号。 */
 .contact-copy {
-  height: 42rpx;
+  min-width: 178rpx;
+  height: 41rpx;
   padding: 0 17rpx;
   display: flex;
   align-items: center;
@@ -276,7 +279,7 @@
   box-sizing: border-box;
   color: #ffffff;
   background: var(--color-primary-soft);
-  border-radius: 5rpx;
+  border-radius: 7rpx;
   font-size: 21rpx;
   font-weight: 900;
   line-height: 1;
@@ -291,8 +294,8 @@
 
 /* 底部输入栏：固定在聊天区域下方，支持用户键入职业或区域编号。 */
 .chat-input {
-  flex: 0 0 68rpx;
-  height: 68rpx;
+  flex: 0 0 82rpx;
+  height: 82rpx;
   display: flex;
   align-items: center;
   gap: 12rpx;
@@ -318,25 +321,25 @@
 /* 数字输入框：用户可输入职业/区域编号，回车会直接发送。 */
 .input-field {
   flex: 1;
-  height: 44rpx;
+  height: 58rpx;
   padding: 0 18rpx;
   color: #999999;
   background: #f2f2f2;
-  border-radius: 5rpx;
+  border-radius: 7rpx;
   font-size: 22rpx;
 }
 
 /* 发送按钮：与输入框同高，便于在开发者工具中点击完成对话测试。 */
 .send-button {
   min-width: 82rpx;
-  height: 44rpx;
+  height: 58rpx;
   padding: 0 12rpx;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffffff;
   background: var(--color-primary-soft);
-  border-radius: 5rpx;
+  border-radius: 7rpx;
   font-size: 21rpx;
   font-weight: 800;
 }
@@ -354,36 +357,37 @@
 
 /* 页面自绘底部导航：客服页不是原生 tabBar 页面，点击后跳回对应主页面。 */
 .service-tabbar {
-  flex: 0 0 150rpx;
-  height: 150rpx;
+  flex: 0 0 152rpx;
+  height: 152rpx;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  background: var(--color-tabbar-bg);
-  border-top: 1rpx solid rgba(0, 0, 0, 0.04);
+  background: #eaeaea;
+  overflow: hidden;
 }
 
-/* 客服页自绘底栏单个入口：高度、文字颜色及字号。 */
 .service-tabbar-item {
   flex: 1;
-  height: 150rpx;
+  height: 152rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  color: #8b8b8b;
-  font-size: 19rpx;
+  color: #939393;
+  font-size: 20rpx;
   line-height: 1.1;
 }
 
-/* 自绘底栏当前选中入口的品牌色。 */
 .service-tabbar-item.active {
-  color: var(--color-primary);
+  color: #82947b;
 }
 
-/* 自绘底栏图标宽高与图标到文字的间距。 */
 .service-tabbar-icon {
-  width: 40rpx;
-  height: 40rpx;
-  margin-bottom: 5rpx;
+  width: 42rpx;
+  height: 42rpx;
+  margin-bottom: 8rpx;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
 }

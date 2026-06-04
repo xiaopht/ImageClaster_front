@@ -24,27 +24,28 @@
 
 /* 首页主体边距：padding 的四个方向分别控制首屏上方、左右及 tabBar 上方留白。 */
 .home-content {
-  padding: 108rpx 30rpx 190rpx;
+  padding: 98rpx 30rpx 190rpx;
   box-sizing: border-box;
 }
 
 /* 品牌头区域：min-height 和 margin-bottom 控制 Logo 行高度及与下方搜索操作行的距离。 */
 .home-brand {
   position: relative;
-  min-height: 50rpx;
-  margin-bottom: 24rpx;
+  min-height: 62rpx;
+  margin-bottom: 22rpx;
 }
 
 /* Logo 定位与占宽：margin-top、padding-left、width 调整品牌在首屏的大小和位置。 */
 .home-brand .brand-lockup {
-  margin-top: -18rpx;
+  margin-top: -10rpx;
   padding-left: 22rpx;
-  width: 210rpx;
+  width: 230rpx;
 }
 
 /* 实际 Logo 图片宽度：与上方容器 width 同步调整可避免变形或溢出。 */
-.home-brand .brand-logo-image {
-  width: 210rpx;
+.home-brand .brand-logo-vector {
+  width: 230rpx;
+  height: 65rpx;
   display: block;
 }
 
@@ -69,34 +70,35 @@
 
 /* 搜索操作行：gap 控制搜索栏与右侧重置按钮的水平间距，margin-bottom 控制与上传框间距。 */
 .search-row {
-  margin-bottom: 24rpx;
+  margin-bottom: 22rpx;
   display: flex;
   align-items: center;
-  gap: 12rpx;
+  gap: 8rpx;
 }
 
 /* 搜索栏右侧重置按钮：height 与 `.search-box` 保持一致，按钮在内容区内不会被胶囊按钮遮挡。 */
 .reset-button {
   flex: 0 0 auto;
   margin-left: auto;
-  min-width: 110rpx;
-  height: 54rpx;
-  padding: 0 12rpx;
+  min-width: 105rpx;
+  height: 40rpx;
+  padding: 0 13rpx;
   gap: 4rpx;
-  font-size: 22rpx;
+  border-radius: 7rpx;
+  font-size: 21rpx;
 }
 
 /* 重置图标大小：同时修改宽高以保持正方形。 */
 .reset-icon {
-  width: 26rpx;
-  height: 26rpx;
+  width: 24rpx;
+  height: 24rpx;
 }
 
 /* 文本搜索框：flex 决定它占满重置按钮左侧空间，height/padding/gap 控制内容位置。 */
 .search-box {
   flex: 1;
   min-width: 0;
-  height: 54rpx;
+  height: 52rpx;
   padding: 0 14rpx;
   display: flex;
   align-items: center;
@@ -133,7 +135,7 @@
 /* 图片上传主框：height 决定首屏占比，margin-bottom 决定与分类条的间距。 */
 .upload-box {
   position: relative;
-  height: 352rpx;
+  height: 354rpx;
   margin-bottom: 10rpx;
   display: flex;
   flex-direction: column;
@@ -216,13 +218,13 @@
   position: absolute;
   right: 16rpx;
   bottom: 16rpx;
-  min-width: 102rpx;
-  height: 42rpx;
+  min-width: 120rpx;
+  height: 38rpx;
   padding: 0 12rpx;
   color: #868686;
   background: rgba(255, 255, 255, 0.72);
-  border-radius: 6rpx;
-  font-size: 21rpx;
+  border-radius: 7rpx;
+  font-size: 20rpx;
   font-weight: 900;
 }
 
@@ -268,7 +270,7 @@
 
 /* 辅助分类横向分段控件：margin 控制与上下区块距离，圆角控制整体轮廓。 */
 .segment {
-  margin: 0 8rpx 22rpx;
+  margin: 0 8rpx 21rpx;
   display: flex;
   align-items: stretch;
   overflow: hidden;
@@ -292,22 +294,22 @@
 
 /* 分类控件左侧标题：flex-basis 控制其宽度，颜色和字号控制视觉权重。 */
 .segment-label {
-  flex: 0 0 156rpx;
+  flex: 0 0 150rpx;
   padding: 0 8rpx;
   color: #ffffff;
   background: #9a9a9a;
-  font-size: 20rpx;
+  font-size: 19rpx;
   font-weight: 800;
 }
 
 /* 单项分类按钮：flex-basis 控制每项宽度，padding 影响长文案空间。 */
 .segment-item {
-  flex: 0 0 86rpx;
+  flex: 0 0 90rpx;
   margin-left: -1rpx;
   padding: 0 6rpx;
   color: #2d2d2d;
   background: #ffffff;
-  font-size: 20rpx;
+  font-size: 19rpx;
   font-weight: 900;
 }
 
@@ -388,8 +390,8 @@
 
 /* 主搜索按钮首页覆盖：width/height/margin 是按钮宽高及首屏纵向位置。 */
 .start-button {
-  width: 56%;
-  height: 84rpx;
+  width: 385rpx;
+  height: 87rpx;
   margin-top: 96rpx;
   margin-bottom: 36rpx;
   font-size: 28rpx;
@@ -397,9 +399,11 @@
 
 /* 主按钮右侧箭头白块的尺寸和右间距。 */
 .start-button .button-arrow {
-  width: 64rpx;
-  height: 64rpx;
-  margin-right: 8rpx;
+  width: 73rpx;
+  height: 73rpx;
+  margin-right: 7rpx;
+  background-color: transparent;
+  background-size: contain;
 }
 
 /* 箭头图形尺寸。 */
@@ -453,7 +457,7 @@
 .pattern-card {
   width: 48.6%;
   margin-bottom: 22rpx;
-  border-radius: 6rpx;
+  border-radius: 8rpx;
   box-shadow: none;
 }
 
@@ -464,9 +468,9 @@
 
 /* 卡片底部信息条：height/padding/gap 控制名称和“更多颜色”的密度。 */
 .pattern-meta {
-  min-height: 62rpx;
-  padding: 6rpx 10rpx;
-  gap: 8rpx;
+  min-height: 66rpx;
+  padding: 7rpx 10rpx 8rpx;
+  gap: 10rpx;
 }
 
 /* 花色名称可见长度、字号和行高。 */
@@ -485,33 +489,39 @@
 
 /* “更多颜色”按钮的最小宽度、高度、圆角和字号。 */
 .more-button {
-  min-width: 86rpx;
-  height: 34rpx;
-  padding: 0 8rpx;
-  border-radius: 6rpx;
-  font-size: 18rpx;
+  min-width: 106rpx;
+  height: 35rpx;
+  padding: 0 9rpx;
+  border-radius: 7rpx;
+  font-size: 19rpx;
 }
 
 /* 卡片图片上的分类标签位置及文字大小。 */
 .pattern-tag {
   right: 8rpx;
-  bottom: 64rpx;
-  min-width: 42rpx;
-  padding: 5rpx 7rpx;
+  bottom: 106rpx;
+  min-width: 64rpx;
+  min-height: 36rpx;
+  padding: 0 8rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   border-radius: 4rpx;
-  font-size: 17rpx;
+  font-size: 19rpx;
+  line-height: 1;
 }
 
 /* 小图右上收藏按钮的触摸范围与定位。 */
 .star {
-  top: 8rpx;
-  right: 8rpx;
-  width: 42rpx;
-  height: 42rpx;
+  top: 10rpx;
+  right: 10rpx;
+  width: 50rpx;
+  height: 50rpx;
 }
 
 /* 收藏星形图标显示尺寸。 */
 .star .star-icon {
-  width: 38rpx;
-  height: 38rpx;
+  width: 46rpx;
+  height: 46rpx;
 }

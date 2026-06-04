@@ -4,18 +4,20 @@
   <view class="mine-hero">
     <!-- 顶部品牌与客服行：客服固定显示在右上角，点击进入客服页面。 -->
     <view class="mine-brand">
-      <!-- 白色品牌文字：颜色覆盖由 .hero-brand / .hero-sub 控制。 -->
-      <view>
-        <text class="brand-main hero-brand">{{brand.main}}</text>
-        <text class="brand-sub hero-sub">{{brand.products.sense}}</text>
+      <!-- 白色品牌 Logo：尺寸和位置由 `.mine-logo-*` 控制。 -->
+      <view class="mine-logo-lockup">
+        <view class="mine-logo-vector svg-logo-sense-white"></view>
       </view>
-      <!-- 固定客服入口：位置和文字样式由 `.hero-service` 控制。 -->
-      <button class="hero-service" bindtap="contactService">{{icons.service}} {{text.customerService}}</button>
+      <!-- 固定客服入口：位置、图标和文字样式由 `.hero-service` 控制。 -->
+      <button class="hero-service" bindtap="contactService">
+        <view class="ui-icon svg-icon-service hero-service-icon"></view>
+        <text>{{text.customerService}}</text>
+      </button>
     </view>
     <!-- 个人信息卡片：灰色卡片高度、圆角、与品牌区距离由 .profile-card 控制。 -->
     <view class="profile-card">
       <!-- 头像占位：圆形尺寸、颜色由 .avatar 控制。 -->
-      <view class="avatar">{{icons.profileAvatar}}</view>
+      <view class="avatar"></view>
       <!-- 用户名与角色：占位宽度、字号由 .profile-main 控制。 -->
         <view class="profile-main">
           <view class="profile-name">{{displayName}}</view>
@@ -39,7 +41,10 @@
       <view class="tab {{activeTab == tabs.history ? 'active' : ''}}" data-tab="{{tabs.history}}" bindtap="switchTab">{{text.history}}</view>
     </view>
     <!-- 分享按钮：样式与刷新按钮共用 .share-button / .mini-button。 -->
-    <button class="share-button" open-type="share">{{text.share}}</button>
+    <button class="share-button" open-type="share">
+      <text class="share-button-label">{{text.share}}</text>
+      <view class="ui-icon svg-icon-share-arrow share-button-icon"></view>
+    </button>
   </view>
 
   <!-- 收藏列表面板：灰底、内边距、圆角由 .mine-panel 控制。 -->
@@ -56,7 +61,9 @@
           <!-- 花色图片：高度由 .pattern-image 控制。 -->
           <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" />
           <!-- 收藏星标：小图右上角按钮；黄色态由 .star.on 控制，再点会取消收藏。 -->
-          <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" catchtap="favorite">{{icons.favorite}}</button>
+          <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" catchtap="favorite">
+            <view class="ui-icon icon-favorite star-icon"></view>
+          </button>
           <!-- 分类标签：位置、背景由 .pattern-tag 控制。 -->
           <view class="pattern-tag">{{item.categoryLabel}}</view>
           <!-- 名称编号区：底部白色信息区由 .pattern-meta 控制。 -->
@@ -65,7 +72,9 @@
               <view class="pattern-name">{{item.nameText}}</view>
               <view class="pattern-code">{{item.idText}}</view>
             </view>
-            <button class="more-button" data-id="{{item.pattern_id}}" catchtap="moreColors">{{text.moreColors}}</button>
+            <button class="more-button" data-id="{{item.pattern_id}}" catchtap="moreColors">
+              <text class="more-button-label">{{text.moreColors}}</text>
+            </button>
           </view>
         </view>
       </block>
@@ -89,14 +98,18 @@
         <view class="pattern-card" data-source="history" data-index="{{index}}" bindtap="openItem">
           <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" />
           <!-- 浏览记录里的收藏星标：用于显示/切换该花色收藏状态。 -->
-          <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" catchtap="favorite">{{icons.favorite}}</button>
+          <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" catchtap="favorite">
+            <view class="ui-icon icon-favorite star-icon"></view>
+          </button>
           <view class="pattern-tag">{{item.categoryLabel}}</view>
           <view class="pattern-meta">
             <view>
               <view class="pattern-name">{{item.nameText}}</view>
               <view class="pattern-code">{{item.idText}}</view>
             </view>
-            <button class="more-button" data-id="{{item.pattern_id}}" catchtap="moreColors">{{text.moreColors}}</button>
+            <button class="more-button" data-id="{{item.pattern_id}}" catchtap="moreColors">
+              <text class="more-button-label">{{text.moreColors}}</text>
+            </button>
           </view>
         </view>
       </block>
@@ -149,7 +162,9 @@
     <view class="auth-card" catchtap="noop">
       <view class="auth-head">
         <view class="auth-title">{{authMode == authModes.register ? text.authRegisterTitle : text.authLoginTitle}}</view>
-        <button class="auth-close" catchtap="closeAuth">{{icons.close}}</button>
+        <button class="auth-close" catchtap="closeAuth">
+          <view class="ui-icon icon-close-muted"></view>
+        </button>
       </view>
       <view class="auth-tabs">
         <view class="auth-tab {{authMode == authModes.login ? 'active' : ''}}" data-mode="{{authModes.login}}" catchtap="switchAuthMode">{{text.authLogin}}</view>
@@ -173,7 +188,9 @@
     <view class="lead-card" catchtap="noop">
       <view class="lead-head">
         <view class="lead-title">{{leadContact ? text.leadContactTitle : text.leadTitle}}</view>
-        <button class="lead-close" catchtap="closeLeadDialog">{{icons.close}}</button>
+        <button class="lead-close" catchtap="closeLeadDialog">
+          <view class="ui-icon icon-close-muted"></view>
+        </button>
       </view>
       <block wx:if="{{!leadContact}}">
         <view class="lead-label">{{text.leadIndustry}}</view>
@@ -200,15 +217,15 @@
   <!-- 自动化截图专用底栏：真实使用仍依赖微信系统 tabBar，避免手动预览出现两行底栏。 -->
   <view wx:if="{{visualSyntheticTabbar}}" class="visual-tabbar">
     <view class="visual-tabbar-item">
-      <image class="visual-tabbar-icon" src="/assets/tabbar/home-normal.png" mode="aspectFit" />
+      <view class="visual-tabbar-icon svg-icon-home-normal"></view>
       <view>{{text.homeTab}}</view>
     </view>
     <view class="visual-tabbar-item">
-      <image class="visual-tabbar-icon" src="/assets/tabbar/camera-normal.png" mode="aspectFit" />
+      <view class="visual-tabbar-icon svg-icon-camera-normal"></view>
       <view>{{text.cameraTab}}</view>
     </view>
     <view class="visual-tabbar-item active">
-      <image class="visual-tabbar-icon" src="/assets/tabbar/user-active.png" mode="aspectFit" />
+      <view class="visual-tabbar-icon svg-icon-mine-active"></view>
       <view>{{text.mineTab}}</view>
     </view>
   </view>

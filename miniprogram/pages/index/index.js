@@ -6,8 +6,8 @@ const visualMock = require('../../utils/visual-mock');
 
 // 客服悬浮按钮可调外观/位置参数（单位 rpx）：尺寸应与 app.wxss 的 `.service` 保持一致。
 const SERVICE_FLOAT_STYLE = {
-  width: 112, // 按钮宽度：数值越大，绿色客服浮钮越宽。
-  height: 92, // 按钮高度：数值越大，图标和文字可用空间越多。
+  width: 114, // 按钮宽度：按 SVG 客服浮钮 113.6rpx 换算取整。
+  height: 88, // 按钮高度：按 SVG 客服浮钮 87.6rpx 换算取整。
   sideGap: 24, // 左右最小安全边距：防止按钮贴住屏幕边缘。
   topGap: 128, // 拖动时距离窗口顶部的最小范围：避开状态栏和品牌区。
   bottomGap: 180, // 拖动时距离窗口底部的最小范围：避开 tabBar。

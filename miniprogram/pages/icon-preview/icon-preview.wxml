@@ -1,0 +1,20 @@
+<view class="page icon-preview-page">
+  <view class="preview-title">SVG path ????</view>
+  <view class="preview-note">????????????? path?????????</view>
+
+  <view class="sample-grid">
+    <view class="sample-card"><view class="svg-tab-icon svg-home-active"></view><view class="sample-label">?? ??</view></view>
+    <view class="sample-card"><view class="svg-tab-icon svg-home-normal"></view><view class="sample-label">?? ??</view></view>
+    <view class="sample-card"><view class="svg-tab-icon svg-camera-active"></view><view class="sample-label">?? ??</view></view>
+    <view class="sample-card"><view class="svg-tab-icon svg-camera-normal"></view><view class="sample-label">?? ??</view></view>
+    <view class="sample-card"><view class="svg-tab-icon svg-mine-active"></view><view class="sample-label">?? ??</view></view>
+    <view class="sample-card"><view class="svg-tab-icon svg-mine-normal"></view><view class="sample-label">?? ??</view></view>
+  </view>
+
+  <view class="preview-title compact">??????</view>
+  <view class="tabbar-path-demo">
+    <view class="tabbar-slot"><view class="svg-tab-icon small svg-home-active"></view><view class="tabbar-label active">??</view></view>
+    <view class="tabbar-slot"><view class="svg-tab-icon small svg-camera-normal"></view><view class="tabbar-label">??</view></view>
+    <view class="tabbar-slot"><view class="svg-tab-icon small svg-mine-normal"></view><view class="tabbar-label">??</view></view>
+  </view>
+</view>
