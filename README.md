@@ -5,7 +5,7 @@
 - 微信小程序用户端 `miniprogram/`
 - 可本地运行的轻量后端 `server.py`
 - 独立后台查看页面 `admin_web/`
-- HarmonyOS Sans SC 字体 `assets/fonts/`
+- HarmonyOS Sans SC Regular / Medium / Bold 字体 `assets/fonts/`
 - 页面展示使用的扫描花色素材 `demo_data/decor_info/`
 - 项目说明文档 `docs/`
 
