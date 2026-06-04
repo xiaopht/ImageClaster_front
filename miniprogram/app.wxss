@@ -1,4 +1,4 @@
-﻿@import "./styles/svg-path-icons.wxss";
+@import "./styles/svg-path-icons.wxss";
 
 /* 全局主题参数：这里集中修改页面底色、品牌绿、文字色、线条色、收藏黄和全局字体。 */
 page {

@@ -1,4 +1,4 @@
-﻿/* 首页整屏底板：min-height 控制至少占满屏幕，background 控制页面底色。 */
+/* 首页整屏底板：min-height 控制至少占满屏幕，background 控制页面底色。 */
 .home-page {
   min-height: 100vh;
   background: var(--color-page-bg);

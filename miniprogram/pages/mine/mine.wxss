@@ -1,4 +1,4 @@
-﻿/* 我的页页面容器覆盖：去掉通用左右/顶部 padding，让绿色头部贴边。 */
+/* 我的页页面容器覆盖：去掉通用左右/顶部 padding，让绿色头部贴边。 */
 .page {
   padding-left: 0;
   padding-right: 0;

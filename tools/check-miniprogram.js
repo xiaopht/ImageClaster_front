@@ -25,6 +25,23 @@ function walk(directory, extension) {
   });
 }
 
+function walkTextFiles(directory) {
+  const textExtensions = new Set(['.js', '.json', '.wxml', '.wxss']);
+  return fs.readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
+    const target = path.join(directory, entry.name);
+    if (entry.isDirectory()) return walkTextFiles(target);
+    return textExtensions.has(path.extname(target)) ? [target] : [];
+  });
+}
+
+walkTextFiles(miniprogram).forEach((filePath) => {
+  const bytes = fs.readFileSync(filePath);
+  if (bytes.length >= 3 && bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) {
+    throw new Error(`UTF-8 BOM is not allowed: ${path.relative(root, filePath)}`);
+  }
+});
+console.log('Text encoding OK no UTF-8 BOM');
+
 parseJson(path.join(miniprogram, 'app.json'));
 parseJson(path.join(miniprogram, 'project.config.json'));
 parseJson(path.join(miniprogram, 'sitemap.json'));
