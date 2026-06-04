@@ -1,4 +1,4 @@
-/* 拍摄页主拍摄框：控制高度、虚线边框、灰底和内容居中。 */
+﻿/* 拍摄页主拍摄框：控制高度、虚线边框、灰底和内容居中。 */
 .shoot-box {
   position: relative;
   height: 720rpx;
@@ -82,7 +82,7 @@
   border: 1rpx solid var(--color-line);
   box-sizing: border-box;
   font-size: 19rpx;
-  font-weight: 900;
+  font-weight: 700;
   text-align: center;
   line-height: 1.08;
 }
@@ -144,7 +144,7 @@
 .mode-name {
   color: #333;
   font-size: 24rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 匹配模式说明文字。 */

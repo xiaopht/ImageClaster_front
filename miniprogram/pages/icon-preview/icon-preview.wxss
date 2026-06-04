@@ -1,4 +1,4 @@
-.icon-preview-page {
+﻿.icon-preview-page {
   padding-bottom: 60rpx;
 }
 
@@ -6,7 +6,7 @@
   margin-bottom: 18rpx;
   color: #333333;
   font-size: 32rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .preview-title.compact {

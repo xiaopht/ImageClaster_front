@@ -1,4 +1,4 @@
-/* 我的页页面容器覆盖：去掉通用左右/顶部 padding，让绿色头部贴边。 */
+﻿/* 我的页页面容器覆盖：去掉通用左右/顶部 padding，让绿色头部贴边。 */
 .page {
   padding-left: 0;
   padding-right: 0;
@@ -96,7 +96,7 @@
   width: 100%;
   color: #8e8e8e;
   font-size: 28rpx;
-  font-weight: 900;
+  font-weight: 700;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -176,7 +176,7 @@
   justify-content: center;
   color: #333;
   font-size: 32rpx;
-  font-weight: 900;
+  font-weight: 700;
   border-radius: 7rpx 7rpx 0 0;
   box-sizing: border-box;
 }
@@ -300,7 +300,7 @@
 .auth-title {
   color: #333;
   font-size: 40rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 账号弹窗关闭按钮触摸范围与符号尺寸。 */
@@ -363,7 +363,7 @@
   background: var(--color-primary-soft);
   border-radius: 7rpx;
   font-size: 23rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 请求进行时的按钮透明度。 */

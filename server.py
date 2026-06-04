@@ -9,6 +9,11 @@ from pathlib import Path
 from urllib.parse import parse_qs, unquote, urlparse
 
 
+mimetypes.add_type("font/ttf", ".ttf")
+mimetypes.add_type("font/otf", ".otf")
+mimetypes.add_type("font/woff", ".woff")
+mimetypes.add_type("font/woff2", ".woff2")
+
 ROOT = Path(__file__).resolve().parent
 # Scanned display images shipped with this UI/backend demo package.
 # Model features and photographed training/reference images are intentionally omitted.
@@ -317,6 +322,8 @@ class Handler(BaseHTTPRequestHandler):
             data = resolved.read_bytes()
             self.send_response(200)
             self.send_header("Content-Type", mimetypes.guess_type(resolved.name)[0] or "application/octet-stream")
+            if root == FONT_ROOT.resolve():
+                self.send_header("Cache-Control", "public, max-age=604800")
             self.send_header("Content-Length", str(len(data)))
             self.end_headers()
             self.wfile.write(data)

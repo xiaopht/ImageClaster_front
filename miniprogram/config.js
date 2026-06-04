@@ -11,6 +11,8 @@ const DEFAULT_APP_STATE = {
   user: null,
   language: DEFAULT_LANGUAGE,
   fontLoaded: false,
+  fontLoadFailed: false,
+  fontLoadErrors: [],
   // 底部“拍照”页写入的一次性标记，由首页消费后立即恢复为 false。
   openHomeImagePicker: false
 };
@@ -31,8 +33,7 @@ const FONT_CONFIG = {
   faces: [
     { weight: '400', path: '/fonts/HarmonyOS_Sans_SC_Regular.ttf' },
     { weight: '500', path: '/fonts/HarmonyOS_Sans_SC_Medium.ttf' },
-    { weight: '700', path: '/fonts/HarmonyOS_Sans_SC_Bold.ttf' },
-    { weight: '900', path: '/fonts/HarmonyOS_Sans_SC_Black.ttf' }
+    { weight: '700', path: '/fonts/HarmonyOS_Sans_SC_Bold.ttf' }
   ]
 };
 

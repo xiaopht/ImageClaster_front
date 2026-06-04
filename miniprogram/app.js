@@ -27,11 +27,15 @@ App({
 
     let finished = 0;
     let loaded = 0;
+    const errors = [];
 
     faces.forEach((face) => {
+      const source = /^https?:\/\//.test(face.path)
+        ? face.path
+        : `${apiBase}${face.path}`;
       wx.loadFontFace({
         family: config.FONT_CONFIG.family,
-        source: `url("${apiBase}${face.path}")`,
+        source: `url("${source}")`,
         desc: {
           style: 'normal',
           weight: face.weight
@@ -39,10 +43,23 @@ App({
         success: () => {
           loaded += 1;
         },
+        fail: (error) => {
+          errors.push({
+            weight: face.weight,
+            path: face.path,
+            errMsg: error && error.errMsg ? error.errMsg : 'font load failed'
+          });
+        },
         complete: () => {
           finished += 1;
-          if (finished === faces.length && loaded > 0) {
-            this.globalData.fontLoaded = true;
+          if (finished === faces.length) {
+            this.globalData.fontLoaded = loaded > 0;
+            this.globalData.fontLoadFailed = loaded === 0;
+            this.globalData.fontLoadErrors = errors;
+
+            if (errors.length) {
+              console.warn('[font] HarmonyOS Sans SC load warnings:', errors);
+            }
           }
         }
       });

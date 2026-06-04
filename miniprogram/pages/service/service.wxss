@@ -1,4 +1,4 @@
-/* 客服页面画布：控制整页底色、字体与不可滚出容器的行为。 */
+﻿/* 客服页面画布：控制整页底色、字体与不可滚出容器的行为。 */
 @import "../../styles/svg-path-icons.wxss";
 
 .service-page {
@@ -27,7 +27,7 @@
 .service-brand-main {
   color: #ffffff;
   font-size: 37rpx;
-  font-weight: 900;
+  font-weight: 700;
   line-height: 0.9;
 }
 
@@ -128,7 +128,7 @@
   background: var(--color-primary-soft);
   border-radius: 50%;
   font-size: 14rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 用户头像占位：尺寸、左间距和径向渐变图形。 */
@@ -205,7 +205,7 @@
   margin-bottom: 12rpx;
   color: var(--color-primary-soft);
   font-size: 25rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 单个选项按钮：最大宽度、内边距、灰底、圆角及长文案行距。 */
@@ -281,7 +281,7 @@
   background: var(--color-primary-soft);
   border-radius: 7rpx;
   font-size: 21rpx;
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1;
 }
 

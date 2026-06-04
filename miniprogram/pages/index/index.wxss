@@ -1,4 +1,4 @@
-/* 首页整屏底板：min-height 控制至少占满屏幕，background 控制页面底色。 */
+﻿/* 首页整屏底板：min-height 控制至少占满屏幕，background 控制页面底色。 */
 .home-page {
   min-height: 100vh;
   background: var(--color-page-bg);
@@ -171,7 +171,7 @@
   margin-top: 18rpx;
   color: #3d3d3d;
   font-size: 24rpx;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0;
   line-height: 1.18;
   text-align: center;
@@ -225,7 +225,7 @@
   background: rgba(255, 255, 255, 0.72);
   border-radius: 7rpx;
   font-size: 20rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 折叠预览模式的对齐方式。 */
@@ -242,7 +242,7 @@
   z-index: 2;
   color: #333333;
   font-size: 22rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 折叠预览图尺寸。 */
@@ -265,7 +265,7 @@
   box-shadow: inset 0 1rpx 0 rgba(255, 255, 255, 0.7);
   box-sizing: border-box;
   font-size: 22rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 辅助分类横向分段控件：margin 控制与上下区块距离，圆角控制整体轮廓。 */
@@ -310,7 +310,7 @@
   color: #2d2d2d;
   background: #ffffff;
   font-size: 19rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 当前选中分类的背景色与文字色。 */
@@ -375,7 +375,7 @@
 .mode-name {
   color: var(--color-text-strong);
   font-size: 24rpx;
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1.2;
 }
 

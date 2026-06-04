@@ -1,4 +1,4 @@
-@import "./styles/svg-path-icons.wxss";
+﻿@import "./styles/svg-path-icons.wxss";
 
 /* 全局主题参数：这里集中修改页面底色、品牌绿、文字色、线条色、收藏黄和全局字体。 */
 page {
@@ -140,7 +140,7 @@ textarea {
   color: var(--color-text-strong);
   font-size: 58rpx;
   font-family: var(--font-family-title);
-  font-weight: 900;
+  font-weight: 700;
   line-height: 0.9;
 }
 
@@ -199,7 +199,7 @@ textarea {
   border-radius: 9rpx;
   box-shadow: 0 10rpx 18rpx rgba(116, 134, 109, 0.2);
   font-size: 28rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 主操作按钮按下态：位移和阴影深浅。 */
@@ -243,7 +243,7 @@ textarea {
 .section-title {
   color: var(--color-text-strong);
   font-size: 42rpx;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0;
 }
 
@@ -553,7 +553,7 @@ textarea {
   background: rgba(255, 255, 255, 0.92);
   border-radius: 6rpx;
   font-size: 22rpx;
-  font-weight: 900;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -677,7 +677,7 @@ textarea {
   background: rgba(255, 255, 255, 0.92);
   border-radius: 7rpx;
   font-size: 20rpx;
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1;
 }
 
@@ -698,7 +698,7 @@ textarea {
 /* 大图花色名称字号与行距：按标准页缩小文字比例。 */
 .detail-name {
   font-size: 33rpx;
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1.1;
 }
 
@@ -708,7 +708,7 @@ textarea {
   color: #ffffff;
   font-size: 27rpx;
   font-family: var(--font-family-number);
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1.1;
 }
 
@@ -725,7 +725,7 @@ textarea {
   margin-top: 17rpx;
   color: rgba(255, 255, 255, 0.62);
   font-size: 22rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 结果页反馈横条：边距、内边距和背景影响提示条体积。 */
@@ -769,7 +769,7 @@ textarea {
   justify-content: center;
   border-radius: 7rpx;
   font-size: 22rpx;
-  font-weight: 900;
+  font-weight: 700;
   white-space: nowrap;
 }
 
@@ -846,7 +846,7 @@ textarea {
 .unmatched-title {
   color: #8e8e8e;
   font-size: 30rpx;
-  font-weight: 900;
+  font-weight: 700;
   line-height: 1.15;
 }
 
@@ -872,7 +872,7 @@ textarea {
   background: var(--color-primary-soft);
   border-radius: 7rpx;
   font-size: 22rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 评分弹窗主体：固定宽度、上偏移、内边距与背景。 */
@@ -939,7 +939,7 @@ textarea {
   justify-content: center;
   border-radius: 7rpx;
   font-size: 23rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* “不再提醒”按钮宽度、图标间距与底色。 */
@@ -990,7 +990,7 @@ textarea {
 .auth-title {
   color: var(--color-text-strong);
   font-size: 38rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .auth-title {
@@ -1079,7 +1079,7 @@ textarea {
   justify-content: center;
   border-radius: 7rpx;
   font-size: 23rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 双按钮等分宽度。 */
@@ -1110,7 +1110,7 @@ textarea {
   margin: 0 0 10rpx;
   color: #555555;
   font-size: 26rpx;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 /* 已返回销售联系人信息的单行卡片尺寸、边框和换行规则。 */
