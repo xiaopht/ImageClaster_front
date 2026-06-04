@@ -203,7 +203,7 @@
   border-radius: 7rpx;
   font-size: 23rpx;
   font-weight: 800;
-  line-height: 1;
+  line-height: 38rpx;
 }
 
 .share-button {
@@ -212,9 +212,11 @@
 }
 
 .share-button-label {
-  display: block;
-  line-height: 1;
-  transform: translateY(1rpx);
+  height: 38rpx;
+  display: flex;
+  align-items: center;
+  line-height: 38rpx;
+  transform: none;
 }
 
 .share-button-icon {
@@ -446,4 +448,21 @@
   border-radius: 4rpx;
   font-size: 19rpx;
   line-height: 1;
+}
+
+/* 我的页打开收藏/历史花色的大图弹层：提高层级并上提主体，避免底部 tabBar 遮挡名称、编号和序号。 */
+.mine-detail-mask {
+  z-index: 1200;
+}
+
+.mine-detail-mask .detail-viewer {
+  top: 300rpx;
+}
+
+.mine-detail-mask .detail-pdf {
+  top: 229rpx;
+}
+
+.mine-detail-mask .detail-close {
+  top: 213rpx;
 }

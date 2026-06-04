@@ -119,7 +119,7 @@
   </view>
 
   <!-- 花色大图弹层：我的页收藏和浏览记录共用这套大图结构。 -->
-  <view wx:if="{{detailVisible && selectedItem}}" class="detail-mask" catchtap="closeDetail">
+  <view wx:if="{{detailVisible && selectedItem}}" class="detail-mask mine-detail-mask" catchtap="closeDetail">
     <!-- 大图左上角单花色 PDF 按钮，保留在弹层内。 -->
     <button class="detail-pdf" catchtap="exportPdf">{{text.pdfShort}}</button>
     <!-- 大图右上角关闭图标：尺寸和位置统一使用 app.wxss 的 `.detail-close .ui-icon`。 -->
