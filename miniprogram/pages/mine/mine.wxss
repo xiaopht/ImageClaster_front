@@ -450,19 +450,22 @@
   line-height: 1;
 }
 
-/* 我的页打开收藏/历史花色的大图弹层：提高层级并上提主体，避免底部 tabBar 遮挡名称、编号和序号。 */
+/* 我的页打开收藏/历史花色的大图弹层：提高层级，避免底部 tabBar 盖住弹层内容。 */
 .mine-detail-mask {
   z-index: 1200;
 }
 
+/* 我的页使用微信原生导航栏，fixed 坐标从导航栏下方开始；这里补偿导航栏高度，使大图绝对位置与主页一致。 */
 .mine-detail-mask .detail-viewer {
-  top: 300rpx;
+  top: 158rpx;
 }
 
+/* PDF 按钮同样补偿原生导航栏高度，对齐主页大图左上角位置。 */
 .mine-detail-mask .detail-pdf {
-  top: 229rpx;
+  top: 87rpx;
 }
 
+/* 关闭按钮同样补偿原生导航栏高度，对齐主页大图右上角位置。 */
 .mine-detail-mask .detail-close {
-  top: 213rpx;
+  top: 71rpx;
 }
