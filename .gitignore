@@ -11,6 +11,11 @@ __pycache__/
 *.sqlite3
 runtime_data/
 uploads/
+backend_full/data/
+backend_full/models/
+backend_full/models_cache/
+backend_full/uploads/
+backend_full/runtime_data/
 
 # Dependencies and reports
 node_modules/
