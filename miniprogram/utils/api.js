@@ -23,6 +23,20 @@ function currentUser() {
   return wx.getStorageSync(config.STORAGE_KEYS.user) || appState().user || null;
 }
 
+// 只有后台已配置手机号且账号有效的员工才视为正式登录。
+function isAuthorizedUser(user) {
+  const role = user && user.role;
+  const accessMode = user && (user.access_mode || user.login_policy);
+  return Boolean(
+    user
+    && user.status !== 'disabled'
+    && (
+      [config.USER_ROLES.employee, config.USER_ROLES.sales, config.USER_ROLES.admin].indexOf(role) > -1
+      || (role === config.USER_ROLES.visitor && accessMode === 'open')
+    )
+  );
+}
+
 // 生成鉴权请求头：影响所有带 token 的接口访问。
 function authHeader(extra) {
   const token = currentToken();
@@ -37,6 +51,7 @@ function saveSession(result) {
   const user = result.user ? Object.assign({ role: config.USER_ROLES.visitor }, result.user) : null;
   appState().token = result.token;
   appState().user = user;
+  validatedToken = result.token;
   wx.setStorageSync(config.STORAGE_KEYS.token, result.token);
   wx.setStorageSync(config.STORAGE_KEYS.user, user);
   if (user && user.language) {
@@ -56,7 +71,10 @@ function request(options) {
         if (res.statusCode >= config.HTTP_STATUS.successMin && res.statusCode < config.HTTP_STATUS.successMax) {
           resolve(res.data);
         } else {
-          reject(new Error((res.data && res.data.detail) || `${config.ERROR_MESSAGES.httpPrefix} ${res.statusCode}`));
+          const error = new Error((res.data && res.data.detail) || `${config.ERROR_MESSAGES.httpPrefix} ${res.statusCode}`);
+          error.statusCode = res.statusCode;
+          error.responseData = res.data;
+          reject(error);
         }
       },
       fail: reject
@@ -77,6 +95,39 @@ function login(data) {
   return request({ url: config.API_ENDPOINTS.login, method: config.REQUEST_METHODS.post, data }).then((res) => {
     saveSession(res);
     return res;
+  });
+}
+
+// 使用微信手机号动态 code 与 wx.login code 登录；手机号只在后端向微信换取。
+function wechatPhoneLogin(phoneCode, loginCode, devOptions) {
+  const options = devOptions || {};
+  return request({
+    url: config.API_ENDPOINTS.wechatPhoneLogin,
+    method: config.REQUEST_METHODS.post,
+    data: {
+      phone_code: phoneCode || '',
+      login_code: loginCode || '',
+      dev_phone: options.devPhone || '',
+      dev_openid: options.devOpenid || '',
+      language: i18n.currentLanguage()
+    }
+  }).then((res) => {
+    saveSession(res);
+    return res;
+  });
+}
+
+function validateSession() {
+  const token = currentToken();
+  if (!token) return Promise.reject(Object.assign(new Error('Login required'), { statusCode: 401 }));
+  return request({ url: config.API_ENDPOINTS.authMe }).then((res) => {
+    const user = res && res.user;
+    if (user) {
+      appState().user = user;
+      wx.setStorageSync(config.STORAGE_KEYS.user, user);
+    }
+    validatedToken = token;
+    return user;
   });
 }
 
@@ -110,17 +161,55 @@ function wechatLogin(role, accessCode) {
   });
 }
 
-// 访客会话 Promise：避免多个页面同时创建访客 token。
+// 会话校验 Promise：避免多个页面同时验证同一个员工 token。
 let visitorSessionPromise = null;
+let validatedToken = '';
 
-// 确保存在访客会话：影响收藏、浏览、反馈等需要 token 的匿名操作。
+// 清除失效或属于旧 AppID 的本地会话，避免前端继续携带无效 token。
+function clearSession() {
+  validatedToken = '';
+  appState().token = '';
+  appState().user = null;
+  wx.removeStorageSync(config.STORAGE_KEYS.token);
+  wx.removeStorageSync(config.STORAGE_KEYS.user);
+}
+
+function createVisitorSession() {
+  return wechatLogin(config.USER_ROLES.visitor).then((res) => {
+    validatedToken = res.token || '';
+    return res;
+  });
+}
+
+// 确保存在有效员工会话：收藏、浏览、反馈等操作不再创建匿名访客账号。
 function ensureVisitorSession() {
   const token = currentToken();
-  if (token) {
+  if (!token) {
+    return Promise.reject(new Error('Phone login required'));
+  }
+  if (token && validatedToken === token) {
     return Promise.resolve({ token, user: currentUser() });
   }
   if (visitorSessionPromise) return visitorSessionPromise;
-  visitorSessionPromise = wechatLogin(config.USER_ROLES.visitor)
+
+  const establishSession = token
+    ? request({ url: config.API_ENDPOINTS.authMe })
+      .then((res) => {
+        validatedToken = token;
+        if (res && res.user) {
+          appState().user = res.user;
+          wx.setStorageSync(config.STORAGE_KEYS.user, res.user);
+        }
+        return { token, user: (res && res.user) || currentUser() };
+      })
+      .catch((error) => {
+        if (error.statusCode !== 401) throw error;
+        clearSession();
+        throw new Error('Phone login required');
+      })
+    : Promise.reject(new Error('Phone login required'));
+
+  visitorSessionPromise = establishSession
     .then((res) => {
       visitorSessionPromise = null;
       return res;
@@ -134,11 +223,12 @@ function ensureVisitorSession() {
 
 // 上传图片并识别：影响首页和拍摄页的图片匹配流程。
 function uploadRecognize(filePath, category, useCrop) {
-  return new Promise((resolve, reject) => {
+  let uploadTask = null;
+  const promise = new Promise((resolve, reject) => {
     const formData = {};
     formData[config.UPLOAD_CONFIG.cropFieldName] = useCrop === false ? config.UPLOAD_CONFIG.cropDisabledValue : config.UPLOAD_CONFIG.cropEnabledValue;
     formData[config.UPLOAD_CONFIG.categoryFieldName] = category || '';
-    wx.uploadFile({
+    uploadTask = wx.uploadFile({
       url: `${apiBase()}${config.API_ENDPOINTS.recognize}`,
       filePath,
       name: config.UPLOAD_CONFIG.fileFieldName,
@@ -159,24 +249,42 @@ function uploadRecognize(filePath, category, useCrop) {
       fail: reject
     });
   });
+  promise.abort = () => {
+    if (uploadTask && typeof uploadTask.abort === 'function') {
+      uploadTask.abort();
+    }
+  };
+  return promise;
 }
 
 // 补全花色图片地址：影响花色卡片和详情页图片显示。
-function patternImageUrl(item, base) {
-  const patternId = item.pattern_id || item.id || item.code || '';
-  const imageUrl = item.image_url || item.image || item.thumbnail || '';
+function normalizePatternImageUrl(imageUrl, patternId, base) {
+  const rawImageUrl = imageUrl || '';
+  const resolvedPatternId = patternId || '';
   if (
-    imageUrl.indexOf(config.URL_PREFIXES.http) === 0
-    || imageUrl.indexOf(config.URL_PREFIXES.wxFile) === 0
-    || imageUrl.indexOf(config.URL_PREFIXES.blob) === 0
+    rawImageUrl.indexOf(config.URL_PREFIXES.http) === 0
+    || rawImageUrl.indexOf(config.URL_PREFIXES.wxFile) === 0
+    || rawImageUrl.indexOf(config.URL_PREFIXES.blob) === 0
   ) {
-    return imageUrl;
+    return rawImageUrl;
   }
   // 视觉回归和本地静态资源允许直接使用小程序包内 assets，避免被拼成后端 HTTP 地址。
-  if (imageUrl.indexOf('/assets/') === 0) return imageUrl;
-  if (imageUrl) return `${base || apiBase()}${imageUrl}`;
-  if (patternId) return `${base || apiBase()}${config.API_ENDPOINTS.patternImage(patternId)}`;
+  if (rawImageUrl.indexOf('/assets/') === 0) return rawImageUrl;
+  if (rawImageUrl) return `${base || apiBase()}${rawImageUrl}`;
+  if (resolvedPatternId) return `${base || apiBase()}${config.API_ENDPOINTS.patternImage(resolvedPatternId)}`;
   return '';
+}
+
+function patternImageUrl(item, base) {
+  const patternId = item.pattern_id || item.id || item.code || '';
+  const imageUrl = item.thumbnail_url || item.thumbnail || item.image_url || item.image || '';
+  return normalizePatternImageUrl(imageUrl, patternId, base);
+}
+
+function patternFullImageUrl(item, base) {
+  const patternId = item.pattern_id || item.id || item.code || '';
+  const imageUrl = item.full_image_url || item.fullImageUrl || item.image || item.image_url || item.thumbnail_url || item.thumbnail || '';
+  return normalizePatternImageUrl(imageUrl, patternId, base);
 }
 
 // 格式化花色列表：影响所有页面卡片所需的名称、编号、分类、图片和收藏态字段。
@@ -193,6 +301,7 @@ function formatPatternItems(list, base, language) {
       idText: item.code || patternId,
       categoryLabel: i18n.categoryLabel(category, activeLanguage),
       imageSrc: patternImageUrl(item, base),
+      fullImageSrc: patternFullImageUrl(item, base),
       confidenceText: confidence ? `${Math.round(confidence * config.NUMBER_FORMAT.percentMultiplier)}%` : '',
       favorited: Boolean(item.favorited)
     });
@@ -281,6 +390,17 @@ function submitLeadContact(data) {
   });
 }
 
+// 提交客服对话后的结构化线索：职业、区域、销售联系方式和简要对话会进入后台“客服线索”。
+function submitServiceLead(data) {
+  return ensureVisitorSession().then(() => {
+    return request({
+      url: config.API_ENDPOINTS.serviceLead,
+      method: config.REQUEST_METHODS.post,
+      data: data || {}
+    });
+  });
+}
+
 // 更新用户偏好：影响登录用户语言选择同步到后端。
 function updatePreferences(language) {
   return request({
@@ -310,6 +430,7 @@ function downloadFavoritesPdf() {
           wx.openDocument({
             filePath: res.tempFilePath,
             fileType: config.FILE_TYPES.pdf,
+            showMenu: true,
             success: () => resolve(res.tempFilePath),
             fail: reject
           });
@@ -337,6 +458,7 @@ function downloadPatternPdf(patternId) {
           wx.openDocument({
             filePath: res.tempFilePath,
             fileType: config.FILE_TYPES.pdf,
+            showMenu: true,
             success: () => resolve(res.tempFilePath),
             fail: reject
           });
@@ -353,9 +475,12 @@ module.exports = {
   apiBase,
   currentToken,
   currentUser,
+  isAuthorizedUser,
   request,
   register,
   login,
+  wechatPhoneLogin,
+  validateSession,
   wechatLogin,
   ensureVisitorSession,
   uploadRecognize,
@@ -365,11 +490,13 @@ module.exports = {
   recordEvent,
   submitFeedback,
   submitLeadContact,
+  submitServiceLead,
   applyFavoriteState,
   updatePreferences,
   downloadFavoritesPdf,
   downloadPatternPdf,
   saveSession,
+  clearSession,
   patternImageUrl,
   formatPatternItems
 };

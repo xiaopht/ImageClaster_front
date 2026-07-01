@@ -5,6 +5,9 @@ const i18n = require('../../utils/i18n');
 const visualMock = require('../../utils/visual-mock');
 
 Page({
+  activeRecognitionTask: null,
+  recognitionRunId: 0,
+
   data: {
     brand: config.BRAND,
     icons: config.UI_SYMBOLS,
@@ -46,11 +49,27 @@ Page({
     this.applyVisualState(options && options.visualState);
   },
 
+  // 中止当前图片识别，防止页面切换或再次识别后旧请求继续写入结果。
+  cancelActiveRecognition() {
+    this.recognitionRunId = (this.recognitionRunId || 0) + 1;
+    if (this.activeRecognitionTask && typeof this.activeRecognitionTask.abort === 'function') {
+      this.activeRecognitionTask.abort();
+    }
+    this.activeRecognitionTask = null;
+  },
+
   onShow() {
     this.applyLanguage();
     this.setData({ apiBase: api.apiBase() });
     if (this.data.visualMockActive) {
       this.applyVisualState(this.data.visualState);
+      return;
+    }
+    if (!api.currentToken() || !api.isAuthorizedUser(api.currentUser())) {
+      const app = getApp();
+      app.globalData.openPhoneLogin = true;
+      app.globalData.openHomeImagePicker = false;
+      wx.switchTab({ url: config.ROUTES.index });
       return;
     }
     this.openHomeCaptureShortcut();
@@ -103,6 +122,7 @@ Page({
       mediaType: config.MEDIA_CONFIG.mediaTypes,
       sourceType: config.MEDIA_CONFIG.cameraSourceTypes,
       success: (res) => {
+        this.cancelActiveRecognition();
         this.setData({
           imagePath: res.tempFiles[0].tempFilePath,
           results: [],
@@ -143,6 +163,11 @@ Page({
       wx.showToast({ title: this.data.text.chooseImageFirst, icon: config.TOAST_ICONS.none });
       return;
     }
+    const runId = (this.recognitionRunId || 0) + 1;
+    this.recognitionRunId = runId;
+    if (this.activeRecognitionTask && typeof this.activeRecognitionTask.abort === 'function') {
+      this.activeRecognitionTask.abort();
+    }
     this.setData({
       loading: true,
       message: this.data.text.matching,
@@ -160,8 +185,11 @@ Page({
       detailVisible: false,
       selectedItem: null
     });
-    api.uploadRecognize(this.data.imagePath, this.data.category, this.data.matchMode === config.MATCH_MODES.auto)
+    const recognitionTask = api.uploadRecognize(this.data.imagePath, this.data.category, this.data.matchMode === config.MATCH_MODES.auto);
+    this.activeRecognitionTask = recognitionTask;
+    recognitionTask
       .then((data) => {
+        if (this.recognitionRunId !== runId) return;
         const threshold = Number(data.threshold || 0);
         const topResults = data.top_results || data.results || [];
         const visibleResults = topResults.filter((item) => {
@@ -186,8 +214,15 @@ Page({
         });
         this.refreshFavoriteState();
       })
-      .catch((error) => this.showError(error))
-      .then(() => this.setData({ loading: false }));
+      .catch((error) => {
+        if (this.recognitionRunId !== runId) return;
+        this.showError(error);
+      })
+      .then(() => {
+        if (this.recognitionRunId !== runId) return;
+        this.activeRecognitionTask = null;
+        this.setData({ loading: false });
+      });
   },
 
   favorite(e) {
@@ -334,8 +369,8 @@ Page({
   },
 
   refreshFavoriteState() {
-    if (!wx.getStorageSync('token') || !this.data.results.length) return;
-    api.listFavorites().then((data) => {
+    if (!this.data.results.length) return;
+    this.ensureVisitorSession().then(() => api.listFavorites()).then((data) => {
       const results = api.applyFavoriteState(this.data.results, data.items || []);
       const updates = { results };
       if (this.data.selectedItem) {

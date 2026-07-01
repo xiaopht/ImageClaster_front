@@ -1,11 +1,15 @@
-# schattdecor Sense 本地后台演示页
+# schattdecor Sense 后台网站
 
-这个目录是独立后台数据网站，不会打包进小程序页面。
+这是独立的运维后台，不会显示在小程序页面中。
 
-本地测试方式：
+本地测试地址：`http://127.0.0.1:8000/admin/`。
 
-1. 在发布包根目录运行 `python server.py` 启动本地演示服务。
-2. 打开 `http://127.0.0.1:8000/admin-web/`。
-3. 输入测试账号登录并查看本次进程中产生的事件与反馈。该演示后端不提供生产级身份校验或数据持久化。
+正式地址规划为：`https://decorsense.schattdecor.cn/admin/`。
 
-它读取这些后端接口：`/api/admin/summary`、`/api/admin/events`、`/api/admin/feedback`、`/api/admin/unmatched`、`/api/admin/training-data`、`/api/admin/sample-orders`。
+主要功能：
+
+- 管理允许登录小程序的员工手机号、姓名和权限。
+- 查看并批准或拒绝陌生手机号的登录申请。
+- 查看识别事件、反馈、未匹配图片、训练数据和样品单。
+
+手机号和登录申请接口只允许 `admin` 账号访问。生产环境还必须配置 `WECHAT_APP_ID` 与 `WECHAT_APP_SECRET`。

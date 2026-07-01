@@ -60,8 +60,8 @@
 
 .svg-icon-favorite-on,
 .ui-icon.svg-icon-favorite-on,
-.page button.star.on .ui-icon.star-icon,
-.page button.detail-favorite.on .ui-icon.star-icon {
+.page .star.on .ui-icon.star-icon,
+.page .detail-favorite.on .ui-icon.star-icon {
   background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%221124%20936%2064%2062%22%3E%3Cpath%20d%3D%22M1158.76%2C941.15l7.11%2C15.1%2C16.56%2C2.09c2.02.25%2C2.82%2C2.74%2C1.34%2C4.13l-12.17%2C11.43%2C3.13%2C16.4c.38%2C2-1.74%2C3.53-3.52%2C2.55l-14.63-8.04-14.63%2C8.04c-1.78.98-3.9-.56-3.52-2.55l3.13-16.4-12.17-11.43c-1.48-1.39-.67-3.88%2C1.34-4.13l16.56-2.09%2C7.11-15.1c.87-1.84%2C3.48-1.84%2C4.35%2C0Z%22%20fill%3D%22%23e5c880%22%2F%3E%3C%2Fsvg%3E");
 }
 
@@ -126,7 +126,7 @@
 
 .svg-icon-start-arrow-box,
 .ui-icon.svg-icon-start-arrow-box {
-  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%22842%201664%20126%20126%22%3E%3Crect%20x%3D%22842.16%22%20y%3D%221664.41%22%20width%3D%22124.83%22%20height%3D%22124.83%22%20rx%3D%2215%22%20ry%3D%2215%22%20fill%3D%22%23f5f5f5%22%20opacity%3D%22.85%22%2F%3E%3Cpath%20d%3D%22M892.83%2C1735.59l-.03-17.18c0-1.31%2C1.06-2.37%2C2.36-2.37h23.07%22%20fill%3D%22none%22%20stroke%3D%22%2382947b%22%20stroke-miterlimit%3D%2210%22%2F%3E%3Cpolygon%20points%3D%22916.92%201706.32%20916.92%201725.76%20926.63%201716.04%20916.92%201706.32%22%20fill%3D%22%2382947b%22%2F%3E%3C%2Fsvg%3E");
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%22842%201664%20126%20126%22%3E%3Crect%20x%3D%22842.16%22%20y%3D%221664.41%22%20width%3D%22124.83%22%20height%3D%22124.83%22%20rx%3D%2215%22%20ry%3D%2215%22%20fill%3D%22%23f5f5f5%22%20opacity%3D%22.85%22%2F%3E%3Cpath%20d%3D%22M892.83%2C1735.59l-.03-17.18c0-1.31%2C1.06-2.37%2C2.36-2.37h23.07%22%20fill%3D%22none%22%20stroke%3D%22%2382947b%22%20stroke-width%3D%223%22%20stroke-miterlimit%3D%2210%22%2F%3E%3Cpolygon%20points%3D%22916.92%201706.32%20916.92%201725.76%20926.63%201716.04%20916.92%201706.32%22%20fill%3D%22%2382947b%22%2F%3E%3C%2Fsvg%3E");
 }
 
 .svg-icon-start-arrow,

@@ -1,15 +1,15 @@
 {
-  "appid": "wx12df21c3d46da542",
+  "appid": "wx76a456c7852cc35a",
   "projectname": "xiaote-pattern-miniprogram",
   "miniprogramRoot": "./",
   "compileType": "miniprogram",
   "setting": {
-    "urlCheck": false,
+    "urlCheck": true,
     "es6": true,
     "enhance": true,
     "postcss": true,
     "minified": true,
-    "compileHotReLoad": true,
+    "compileHotReLoad": false,
     "compileWorklet": false,
     "uglifyFileName": false,
     "uploadWithSourceMap": true,

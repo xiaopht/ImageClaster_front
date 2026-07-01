@@ -6,7 +6,8 @@ const LANGUAGE_ORDER = ['zh-CN', 'en-US'];
 
 // 默认全局状态：影响 app.js 启动时写入 globalData 的基础值。
 const DEFAULT_APP_STATE = {
-  apiBase: 'http://127.0.0.1:8000',
+  // 正式 API 域名：微信后台需同时配置 request、uploadFile、downloadFile 合法域名。
+  apiBase: 'https://decorsense.schattdecor.cn',
   token: '',
   user: null,
   language: DEFAULT_LANGUAGE,
@@ -14,7 +15,9 @@ const DEFAULT_APP_STATE = {
   fontLoadFailed: false,
   fontLoadErrors: [],
   // 底部“拍照”页写入的一次性标记，由首页消费后立即恢复为 false。
-  openHomeImagePicker: false
+  openHomeImagePicker: false,
+  // 未登录用户点击其他 Tab 时，返回首页后自动打开手机号登录弹窗。
+  openPhoneLogin: false
 };
 
 // 本地缓存键名：影响登录态、语言、接口地址和开发 openid 的读取与写入。
@@ -30,10 +33,9 @@ const STORAGE_KEYS = {
 const FONT_CONFIG = {
   family: 'HarmonyOS Sans SC',
   regularPath: '/fonts/HarmonyOS_Sans_SC_Regular.ttf',
+  // 只加载常规字重，避免启动时并发下载三份约 8MB 的中文字体；中粗体由客户端合成。
   faces: [
-    { weight: '400', path: '/fonts/HarmonyOS_Sans_SC_Regular.ttf' },
-    { weight: '500', path: '/fonts/HarmonyOS_Sans_SC_Medium.ttf' },
-    { weight: '700', path: '/fonts/HarmonyOS_Sans_SC_Bold.ttf' }
+    { weight: '400', path: '/fonts/HarmonyOS_Sans_SC_Regular.ttf' }
   ]
 };
 
@@ -95,6 +97,7 @@ const AUTH_CONFIG = {
 // 用户角色配置：影响登录注册、访客态判断和角色展示。
 const USER_ROLES = {
   visitor: 'visitor',
+  employee: 'employee',
   sales: 'sales',
   admin: 'admin'
 };
@@ -129,7 +132,9 @@ const MEDIA_CONFIG = {
   imageCount: 1,
   mediaTypes: ['image'],
   indexSourceTypes: ['album', 'camera'],
-  cameraSourceTypes: ['camera', 'album']
+  cameraSourceTypes: ['camera', 'album'],
+  // 微信原生裁剪界面的固定比例；可改为 16:9、9:16、4:3、3:4、5:4、4:5 或 1:1。
+  cropScale: '1:1'
 };
 
 // 上传配置：影响识别接口上传字段名和裁剪开关传值。
@@ -265,11 +270,14 @@ const API_ENDPOINTS = {
   register: '/api/auth/register',
   login: '/api/auth/login',
   wechatLogin: '/api/auth/wechat-login',
+  wechatPhoneLogin: '/api/auth/wechat-phone-login',
+  authMe: '/api/auth/me',
   recognize: '/recognize',
   favorites: '/api/favorites',
   events: '/api/events',
   feedback: '/api/feedback',
   leadContact: '/api/leads/contact',
+  serviceLead: '/api/service/leads',
   userPreferences: '/api/user/preferences',
   favoritesPdf: '/api/favorites/export.pdf',
 
@@ -315,8 +323,9 @@ const I18N_DICTIONARIES = {
     searchPlaceholder: '搜索（输入编号如“57204”或名称如“Amalfi”）',
     uploadChange: '点击可更换图片',
     cropImage: '图片裁剪',
-    foldImage: '▼ 折叠图片',
-    expandImage: '▶ 展开图片',
+    cropUnsupported: '当前微信版本不支持图片裁剪',
+    foldImage: '折叠图片',
+    expandImage: '展开图片',
     uploadTitle: '点击、拖拽或拍摄上传图片',
     uploadSub: '支持 JPG、PNG、WEBP 格式',
     auxCategory: '辅助分类匹配',
@@ -388,6 +397,7 @@ const I18N_DICTIONARIES = {
     myName: '我的名字',
     guestName: '访客用户',
     roleVisitor: '访客',
+    roleEmployee: '员工',
     roleSales: 'Sales',
     roleInternal: '内部账号',
     loginRegister: '登录 / 注册',
@@ -406,6 +416,13 @@ const I18N_DICTIONARIES = {
     authPasswordTooShort: '密码至少 6 位',
     authLoginSuccess: '登录成功',
     authRegisterSuccess: '注册成功',
+    phoneLoginTitle: '员工手机号登录',
+    phoneLoginCopy: '请授权微信绑定手机号。仅后台已开通的员工手机号可以进入小程序。',
+    phoneLoginAction: '授权手机号并登录',
+    phoneLoginCancel: '暂不登录',
+    phoneLoginDenied: '未获得手机号授权',
+    phoneLoginPending: '该手机号尚未开通，申请已记录，请联系管理员',
+    phoneLoginSuccess: '登录成功',
     favorites: '我的收藏',
     history: '浏览记录',
     share: '分享',
@@ -467,8 +484,9 @@ const I18N_DICTIONARIES = {
     searchPlaceholder: 'Search by decor code, e.g. 57204, or name, e.g. Amalfi',
     uploadChange: 'Tap to replace image',
     cropImage: 'Crop',
-    foldImage: '▼ Collapse image',
-    expandImage: '▶ Expand image',
+    cropUnsupported: 'Image cropping is unavailable in this WeChat version',
+    foldImage: 'Collapse image',
+    expandImage: 'Expand image',
     uploadTitle: 'Tap or shoot to upload an image',
     uploadSub: 'JPG, PNG, WEBP supported',
     auxCategory: 'Auxiliary category',
@@ -540,6 +558,7 @@ const I18N_DICTIONARIES = {
     myName: 'My profile',
     guestName: 'Guest',
     roleVisitor: 'Guest',
+    roleEmployee: 'Employee',
     roleSales: 'Sales',
     roleInternal: 'Internal',
     loginRegister: 'Sign in / Register',
@@ -558,6 +577,13 @@ const I18N_DICTIONARIES = {
     authPasswordTooShort: 'Use at least 6 characters',
     authLoginSuccess: 'Signed in',
     authRegisterSuccess: 'Registered',
+    phoneLoginTitle: 'Employee phone sign-in',
+    phoneLoginCopy: 'Authorize your WeChat-bound phone number. Only employees enabled by an administrator can enter.',
+    phoneLoginAction: 'Authorize phone and sign in',
+    phoneLoginCancel: 'Not now',
+    phoneLoginDenied: 'Phone authorization was not granted',
+    phoneLoginPending: 'This phone is not enabled yet. The request has been recorded for an administrator.',
+    phoneLoginSuccess: 'Signed in',
     favorites: 'Favorites',
     history: 'History',
     share: 'Share',

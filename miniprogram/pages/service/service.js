@@ -1,5 +1,6 @@
 const config = require('../../config');
 const i18n = require('../../utils/i18n');
+const api = require('../../utils/api');
 
 const OCCUPATION_OPTIONS = [
   { id: 1, labelKey: 'serviceOccupationDesigner' },
@@ -23,7 +24,7 @@ const REGION_OPTIONS = [
 
 const CONTACT = {
   region: '',
-  name: '某某某',
+  name: 'Schattdecor Sales',
   phone: '15815811558',
   email: '15815811558@163.com'
 };
@@ -73,6 +74,7 @@ Page({
     occupationSelected: '',
     regionSelected: '',
     contact: CONTACT,
+    leadSubmitted: false,
     inputValue: '',
     canSend: false,
     scrollTop: 0,
@@ -115,6 +117,7 @@ Page({
         occupationSelected: '1',
         regionSelected: '4',
         contact: regionContact('4', this.data.language, this.data.text),
+        leadSubmitted: true,
         scrollTop: 1600
       });
       return true;
@@ -127,6 +130,7 @@ Page({
         occupationSelected: '1',
         regionSelected: '',
         contact: CONTACT,
+        leadSubmitted: false,
         scrollTop: 680
       });
       return true;
@@ -185,9 +189,11 @@ Page({
     this.setData({
       regionSelected: reply,
       contact: regionContact(reply, this.data.language, this.data.text),
-      step: STEPS.complete
+      step: STEPS.complete,
+      leadSubmitted: false
     });
     this.appendMessages([message('user', reply), message('contact')]);
+    this.submitServiceLead();
   },
 
   restartConversation(reply) {
@@ -197,7 +203,39 @@ Page({
       occupationSelected: '',
       regionSelected: '',
       contact: CONTACT,
+      leadSubmitted: false,
       scrollTop: this.data.scrollTop + 1200
+    });
+  },
+
+  optionLabel(options, id) {
+    const option = options.find((item) => String(item.id) === String(id));
+    return option ? option.label : '';
+  },
+
+  plainMessages() {
+    return (this.data.messages || []).map((item) => ({
+      type: item.type,
+      value: item.value || '',
+      text_key: item.textKey || ''
+    }));
+  },
+
+  submitServiceLead() {
+    if (this.data.leadSubmitted || !this.data.occupationSelected || !this.data.regionSelected) return;
+    const payload = {
+      profession_id: String(this.data.occupationSelected),
+      profession_label: this.optionLabel(this.data.occupationOptions, this.data.occupationSelected),
+      region_id: String(this.data.regionSelected),
+      region_label: this.optionLabel(this.data.regionOptions, this.data.regionSelected),
+      contact: this.data.contact,
+      messages: this.plainMessages(),
+      language: this.data.language,
+      source: 'service_chat'
+    };
+    this.setData({ leadSubmitted: true });
+    api.submitServiceLead(payload).catch(() => {
+      this.setData({ leadSubmitted: false });
     });
   },
 

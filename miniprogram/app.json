@@ -6,6 +6,11 @@
     "pages/service/service"
   ],
   "lazyCodeLoading": "requiredComponents",
+  "networkTimeout": {
+    "request": 60000,
+    "uploadFile": 180000,
+    "downloadFile": 180000
+  },
   "window": {
     "navigationBarTitleText": "schattdecor Sense",
     "navigationBarBackgroundColor": "#f7f7f5",

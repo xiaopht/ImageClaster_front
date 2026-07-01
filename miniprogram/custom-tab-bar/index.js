@@ -1,4 +1,5 @@
 const i18n = require('../utils/i18n');
+const api = require('../utils/api');
 
 const TAB_ITEMS = [
   {
@@ -83,6 +84,17 @@ Component({
       const index = Number(e.currentTarget.dataset.index);
       const item = TAB_ITEMS[index];
       if (!item) return;
+      if (!api.isAuthorizedUser(api.currentUser())) {
+        const pages = getCurrentPages();
+        const currentPage = pages[pages.length - 1];
+        if (currentPage && currentPage.route === TAB_ITEMS[0].pagePath && typeof currentPage.openPhoneLogin === 'function') {
+          currentPage.openPhoneLogin();
+          return;
+        }
+        getApp().globalData.openPhoneLogin = true;
+        wx.switchTab({ url: TAB_ITEMS[0].pagePath });
+        return;
+      }
       wx.switchTab({ url: item.pagePath });
     }
   }

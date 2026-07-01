@@ -40,15 +40,23 @@ function serviceWindowMetrics() {
 }
 
 Page({
+  activeRecognitionTask: null,
+  recognitionRunId: 0,
+
   data: {
     brand: config.BRAND,
     matchModes: config.MATCH_MODES,
     feedbackNoteMaxLength: config.FORM_LIMITS.feedbackNoteMaxLength,
     leadNoteMaxLength: config.FORM_LIMITS.leadNoteMaxLength,
     apiBase: '',
+    authenticated: false,
+    authChecked: false,
+    phoneLoginVisible: false,
+    phoneLoginLoading: false,
     language: i18n.DEFAULT_LANGUAGE,
     text: i18n.text(i18n.DEFAULT_LANGUAGE),
     query: '',
+    searchInputVisible: true,
     category: '',
     categoryOptions: i18n.categoryOptions(i18n.DEFAULT_LANGUAGE),
     matchMode: config.MATCH_MODES.auto,
@@ -96,6 +104,7 @@ Page({
   },
 
   onLoad(options) {
+    this.queryValue = this.data.query || '';
     this.applyLanguage();
     this.setData({ apiBase: api.apiBase() });
     this.applyVisualState(options && options.visualState);
@@ -103,6 +112,15 @@ Page({
 
   onReady() {
     this.ensureServicePosition();
+  },
+
+  // 中止当前图片识别：重置、换图、裁剪时调用，防止旧请求返回后覆盖初始页面。
+  cancelActiveRecognition() {
+    this.recognitionRunId = (this.recognitionRunId || 0) + 1;
+    if (this.activeRecognitionTask && typeof this.activeRecognitionTask.abort === 'function') {
+      this.activeRecognitionTask.abort();
+    }
+    this.activeRecognitionTask = null;
   },
 
   onResize() {
@@ -121,8 +139,16 @@ Page({
       this.applyVisualState(this.data.visualState);
       return;
     }
-    this.refreshFavoriteState();
-    this.openPendingHomeImagePicker();
+    const app = getApp();
+    if (app.globalData.openPhoneLogin) {
+      app.globalData.openPhoneLogin = false;
+      this.setData({ phoneLoginVisible: true });
+    }
+    this.refreshPhoneAuth().then((authenticated) => {
+      if (!authenticated) return;
+      this.refreshFavoriteState();
+      this.openPendingHomeImagePicker();
+    });
   },
 
   // 消费底栏“拍照”的一次性请求，复用红框上传区域的选图/拍照和预览状态逻辑。
@@ -166,10 +192,6 @@ Page({
     return true;
   },
 
-  onQuery(e) {
-    this.setData({ query: e.detail.value });
-  },
-
   selectCategory(e) {
     this.setData({ category: e.currentTarget.dataset.value || '' });
   },
@@ -178,9 +200,89 @@ Page({
     this.setData({ matchMode: e.currentTarget.dataset.mode || config.MATCH_MODES.auto });
   },
 
+  refreshPhoneAuth() {
+    const user = api.currentUser();
+    if (!api.currentToken() || !api.isAuthorizedUser(user)) {
+      if (api.currentToken() || user) api.clearSession();
+      this.setData({ authenticated: false, authChecked: true });
+      return Promise.resolve(false);
+    }
+    return api.validateSession().then((validatedUser) => {
+      const authenticated = api.isAuthorizedUser(validatedUser);
+      this.setData({ authenticated, authChecked: true });
+      if (!authenticated) api.clearSession();
+      return authenticated;
+    }).catch(() => {
+      api.clearSession();
+      this.setData({ authenticated: false, authChecked: true });
+      return false;
+    });
+  },
+
+  openPhoneLogin() {
+    this.setData({ phoneLoginVisible: true });
+  },
+
+  closePhoneLogin() {
+    if (this.data.phoneLoginLoading) return;
+    this.setData({ phoneLoginVisible: false });
+  },
+
+  onGetPhoneNumber(e) {
+    const phoneCode = e && e.detail && e.detail.code;
+    if (!phoneCode) {
+      wx.showToast({ title: this.data.text.phoneLoginDenied, icon: config.TOAST_ICONS.none });
+      return;
+    }
+    this.setData({ phoneLoginLoading: true });
+    wx.login({
+      success: (loginResult) => {
+        api.wechatPhoneLogin(phoneCode, loginResult.code)
+          .then((res) => {
+            const authenticated = api.isAuthorizedUser(res && res.user);
+            this.setData({
+              authenticated,
+              authChecked: true,
+              phoneLoginVisible: !authenticated,
+              phoneLoginLoading: false
+            });
+            if (authenticated) {
+              wx.showToast({ title: this.data.text.phoneLoginSuccess });
+              this.refreshFavoriteState();
+              this.openPendingHomeImagePicker();
+            }
+          })
+          .catch((error) => {
+            this.setData({ phoneLoginLoading: false });
+            const title = error.statusCode === 403 ? this.data.text.phoneLoginPending : (error.message || this.data.text.requestFailed);
+            wx.showToast({ title, icon: config.TOAST_ICONS.none, duration: 3500 });
+          });
+      },
+      fail: (error) => {
+        this.setData({ phoneLoginLoading: false });
+        this.showError(error);
+      }
+    });
+  },
+
+  // 输入过程中不调用 setData，避免重绘原生 input 后打断中文输入法的拼音组合状态。
+  onQueryInput(e) {
+    this.queryValue = e.detail.value || '';
+  },
+
+  // 失焦后才同步到页面数据，便于调试和保留完整关键词。
+  commitQuery(e) {
+    const query = e.detail.value || this.queryValue || '';
+    this.queryValue = query;
+    this.setData({ query });
+  },
+
   reset() {
+    this.cancelActiveRecognition();
+    this.queryValue = '';
     this.setData({
       query: '',
+      searchInputVisible: false,
       category: '',
       matchMode: config.MATCH_MODES.auto,
       imagePath: '',
@@ -193,6 +295,7 @@ Page({
       all_top_results: [],
       feedbackVisible: false,
       feedbackSubmitted: false,
+      feedbackLoading: false,
       feedbackDialogVisible: false,
       unmatchedDialogVisible: false,
       feedbackRating: 0,
@@ -205,8 +308,23 @@ Page({
       detailCountText: config.UI_TEXT.emptyDetailCount,
       searchBoxVisible: true,
       imagePanelMode: 'full',
-      controlsVisible: true
+      controlsVisible: true,
+      loading: false
+    }, () => {
+      // 原生输入框不使用 value 受控绑定；重建一次即可可靠清空。
+      this.setData({ searchInputVisible: true });
     });
+  },
+
+  // 收起已上传图片预览框：仅隐藏预览区域，保留当前图片、搜索结果和筛选状态。
+  foldImagePanel() {
+    if (!this.data.imagePath) return;
+    this.setData({ imagePanelMode: 'strip' });
+  },
+
+  // 展开已上传图片预览框：从条形入口恢复到完整图片预览。
+  expandImagePanel() {
+    this.setData({ imagePanelMode: 'full' });
   },
 
   chooseImage() {
@@ -215,6 +333,7 @@ Page({
       mediaType: config.MEDIA_CONFIG.mediaTypes,
       sourceType: config.MEDIA_CONFIG.indexSourceTypes,
       success: (res) => {
+        this.cancelActiveRecognition();
         const filePath = res.tempFiles[0].tempFilePath;
         this.setData({
           imagePath: filePath,
@@ -247,19 +366,70 @@ Page({
     });
   },
 
-  startSearch() {
+  // 打开微信原生裁剪界面；成功后下一次识别会上传裁剪后的临时图片。
+  cropImage() {
+    if (!this.data.imagePath) return;
+    if (typeof wx.cropImage !== 'function') {
+      wx.showToast({ title: this.data.text.cropUnsupported, icon: config.TOAST_ICONS.none });
+      return;
+    }
+
+    wx.cropImage({
+      src: this.data.imagePath,
+      cropScale: config.MEDIA_CONFIG.cropScale,
+      success: (res) => {
+        if (!res.tempFilePath) return;
+        this.cancelActiveRecognition();
+        this.setData({
+          imagePath: res.tempFilePath,
+          message: '',
+          results: [],
+          resultCount: 0,
+          recognitionId: '',
+          recognition_id: '',
+          threshold: 0,
+          allTopResults: [],
+          all_top_results: [],
+          feedbackVisible: false,
+          feedbackSubmitted: false,
+          feedbackDialogVisible: false,
+          unmatchedDialogVisible: false,
+          detailVisible: false,
+          selectedItem: null,
+          searchBoxVisible: true,
+          imagePanelMode: 'full',
+          controlsVisible: true
+        });
+      },
+      fail: (error) => {
+        if (error && error.errMsg && error.errMsg.indexOf('cancel') > -1) return;
+        this.showError(error);
+      }
+    });
+  },
+
+  startSearch(e) {
+    const eventQuery = e && e.detail && typeof e.detail.value === 'string' ? e.detail.value : '';
+    const query = (eventQuery || this.queryValue || '').trim();
+    this.queryValue = query;
     if (this.data.imagePath) {
       this.searchByImage();
       return;
     }
-    if (this.data.query.trim()) {
-      this.searchByText();
+    if (query) {
+      this.setData({ query });
+      this.searchByText(query);
       return;
     }
     wx.showToast({ title: this.data.text.chooseImageOrKeyword, icon: config.TOAST_ICONS.none });
   },
 
   searchByImage() {
+    const runId = (this.recognitionRunId || 0) + 1;
+    this.recognitionRunId = runId;
+    if (this.activeRecognitionTask && typeof this.activeRecognitionTask.abort === 'function') {
+      this.activeRecognitionTask.abort();
+    }
     this.setData({
       loading: true,
       message: this.data.text.matching,
@@ -280,8 +450,11 @@ Page({
       detailVisible: false,
       selectedItem: null
     });
-    api.uploadRecognize(this.data.imagePath, this.data.category, this.data.matchMode === config.MATCH_MODES.auto)
+    const recognitionTask = api.uploadRecognize(this.data.imagePath, this.data.category, this.data.matchMode === config.MATCH_MODES.auto);
+    this.activeRecognitionTask = recognitionTask;
+    recognitionTask
       .then((data) => {
+        if (this.recognitionRunId !== runId) return;
         const threshold = Number(data.threshold || 0);
         const topResults = data.top_results || data.results || [];
         const visibleResults = topResults.filter((item) => {
@@ -310,11 +483,18 @@ Page({
         });
         this.refreshFavoriteState();
       })
-      .catch((error) => this.showError(error))
-      .then(() => this.setData({ loading: false }));
+      .catch((error) => {
+        if (this.recognitionRunId !== runId) return;
+        this.showError(error);
+      })
+      .then(() => {
+        if (this.recognitionRunId !== runId) return;
+        this.activeRecognitionTask = null;
+        this.setData({ loading: false });
+      });
   },
 
-  searchByText() {
+  searchByText(query) {
     this.setData({
       loading: true,
       message: this.data.text.searching,
@@ -330,7 +510,7 @@ Page({
       unmatchedDialogVisible: false
     });
     const url = config.API_ENDPOINTS.patternSearch(
-      this.data.query.trim(),
+      query,
       config.SEARCH_CONFIG.textResultLimit,
       config.SEARCH_CONFIG.textSearchMode,
       this.data.category
@@ -643,8 +823,8 @@ Page({
   },
 
   refreshFavoriteState() {
-    if (!wx.getStorageSync('token') || !this.data.results.length) return;
-    api.listFavorites().then((data) => {
+    if (!this.data.authenticated || !this.data.results.length) return;
+    this.ensureVisitorSession().then(() => api.listFavorites()).then((data) => {
       const results = api.applyFavoriteState(this.data.results, data.items || []);
       const updates = { results };
       if (this.data.selectedItem) {

@@ -24,7 +24,7 @@
 
 /* 首页主体边距：padding 的四个方向分别控制首屏上方、左右及 tabBar 上方留白。 */
 .home-content {
-  padding: 98rpx 30rpx 190rpx;
+  padding: 118rpx 30rpx 190rpx;
   box-sizing: border-box;
 }
 
@@ -37,15 +37,15 @@
 
 /* Logo 定位与占宽：margin-top、padding-left、width 调整品牌在首屏的大小和位置。 */
 .home-brand .brand-lockup {
-  margin-top: -10rpx;
+  margin-top: 0;
   padding-left: 22rpx;
-  width: 230rpx;
+  width: 260rpx;
 }
 
 /* 实际 Logo 图片宽度：与上方容器 width 同步调整可避免变形或溢出。 */
 .home-brand .brand-logo-vector {
-  width: 230rpx;
-  height: 65rpx;
+  width: 260rpx;
+  height: 74rpx;
   display: block;
 }
 
@@ -218,14 +218,63 @@
   position: absolute;
   right: 16rpx;
   bottom: 16rpx;
+  z-index: 3;
   min-width: 120rpx;
   height: 38rpx;
   padding: 0 12rpx;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
   color: #868686;
   background: rgba(255, 255, 255, 0.72);
   border-radius: 7rpx;
   font-size: 20rpx;
   font-weight: 700;
+  line-height: 1;
+}
+
+/* 移除 button 原生描边，避免视觉边框改变文字的垂直中心。 */
+.crop-button::after {
+  border: 0;
+}
+
+/* 完整图片框左上折叠入口：top/left 控制“▼ 折叠图片”在预览框内的位置。 */
+.image-fold-toggle {
+  position: absolute;
+  top: 18rpx;
+  left: 24rpx;
+  z-index: 4;
+  min-width: 120rpx;
+  height: 38rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6rpx;
+  box-sizing: border-box;
+  color: #3f3f3f;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 7rpx;
+  font-size: 20rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* 折叠/展开左侧三角：font-size 控制按钮图形大小，展开态用旋转实现。 */
+.image-fold-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20rpx;
+  height: 20rpx;
+  font-size: 18rpx;
+  line-height: 1;
+  transform-origin: center center;
+}
+
+.image-fold-arrow-expand {
+  transform: rotate(-90deg);
 }
 
 /* 折叠预览模式的对齐方式。 */
@@ -258,14 +307,16 @@
   padding: 0 24rpx;
   display: flex;
   align-items: center;
+  gap: 6rpx;
   color: #333333;
   background: var(--color-upload-bg);
   border: 2rpx dashed var(--color-line);
   border-radius: 8rpx;
   box-shadow: inset 0 1rpx 0 rgba(255, 255, 255, 0.7);
   box-sizing: border-box;
-  font-size: 22rpx;
+  font-size: 20rpx;
   font-weight: 700;
+  line-height: 1;
 }
 
 /* 辅助分类横向分段控件：margin 控制与上下区块距离，圆角控制整体轮廓。 */
@@ -524,4 +575,125 @@
 .star .star-icon {
   width: 46rpx;
   height: 46rpx;
+}
+
+/* 未登录主页蒙版：白色透明度、层级和品牌尺寸均可在此调整。 */
+.phone-login-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.phone-login-gate-brand {
+  width: 330rpx;
+  height: 120rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phone-login-gate-logo {
+  width: 310rpx;
+  height: 90rpx;
+}
+
+/* 手机号授权弹层：必须高于登录蒙版，避免点击授权时事件落到页面内容。 */
+.phone-login-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 130;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 36rpx;
+  background: rgba(35, 35, 35, 0.28);
+  box-sizing: border-box;
+}
+
+.phone-login-card {
+  position: relative;
+  width: 100%;
+  max-width: 610rpx;
+  padding: 54rpx 44rpx 38rpx;
+  color: #303030;
+  background: #ffffff;
+  border: 1rpx solid #d7d7d3;
+  border-radius: 8rpx;
+  box-sizing: border-box;
+  box-shadow: 0 16rpx 44rpx rgba(0, 0, 0, 0.16);
+}
+
+.phone-login-close {
+  position: absolute;
+  top: 14rpx;
+  right: 14rpx;
+  width: 54rpx;
+  height: 54rpx;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+
+.phone-login-close .ui-icon {
+  width: 32rpx;
+  height: 32rpx;
+}
+
+.phone-login-logo {
+  width: 260rpx;
+  height: 76rpx;
+  margin: 0 auto 26rpx;
+}
+
+.phone-login-title {
+  font-size: 31rpx;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: center;
+}
+
+.phone-login-copy {
+  margin: 20rpx 0 32rpx;
+  color: #727272;
+  font-size: 24rpx;
+  line-height: 1.55;
+  text-align: center;
+}
+
+.phone-login-submit,
+.phone-login-cancel {
+  width: 100%;
+  height: 76rpx;
+  padding: 0 22rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  border-radius: 7rpx;
+  font-size: 26rpx;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.phone-login-submit {
+  color: #ffffff;
+  background: #84977c;
+}
+
+.phone-login-cancel {
+  margin-top: 14rpx;
+  color: #666666;
+  background: #ececea;
+}
+
+.phone-login-submit::after,
+.phone-login-cancel::after,
+.phone-login-close::after {
+  border: 0;
 }

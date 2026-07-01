@@ -7,7 +7,7 @@
 
 /* 顶部绿色区域：控制背景色、顶部留白、左右内边距。 */
 .mine-hero {
-  padding: 92rpx 30rpx 0;
+  padding: 118rpx 30rpx 0;
   background: var(--color-primary-soft);
 }
 
@@ -21,7 +21,7 @@
 /* 我的页品牌文字改为白色。 */
 /* 我的页白色 Logo 容器：margin/width 控制它在绿色头部中的位置与大小。 */
 .mine-logo-lockup {
-  margin-top: 16rpx;
+  margin-top: 0;
   margin-left: 22rpx;
   width: 260rpx;
 }
@@ -35,6 +35,8 @@
 
 /* 右上角固定客服按钮：控制透明背景、尺寸、字号和点击范围。 */
 .hero-service {
+  position: relative;
+  top: 62rpx;
   min-width: 116rpx;
   height: 92rpx;
   margin-top: 0;

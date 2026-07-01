@@ -59,7 +59,7 @@
         <!-- 收藏花色卡片：点击打开大图。 -->
         <view class="pattern-card" data-source="favorites" data-index="{{index}}" bindtap="openItem">
           <!-- 花色图片：高度由 .pattern-image 控制。 -->
-          <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" />
+          <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" data-source="favorites" data-index="{{index}}" catchtap="openItem" />
           <!-- 收藏星标：小图右上角按钮；黄色态由 .star.on 控制，再点会取消收藏。 -->
           <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" catchtap="favorite">
             <view class="ui-icon icon-favorite star-icon"></view>
@@ -96,7 +96,7 @@
       <block wx:for="{{history}}" wx:key="pattern_id">
         <!-- 浏览记录卡片：点击仅查看大图，不再次记录或改变当前浏览顺序。 -->
         <view class="pattern-card" data-source="history" data-index="{{index}}" bindtap="openItem">
-          <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" />
+          <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" data-source="history" data-index="{{index}}" catchtap="openItem" />
           <!-- 浏览记录里的收藏星标：用于显示/切换该花色收藏状态。 -->
           <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" catchtap="favorite">
             <view class="ui-icon icon-favorite star-icon"></view>
@@ -130,7 +130,7 @@
     <view class="detail-viewer" catchtap="noop">
       <!-- 大图图片舞台：宽高、圆角由 .detail-image-stage 控制。 -->
       <view class="detail-image-stage">
-        <image class="detail-image" mode="aspectFill" src="{{selectedItem.imageSrc}}" />
+        <image class="detail-image" mode="aspectFill" src="{{selectedItem.fullImageSrc}}" />
         <!-- 左右切换按钮：图形尺寸由 `.detail-arrow .ui-icon` 控制。 -->
         <button wx:if="{{detailTotal > 1}}" class="detail-arrow detail-prev" catchtap="prevDetail">
           <view class="ui-icon icon-prev"></view>

@@ -4,12 +4,19 @@ App({
   globalData: Object.assign({}, config.DEFAULT_APP_STATE),
 
   onLaunch() {
+    const configuredApiBase = config.DEFAULT_APP_STATE.apiBase;
     const apiBase = wx.getStorageSync(config.STORAGE_KEYS.apiBase);
     const token = wx.getStorageSync(config.STORAGE_KEYS.token);
     const user = wx.getStorageSync(config.STORAGE_KEYS.user);
     const language = wx.getStorageSync(config.STORAGE_KEYS.language) || (user && user.language);
 
-    if (apiBase) this.globalData.apiBase = apiBase;
+    // 项目配置是发布地址的唯一来源，同时覆盖开发阶段遗留的本地隧道缓存。
+    if (configuredApiBase) {
+      this.globalData.apiBase = configuredApiBase;
+      wx.setStorageSync(config.STORAGE_KEYS.apiBase, configuredApiBase);
+    } else if (apiBase) {
+      this.globalData.apiBase = apiBase;
+    }
     if (token) this.globalData.token = token;
     if (user) this.globalData.user = user;
     if (language) this.globalData.language = language;

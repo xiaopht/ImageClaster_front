@@ -12,7 +12,11 @@ function roleOf(user) {
 // 判断是否访客会话：影响“登录 / 注册”和访客名称的显示。
 function isGuestSession(user) {
   const username = (user && user.username) || '';
-  return !user || (roleOf(user) === config.USER_ROLES.visitor && (!username || username.indexOf(config.USERNAME_PREFIXES.wechatVisitor) === 0));
+  const accessMode = user && (user.access_mode || user.login_policy);
+  return !user || accessMode === 'open' || (
+    roleOf(user) === config.USER_ROLES.visitor
+    && (!username || username.indexOf(config.USERNAME_PREFIXES.wechatVisitor) === 0)
+  );
 }
 
 // 生成用户展示状态：影响我的页头像旁的名称、角色和访客标记。
@@ -21,13 +25,15 @@ function userState(user, text) {
   const guestSession = isGuestSession(user);
   const roleLabels = {};
   roleLabels[config.USER_ROLES.visitor] = text.roleVisitor;
+  roleLabels[config.USER_ROLES.employee] = text.roleEmployee;
   roleLabels[config.USER_ROLES.sales] = text.roleSales;
   roleLabels[config.USER_ROLES.admin] = text.roleInternal;
+  const guestName = i18n.currentLanguage() === 'en-US' ? 'Guest' : '游客';
   return {
     user,
     isVisitor: guestSession,
-    displayName: user && !guestSession && user.username ? user.username : text.guestName,
-    roleLabel: roleLabels[role] || role
+    displayName: user && !guestSession && user.username ? user.username : guestName,
+    roleLabel: guestSession ? roleLabels[config.USER_ROLES.visitor] : (roleLabels[role] || role)
   };
 }
 
@@ -71,7 +77,7 @@ Page({
     visualMockActive: false,
     visualState: '',
     visualSyntheticTabbar: false,
-    authEntryVisible: true,
+    authEntryVisible: false,
     roleLabelVisible: true
   },
 
@@ -89,12 +95,23 @@ Page({
       this.applyVisualState(this.data.visualState);
       return;
     }
-    this.ensureVisitorSession().then(() => {
+    if (!api.currentToken() || !api.isAuthorizedUser(user)) {
+      api.clearSession();
+      const app = getApp();
+      app.globalData.openPhoneLogin = true;
+      wx.switchTab({ url: config.ROUTES.index });
+      return;
+    }
+    api.validateSession().then((validatedUser) => {
+      if (!api.isAuthorizedUser(validatedUser)) throw new Error('Phone login required');
+      this.setData(userState(validatedUser, this.data.text));
       this.loadFavorites();
       this.loadHistory();
     }).catch(() => {
-      this.loadFavorites();
-      this.loadHistory();
+      api.clearSession();
+      const app = getApp();
+      app.globalData.openPhoneLogin = true;
+      wx.switchTab({ url: config.ROUTES.index });
     });
   },
 

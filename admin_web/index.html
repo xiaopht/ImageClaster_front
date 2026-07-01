@@ -19,23 +19,7 @@
     @font-face {
       font-family: "HarmonyOS Sans SC";
       src: url("/fonts/HarmonyOS_Sans_SC_Regular.ttf") format("truetype");
-      font-weight: 400;
-      font-style: normal;
-      font-display: swap;
-    }
-
-    @font-face {
-      font-family: "HarmonyOS Sans SC";
-      src: url("/fonts/HarmonyOS_Sans_SC_Medium.ttf") format("truetype");
-      font-weight: 500;
-      font-style: normal;
-      font-display: swap;
-    }
-
-    @font-face {
-      font-family: "HarmonyOS Sans SC";
-      src: url("/fonts/HarmonyOS_Sans_SC_Bold.ttf") format("truetype");
-      font-weight: 700;
+      font-weight: 400 900;
       font-style: normal;
       font-display: swap;
     }
@@ -64,7 +48,7 @@
     .brand-main {
       display: block;
       font-size: 42px;
-      font-weight: 700;
+      font-weight: 900;
       line-height: .92;
     }
 
@@ -89,6 +73,12 @@
       padding: 28px 24px 44px;
     }
 
+    body.auth-locked main {
+      min-height: calc(100vh - 128px);
+      display: grid;
+      place-items: start center;
+    }
+
     .panel {
       margin-bottom: 18px;
       padding: 18px;
@@ -103,6 +93,26 @@
       grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 12px;
       align-items: end;
+    }
+
+    .login-panel {
+      width: 100%;
+    }
+
+    body.auth-locked .login-panel {
+      max-width: 560px;
+      margin-top: 24px;
+    }
+
+    body.auth-locked .login-grid {
+      grid-template-columns: 1fr;
+    }
+
+    body.is-authenticated .login-panel,
+    body.auth-locked .dashboard-panel,
+    body.auth-locked .header-actions.authenticated-actions,
+    body.auth-locked .internal-create {
+      display: none;
     }
 
     label {
@@ -168,7 +178,7 @@
 
     .metric-value {
       font-size: 28px;
-      font-weight: 700;
+      font-weight: 900;
     }
 
     .metric-label {
@@ -176,6 +186,40 @@
       color: var(--muted);
       font-size: 13px;
       font-weight: 700;
+    }
+
+    .policy-panel[hidden] {
+      display: none;
+    }
+
+    .policy-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .policy-title {
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .policy-copy {
+      margin-top: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .policy-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .policy-actions button.active {
+      outline: 3px solid rgba(132, 151, 124, .28);
     }
 
     .tabs {
@@ -251,7 +295,7 @@
       background: #ededeb;
       color: #555;
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 900;
     }
 
     tr:last-child td {
@@ -280,6 +324,22 @@
       padding-top: 16px;
       border-top: 1px solid var(--line);
     }
+
+    .managed-user-form {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr .9fr 1.1fr 1.4fr auto;
+      gap: 12px;
+      align-items: end;
+      margin-bottom: 16px;
+      padding: 14px;
+      background: #f1f1ef;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .managed-user-form[hidden] { display: none; }
+    .table-action { height: 30px; margin: 0 6px 6px 0; padding: 0 10px; font-size: 12px; }
+    .table-action.danger { background: #9a3f36; }
 
     .preview-mask[hidden] {
       display: none;
@@ -319,7 +379,7 @@
       overflow: hidden;
       color: var(--ink);
       font-size: 15px;
-      font-weight: 700;
+      font-weight: 900;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
@@ -378,26 +438,27 @@
       .login-grid,
       .summary-grid,
       .filters-grid,
+      .managed-user-form,
       .upload-row {
         grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
-<body>
+<body class="auth-locked">
   <header>
     <div>
       <span class="brand-main">schattdecor</span>
       <span class="brand-sub">Sense Admin</span>
     </div>
-    <div class="header-actions">
+    <div class="header-actions authenticated-actions">
       <button id="refreshBtn">刷新</button>
       <button id="logoutBtn" class="secondary">退出</button>
     </div>
   </header>
 
   <main>
-    <section class="panel">
+    <section class="panel login-panel">
       <div class="login-grid">
         <label>
           API 地址
@@ -411,11 +472,11 @@
           密码
           <input id="password" type="password" autocomplete="current-password" />
         </label>
-        <label>
+        <label class="internal-create">
           内部注册码
           <input id="accessCode" placeholder="创建 sales/admin 时填写" />
         </label>
-        <label>
+        <label class="internal-create">
           角色
           <select id="role">
             <option value="admin">admin</option>
@@ -425,23 +486,47 @@
       </div>
       <div class="header-actions" style="justify-content:flex-start;margin-top:12px;">
         <button id="loginBtn">登录</button>
-        <button id="registerBtn" class="secondary">创建内部账号</button>
+        <button id="registerBtn" class="secondary internal-create">创建内部账号</button>
       </div>
       <div id="status" class="status"></div>
     </section>
 
-    <section class="panel">
+    <section class="panel dashboard-panel">
       <div id="summary" class="summary-grid"></div>
     </section>
 
-    <section class="panel">
+    <section id="loginPolicyPanel" class="panel dashboard-panel policy-panel" hidden>
+      <div class="policy-row">
+        <div>
+          <div class="policy-title">登录权限</div>
+          <div id="loginPolicyText" class="policy-copy">当前：员工才可以登录</div>
+        </div>
+        <div class="policy-actions">
+          <button id="policyEmployeeBtn" type="button" data-policy="employee_only">员工才可以登录</button>
+          <button id="policyOpenBtn" type="button" class="secondary" data-policy="open">所有人都可以登录</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel dashboard-panel">
       <div class="tabs" id="tabs">
         <button class="tab active" data-name="events" data-endpoint="/api/admin/events">访问事件</button>
         <button class="tab" data-name="feedback" data-endpoint="/api/admin/feedback">识别反馈</button>
         <button class="tab" data-name="unmatched" data-endpoint="/api/admin/unmatched">未匹配记录</button>
+        <button class="tab" data-name="service-leads" data-endpoint="/api/admin/service-leads">客服线索</button>
         <button class="tab" data-name="training" data-endpoint="/api/admin/training-data">训练数据</button>
         <button class="tab" data-name="orders" data-endpoint="/api/admin/sample-orders">样品单</button>
+        <button class="tab" data-name="managed-users" data-endpoint="/api/admin/managed-users">授权用户</button>
+        <button class="tab" data-name="phone-attempts" data-endpoint="/api/admin/phone-login-attempts">待处理手机号</button>
       </div>
+      <form id="managedUserForm" class="managed-user-form" hidden>
+        <label>手机号<input id="managedPhone" name="phone" inputmode="numeric" placeholder="11位手机号" /></label>
+        <label>用户姓名<input id="managedName" name="display_name" placeholder="员工姓名" /></label>
+        <label>权限<select id="managedRole" name="role"><option value="employee">employee</option><option value="sales">sales</option><option value="admin">admin</option></select></label>
+        <label>后台密码<input id="managedAdminPassword" name="admin_password" type="password" autocomplete="new-password" placeholder="新建 admin 必填" /></label>
+        <label>备注<input id="managedNote" name="note" placeholder="部门、区域或说明" /></label>
+        <button type="submit">保存授权用户</button>
+      </form>
       <div class="table-toolbar">
         <div class="filters-grid">
           <label>
@@ -520,6 +605,8 @@
       token: localStorage.getItem('xiaote_admin_token') || '',
       activeEndpoint: '/api/admin/events',
       activeName: 'events',
+      currentUser: null,
+      loginPolicy: 'employee_only',
       tableItems: [],
       filteredItems: [],
       columns: [],
@@ -527,13 +614,36 @@
     };
 
     const $ = (id) => document.getElementById(id);
-    const exportableTabs = new Set(['feedback', 'unmatched', 'training']);
+    const exportableTabs = new Set(['feedback', 'unmatched', 'service-leads', 'training']);
 
     $('apiBase').value = state.apiBase;
 
     function setStatus(text, isError = false) {
       $('status').textContent = text;
       $('status').style.color = isError ? '#9a3f36' : '#7d7d7d';
+    }
+
+    function setAuthenticated(isAuthenticated) {
+      document.body.classList.toggle('is-authenticated', isAuthenticated);
+      document.body.classList.toggle('auth-locked', !isAuthenticated);
+    }
+
+    function clearDashboard(message = '请登录后台账号。') {
+      state.token = '';
+      localStorage.removeItem('xiaote_admin_token');
+      state.tableItems = [];
+      state.filteredItems = [];
+      state.columns = [];
+      state.currentUser = null;
+      state.loginPolicy = 'employee_only';
+      renderSummary({});
+      renderLoginPolicy('employee_only', null);
+      $('table').innerHTML = '<div class="empty">登录后显示后台数据</div>';
+      $('filterSummary').textContent = '显示 0 / 0 条';
+      $('managedUserForm').hidden = true;
+      closeImagePreview();
+      setAuthenticated(false);
+      setStatus(message);
     }
 
     function headers(json = true) {
@@ -585,11 +695,15 @@
 
     async function loadAll() {
       if (!state.token) {
-        setStatus('请先登录后台账号。');
+        clearDashboard('请先登录后台账号。');
         return;
       }
       const summary = await request('/api/admin/summary');
+      state.currentUser = summary.current_user || null;
+      state.loginPolicy = summary.login_policy || 'employee_only';
+      setAuthenticated(true);
       renderSummary(summary);
+      renderLoginPolicy(state.loginPolicy, state.currentUser);
       await loadTable(state.activeEndpoint);
     }
 
@@ -599,8 +713,11 @@
         ['events', '事件'],
         ['feedback', '反馈'],
         ['unmatched', '未匹配'],
+        ['service_leads', '客服线索'],
         ['training_data', '训练数据'],
         ['sample_orders', '样品单'],
+        ['managed_users', '授权用户'],
+        ['pending_phone_logins', '待处理手机号'],
         ['patterns', '花色库']
       ];
       $('summary').innerHTML = labels.map(([key, label]) => `
@@ -611,10 +728,38 @@
       `).join('');
     }
 
+    function renderLoginPolicy(policy, user) {
+      const normalized = policy === 'open' ? 'open' : 'employee_only';
+      const canManage = user && user.role === 'admin';
+      $('loginPolicyPanel').hidden = !canManage;
+      $('loginPolicyText').textContent = normalized === 'open'
+        ? '当前：所有人都可以登录。未授权手机号会以游客身份进入，收藏和浏览记录仍保存到数据库。'
+        : '当前：员工才可以登录。手机号必须先在授权用户中启用。';
+      $('policyEmployeeBtn').classList.toggle('active', normalized === 'employee_only');
+      $('policyEmployeeBtn').classList.toggle('secondary', normalized !== 'employee_only');
+      $('policyOpenBtn').classList.toggle('active', normalized === 'open');
+      $('policyOpenBtn').classList.toggle('secondary', normalized !== 'open');
+    }
+
+    async function updateLoginPolicy(policy) {
+      const normalized = policy === 'open' ? 'open' : 'employee_only';
+      const label = normalized === 'open' ? '所有人都可以登录' : '员工才可以登录';
+      if (!window.confirm(`确认切换为“${label}”？`)) return;
+      const data = await request('/api/admin/login-policy', {
+        method: 'POST',
+        body: JSON.stringify({ policy: normalized })
+      });
+      state.loginPolicy = data.policy || normalized;
+      renderLoginPolicy(state.loginPolicy, state.currentUser);
+      setStatus(`登录权限已切换为：${label}`);
+      await loadAll();
+    }
+
     async function loadTable(endpoint) {
       const data = await request(`${endpoint}?limit=100`);
       state.tableItems = data.items || [];
       state.columns = collectColumns(state.tableItems);
+      if (state.activeName === 'managed-users' || state.activeName === 'phone-attempts') state.columns.push('__actions');
       populateFilterOptions();
       applyFilters();
     }
@@ -636,19 +781,31 @@
           <thead><tr>${columns.map((key) => `<th>${escapeHtml(key)}</th>`).join('')}</tr></thead>
           <tbody>
             ${items.map((item) => `
-              <tr>${columns.map((key) => `<td>${renderCell(key, item[key])}</td>`).join('')}</tr>
+              <tr>${columns.map((key) => `<td>${renderCell(key, item[key], item)}</td>`).join('')}</tr>
             `).join('')}
           </tbody>
         </table>
       `;
     }
 
-    function renderCell(key, value) {
+    function renderCell(key, value, item) {
+      if (key === '__actions') return actionCell(item);
       if (key === 'image_path' && value) {
         const text = escapeHtml(formatCell(value));
         return `<a href="#" class="preview-link" data-image-path="${escapeHtml(String(value))}">${text}</a>`;
       }
       return escapeHtml(formatCell(value));
+    }
+
+    function actionCell(item) {
+      if (state.activeName === 'managed-users') {
+        const enabled = Boolean(item.enabled);
+        return `<button class="table-action" data-action="edit-user" data-phone="${escapeHtml(item.phone)}">&#32534;&#36753;</button><button class="table-action ${enabled ? 'danger' : ''}" data-action="${enabled ? 'disable-user' : 'enable-user'}" data-phone="${escapeHtml(item.phone)}">${enabled ? '&#20572;&#29992;' : '&#21551;&#29992;'}</button><button class="table-action danger" data-action="delete-user" data-phone="${escapeHtml(item.phone)}">&#21024;&#38500;</button>`;
+      }
+      if (state.activeName === 'phone-attempts' && item.status === 'pending') {
+        return `<button class="table-action" data-action="approve-phone" data-id="${escapeHtml(item.id)}">批准</button><button class="table-action danger" data-action="reject-phone" data-id="${escapeHtml(item.id)}">拒绝</button>`;
+      }
+      return '';
     }
 
     function formatCell(value) {
@@ -778,6 +935,72 @@
       }
     }
 
+    function managedPayload(item, overrides = {}) {
+      return {
+        phone: overrides.phone ?? item.phone,
+        display_name: overrides.display_name ?? item.display_name,
+        role: overrides.role ?? item.role ?? 'employee',
+        enabled: overrides.enabled ?? Boolean(item.enabled),
+        note: overrides.note ?? item.note ?? '',
+        admin_password: overrides.admin_password ?? ''
+      };
+    }
+
+    async function saveManagedUser(payload) {
+      await request('/api/admin/managed-users', { method: 'POST', body: JSON.stringify(payload) });
+      setStatus(`已保存授权用户：${payload.display_name}（${payload.phone}）`);
+      await loadAll();
+    }
+
+    async function handleManagementAction(button) {
+      const action = button.dataset.action;
+      if (!action) return false;
+      if (action === 'edit-user') {
+        const item = state.tableItems.find((row) => row.phone === button.dataset.phone);
+        if (!item) return true;
+        $('managedPhone').value = item.phone || '';
+        $('managedName').value = item.display_name || '';
+        $('managedRole').value = item.role || 'employee';
+        $('managedAdminPassword').value = '';
+        $('managedNote').value = item.note || '';
+        $('managedPhone').focus();
+        return true;
+      }
+      if (action === 'disable-user') {
+        await request(`/api/admin/managed-users/${encodeURIComponent(button.dataset.phone)}`, { method: 'DELETE' });
+        setStatus(`已停用手机号：${button.dataset.phone}`);
+        await loadAll();
+        return true;
+      }
+      if (action === 'enable-user') {
+        const item = state.tableItems.find((row) => row.phone === button.dataset.phone);
+        if (item) await saveManagedUser(managedPayload(item, { enabled: true }));
+        return true;
+      }
+      if (action === 'delete-user') {
+        const phone = button.dataset.phone || '';
+        if (!window.confirm(`确认彻底删除手机号 ${phone}？此操作不可恢复。`)) return true;
+        await request(`/api/admin/managed-users/${encodeURIComponent(phone)}/permanent`, { method: 'DELETE' });
+        setStatus(`已彻底删除手机号：${phone}`);
+        await loadAll();
+        return true;
+      }
+      if (action === 'approve-phone') {
+        const item = state.tableItems.find((row) => row.id === button.dataset.id);
+        await request(`/api/admin/phone-login-attempts/${encodeURIComponent(button.dataset.id)}/approve`, { method: 'POST', body: JSON.stringify({ display_name: item ? `员工${item.phone.slice(-4)}` : '待配置员工', role: 'employee' }) });
+        setStatus('手机号已批准；可在“授权用户”中补充姓名和权限。');
+        await loadAll();
+        return true;
+      }
+      if (action === 'reject-phone') {
+        await request(`/api/admin/phone-login-attempts/${encodeURIComponent(button.dataset.id)}/reject`, { method: 'POST', body: JSON.stringify({ note: '后台拒绝登录申请' }) });
+        setStatus('手机号登录申请已拒绝。');
+        await loadAll();
+        return true;
+      }
+      return false;
+    }
+
     function escapeHtml(value) {
       return String(value)
         .replaceAll('&', '&amp;')
@@ -790,18 +1013,11 @@
     $('loginBtn').addEventListener('click', () => authenticate('login').catch((error) => setStatus(error.message, true)));
     $('registerBtn').addEventListener('click', () => authenticate('register').catch((error) => setStatus(error.message, true)));
     $('refreshBtn').addEventListener('click', () => loadAll().catch((error) => setStatus(error.message, true)));
+    $('policyEmployeeBtn').addEventListener('click', () => updateLoginPolicy('employee_only').catch((error) => setStatus(error.message, true)));
+    $('policyOpenBtn').addEventListener('click', () => updateLoginPolicy('open').catch((error) => setStatus(error.message, true)));
     $('logoutBtn').addEventListener('click', () => {
-      state.token = '';
-      localStorage.removeItem('xiaote_admin_token');
-      renderSummary({});
-      state.tableItems = [];
-      state.filteredItems = [];
-      state.columns = [];
-      $('table').innerHTML = '<div class="empty">登录后显示后台数据</div>';
       resetFilters();
-      $('filterSummary').textContent = '显示 0 / 0 条';
-      closeImagePreview();
-      setStatus('已退出。');
+      clearDashboard('已退出。');
     });
 
     $('tabs').addEventListener('click', (event) => {
@@ -811,6 +1027,7 @@
       button.classList.add('active');
       state.activeEndpoint = button.dataset.endpoint;
       state.activeName = button.dataset.name || 'events';
+      $('managedUserForm').hidden = state.activeName !== 'managed-users';
       resetFilters();
       loadTable(state.activeEndpoint).catch((error) => setStatus(error.message, true));
     });
@@ -826,6 +1043,11 @@
       if (event.target === $('previewMask')) closeImagePreview();
     });
     $('table').addEventListener('click', (event) => {
+      const actionButton = event.target.closest('button[data-action]');
+      if (actionButton) {
+        handleManagementAction(actionButton).catch((error) => setStatus(error.message, true));
+        return;
+      }
       const link = event.target.closest('a[data-image-path]');
       if (!link) return;
       event.preventDefault();
@@ -833,6 +1055,26 @@
         $('previewState').textContent = error.message;
         setStatus(error.message, true);
       });
+    });
+
+    $('managedUserForm').addEventListener('submit', (event) => {
+      event.preventDefault();
+      const payload = {
+        phone: $('managedPhone').value.trim(),
+        display_name: $('managedName').value.trim(),
+        role: $('managedRole').value,
+        enabled: true,
+        note: $('managedNote').value.trim(),
+        admin_password: $('managedAdminPassword').value
+      };
+      if (!payload.phone || !payload.display_name) {
+        setStatus('请填写手机号和用户姓名。', true);
+        return;
+      }
+      if (payload.role === 'admin' && !payload.admin_password) {
+        setStatus('如果这是新的后台管理员，请填写后台密码；已有后台账号可留空。', false);
+      }
+      saveManagedUser(payload).then(() => event.currentTarget.reset()).catch((error) => setStatus(error.message, true));
     });
 
     $('trainingForm').addEventListener('submit', async (event) => {
@@ -862,10 +1104,12 @@
     });
 
     if (state.token) {
-      loadAll().catch((error) => setStatus(error.message, true));
+      loadAll().catch((error) => {
+        clearDashboard(error.message || '登录已失效，请重新登录。');
+        setStatus(error.message || '登录已失效，请重新登录。', true);
+      });
     } else {
-      renderSummary({});
-      setStatus('请输入测试账号进入本地演示后台；正式上线需连接具有角色校验和持久化能力的后端。');
+      clearDashboard('请登录后台账号。');
     }
   </script>
 </body>

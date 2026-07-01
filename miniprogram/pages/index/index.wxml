@@ -17,7 +17,7 @@
       <!-- 文本搜索栏：高度、边框、输入字号由 `.search-box` 和 `.search-input` 控制。 -->
       <view wx:if="{{searchBoxVisible}}" class="search-box">
         <view class="ui-icon icon-search search-icon"></view>
-        <input class="search-input" value="{{query}}" placeholder="{{text.searchPlaceholder}}" placeholder-class="search-placeholder" bindinput="onQuery" confirm-type="search" bindconfirm="startSearch" />
+        <input wx:if="{{searchInputVisible}}" class="search-input" placeholder="{{text.searchPlaceholder}}" placeholder-class="search-placeholder" confirm-type="search" bindinput="onQueryInput" bindblur="commitQuery" bindconfirm="startSearch" />
       </view>
       <button class="icon-button reset-button" bindtap="reset">
         <view class="ui-icon svg-icon-reset-arrows reset-icon"></view>
@@ -27,10 +27,14 @@
 
     <!-- 图片上传/预览主区域：三个状态的面积与留白可在 `.upload-box`、`.image-fold-strip` 中调整。 -->
     <view wx:if="{{imagePanelMode == 'full'}}" class="upload-box {{imagePath ? 'upload-box-filled' : ''}}" bindtap="chooseImage">
+      <view wx:if="{{imagePath}}" class="image-fold-toggle" catchtap="foldImagePanel">
+        <text class="image-fold-arrow image-fold-arrow-down">▼</text>
+        <text>{{text.foldImage}}</text>
+      </view>
       <block wx:if="{{imagePath}}">
         <image class="upload-preview" mode="aspectFit" src="{{imagePath}}" />
         <view class="change-strip">{{text.uploadChange}}</view>
-        <button class="crop-button" catchtap="noop">{{text.cropImage}}</button>
+        <button class="crop-button" catchtap="cropImage">{{text.cropImage}}</button>
       </block>
       <block wx:else>
         <view class="ui-icon svg-icon-upload-camera upload-camera-icon"></view>
@@ -43,10 +47,11 @@
       <view class="image-fold-label">{{text.foldImage}}</view>
       <image class="upload-preview compact-preview" mode="aspectFit" src="{{imagePath}}" />
       <view class="change-strip">{{text.uploadChange}}</view>
-      <button class="crop-button" catchtap="noop">{{text.cropImage}}</button>
+      <button class="crop-button" catchtap="cropImage">{{text.cropImage}}</button>
     </view>
 
-    <view wx:elif="{{imagePanelMode == 'strip'}}" class="image-fold-strip">
+    <view wx:elif="{{imagePanelMode == 'strip'}}" class="image-fold-strip" catchtap="expandImagePanel">
+      <text class="image-fold-arrow image-fold-arrow-expand">▼</text>
       <text>{{text.expandImage}}</text>
     </view>
 
@@ -103,7 +108,7 @@
       <view class="pattern-grid">
         <block wx:for="{{results}}" wx:key="pattern_id">
           <view class="pattern-card" data-index="{{index}}" bindtap="openDetail">
-            <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" />
+            <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" data-index="{{index}}" catchtap="openDetail" />
             <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" data-index="{{index}}" catchtap="favorite">
               <view class="ui-icon icon-favorite star-icon"></view>
             </button>
@@ -157,7 +162,7 @@
     </button>
     <view class="detail-viewer" catchtap="noop">
       <view class="detail-image-stage">
-        <image class="detail-image" mode="aspectFill" src="{{selectedItem.imageSrc}}" />
+        <image class="detail-image" mode="aspectFill" src="{{selectedItem.fullImageSrc}}" />
         <button wx:if="{{results.length > 1}}" class="detail-arrow detail-prev" catchtap="prevDetail">
           <view class="ui-icon icon-prev"></view>
         </button>
@@ -237,6 +242,33 @@
         <view class="lead-contact-row">{{text.leadContactWechat}}：{{leadContact.wechat}}</view>
         <button class="lead-done" catchtap="closeLeadDialog">{{text.leadDone}}</button>
       </block>
+    </view>
+  </view>
+
+  <!-- 未登录访问锁：白色微透明蒙版覆盖主页；点击任意位置打开手机号授权登录。 -->
+  <view wx:if="{{!visualMockActive && !authenticated}}" class="phone-login-gate" catchtap="openPhoneLogin">
+    <view class="phone-login-gate-brand">
+      <view class="phone-login-gate-logo svg-logo-sense"></view>
+    </view>
+  </view>
+
+  <!-- 手机号登录弹窗：用户必须主动点击微信授权按钮，前端只接收一次性动态 code。 -->
+  <view wx:if="{{!visualMockActive && phoneLoginVisible}}" class="phone-login-mask" catchtap="noop">
+    <view class="phone-login-card" catchtap="noop">
+      <button class="phone-login-close" catchtap="closePhoneLogin">
+        <view class="ui-icon icon-close-muted"></view>
+      </button>
+      <view class="phone-login-logo svg-logo-sense"></view>
+      <view class="phone-login-title">{{text.phoneLoginTitle}}</view>
+      <view class="phone-login-copy">{{text.phoneLoginCopy}}</view>
+      <button
+        class="phone-login-submit"
+        open-type="getPhoneNumber"
+        bindgetphonenumber="onGetPhoneNumber"
+        loading="{{phoneLoginLoading}}"
+        disabled="{{phoneLoginLoading}}"
+      >{{text.phoneLoginAction}}</button>
+      <button class="phone-login-cancel" disabled="{{phoneLoginLoading}}" catchtap="closePhoneLogin">{{text.phoneLoginCancel}}</button>
     </view>
   </view>
 </view>

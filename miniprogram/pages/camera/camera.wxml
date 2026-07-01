@@ -98,7 +98,7 @@
         <!-- 单张花色卡片：点击打开大图。 -->
         <view class="pattern-card" data-index="{{index}}" bindtap="openDetail">
           <!-- 花色小图：高度由 .pattern-image 控制，mode 控制裁切。 -->
-          <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" />
+          <image class="pattern-image" mode="aspectFill" src="{{item.imageSrc}}" data-index="{{index}}" catchtap="openDetail" />
           <!-- 收藏星标：右上角位置和大小由 .star 控制；黄色态由 .star.on 控制。 -->
           <button class="star {{item.favorited ? 'on' : ''}}" data-id="{{item.pattern_id}}" data-index="{{index}}" catchtap="favorite">
             <view class="ui-icon icon-favorite star-icon"></view>
@@ -129,7 +129,7 @@
     <view class="detail-viewer" catchtap="noop">
       <!-- 图片舞台：控制大图宽高和圆角。 -->
       <view class="detail-image-stage">
-        <image class="detail-image" mode="aspectFill" src="{{selectedItem.imageSrc}}" />
+        <image class="detail-image" mode="aspectFill" src="{{selectedItem.fullImageSrc}}" />
         <!-- 左右切换按钮：只在结果超过 1 个时显示。 -->
         <button wx:if="{{results.length > 1}}" class="detail-arrow detail-prev" catchtap="prevDetail">
           <view class="ui-icon icon-prev"></view>
