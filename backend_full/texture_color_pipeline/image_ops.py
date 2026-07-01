@@ -48,6 +48,12 @@ def gray_world_white_balance(image: Image.Image, eps: float = 1e-6) -> Image.Ima
     return Image.fromarray(balanced, mode="RGB")
 
 
+def color_normalize_view(image: Image.Image) -> Image.Image:
+    channels = image.convert("RGB").split()
+    normalized = [ImageOps.autocontrast(channel, cutoff=1) for channel in channels]
+    return Image.merge("RGB", normalized)
+
+
 def center_crop_ratio(image: Image.Image, ratio: float = 0.92) -> Image.Image:
     ratio = max(0.1, min(1.0, ratio))
     width, height = image.size
@@ -56,6 +62,49 @@ def center_crop_ratio(image: Image.Image, ratio: float = 0.92) -> Image.Image:
     left = (width - crop_w) // 2
     top = (height - crop_h) // 2
     return image.crop((left, top, left + crop_w, top + crop_h))
+
+
+def stable_region_crops(image: Image.Image, ratio: float = 0.72) -> List[Image.Image]:
+    base = center_crop_ratio(image, ratio)
+    crops = [base]
+    width, height = image.size
+    crop_w = base.width
+    crop_h = base.height
+    offsets = [
+        ((width - crop_w) // 2, (height - crop_h) // 2),
+        (0, (height - crop_h) // 2),
+        (width - crop_w, (height - crop_h) // 2),
+        ((width - crop_w) // 2, 0),
+        ((width - crop_w) // 2, height - crop_h),
+    ]
+    seen = {(0, 0, base.width, base.height)}
+    for left, top in offsets[1:]:
+        box = (max(0, left), max(0, top), max(0, left) + crop_w, max(0, top) + crop_h)
+        if box in seen:
+            continue
+        seen.add(box)
+        crops.append(image.crop(box))
+    return crops
+
+
+def stage2_variant_views(
+    image: Image.Image,
+    source: str = "realshot",
+    realshot_white_balance: bool = True,
+    realshot_color_normalize: bool = False,
+    sample_mode: str = "center",
+) -> List[Image.Image]:
+    prepared = resize_long_side(image, TEMPLATE_MAX_SIDE).convert("RGB")
+    if source == "realshot":
+        if realshot_white_balance:
+            prepared = gray_world_white_balance(prepared)
+        if realshot_color_normalize:
+            prepared = color_normalize_view(prepared)
+    if sample_mode == "stable":
+        return stable_region_crops(prepared)
+    if sample_mode == "none":
+        return [prepared]
+    return [center_crop_ratio(prepared, 0.92)]
 
 
 def color_descriptor(image: Image.Image, bins: int = 16) -> dict:

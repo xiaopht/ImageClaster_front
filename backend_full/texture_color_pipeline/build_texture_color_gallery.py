@@ -19,6 +19,7 @@ from texture_color_pipeline.image_ops import (
     color_descriptor,
     load_rgb_image,
     reference_texture_templates,
+    stage2_variant_views,
 )
 
 
@@ -52,9 +53,13 @@ def build_source_gallery(
 ) -> dict:
     source_vit_dir = config.source_vit_feature_dir(source)
     source_conv_dir = config.source_conv_feature_dir(source)
+    source_stage2_vit_dir = config.source_stage2_vit_feature_dir(source)
+    source_stage2_conv_dir = config.source_stage2_conv_feature_dir(source)
     source_color_dir = config.source_color_descriptor_dir(source)
     source_vit_dir.mkdir(parents=True, exist_ok=True)
     source_conv_dir.mkdir(parents=True, exist_ok=True)
+    source_stage2_vit_dir.mkdir(parents=True, exist_ok=True)
+    source_stage2_conv_dir.mkdir(parents=True, exist_ok=True)
     source_color_dir.mkdir(parents=True, exist_ok=True)
 
     pattern_ids = sorted(classes.keys())
@@ -69,8 +74,17 @@ def build_source_gallery(
     for index, pattern_id in enumerate(pattern_ids, start=1):
         vit_path = source_vit_dir / f"{pattern_id}.pt"
         conv_path = source_conv_dir / f"{pattern_id}.pt"
+        stage2_vit_path = source_stage2_vit_dir / f"{pattern_id}.pt"
+        stage2_conv_path = source_stage2_conv_dir / f"{pattern_id}.pt"
         color_path = source_color_dir / f"{pattern_id}.json"
-        if skip_existing and vit_path.exists() and conv_path.exists() and color_path.exists():
+        if (
+            skip_existing
+            and vit_path.exists()
+            and conv_path.exists()
+            and stage2_vit_path.exists()
+            and stage2_conv_path.exists()
+            and color_path.exists()
+        ):
             print(f"[{source} {index}/{len(pattern_ids)}] skip existing {pattern_id}")
             source_manifest["classes"][pattern_id] = {
                 "family_id": pattern_family_id(pattern_id),
@@ -84,6 +98,8 @@ def build_source_gallery(
         print(f"[{source} {index}/{len(pattern_ids)}] build {pattern_id}")
         vit_parts = []
         conv_parts = []
+        stage2_vit_parts = []
+        stage2_conv_parts = []
         color_parts = []
         for image_path in classes[pattern_id]:
             image = load_rgb_image(image_path)
@@ -95,21 +111,36 @@ def build_source_gallery(
             vit_features, conv_features = extractor.extract_dual(templates)
             vit_parts.append(vit_features)
             conv_parts.append(conv_features)
+            stage2_views = stage2_variant_views(
+                image,
+                source=source,
+                realshot_white_balance=config.stage2_realshot_white_balance,
+                realshot_color_normalize=config.stage2_realshot_color_normalize,
+                sample_mode=config.stage2_realshot_sample_mode,
+            )
+            stage2_vit_features, stage2_conv_features = extractor.extract_dual(stage2_views)
+            stage2_vit_parts.append(stage2_vit_features)
+            stage2_conv_parts.append(stage2_conv_features)
             color_parts.append(color_descriptor(image))
 
         vit_tensor = torch.cat(vit_parts, dim=0)
         conv_tensor = torch.cat(conv_parts, dim=0)
+        stage2_vit_tensor = torch.cat(stage2_vit_parts, dim=0)
+        stage2_conv_tensor = torch.cat(stage2_conv_parts, dim=0)
         torch.save(vit_tensor.cpu(), vit_path)
         torch.save(conv_tensor.cpu(), conv_path)
+        torch.save(stage2_vit_tensor.cpu(), stage2_vit_path)
+        torch.save(stage2_conv_tensor.cpu(), stage2_conv_path)
         save_json(color_path, average_color_descriptors(color_parts))
 
         source_manifest["classes"][pattern_id] = {
             "family_id": pattern_family_id(pattern_id),
-            "reference_images": len(classes[pattern_id]),
-            "templates": int(vit_tensor.shape[0]),
-            "catalog_available": catalog_available(config.decor_root, pattern_id),
-            "skipped_existing": False,
-        }
+                "reference_images": len(classes[pattern_id]),
+                "templates": int(vit_tensor.shape[0]),
+                "stage2_variant_templates": int(stage2_vit_tensor.shape[0]),
+                "catalog_available": catalog_available(config.decor_root, pattern_id),
+                "skipped_existing": False,
+            }
 
     return source_manifest
 
@@ -133,11 +164,18 @@ def build_gallery(config: PipelineConfig, limit: int | None = None, skip_existin
         "local_top_k": config.local_top_k,
         "source_weights": {
             "texture": config.texture_source_weights(),
-            "color": config.color_source_weights(),
+            "stage2_variant": config.stage2_variant_source_weights(),
+            "descriptor_color": config.color_source_weights(),
         },
         "rotation_padding_removed": True,
         "texture_preprocessing": "grayscale_autocontrast_equalize_unsharp",
         "color_preprocessing": "same_for_scan_and_realshot: gray_world_white_balance_center_92_percent_lab_descriptor",
+        "stage2_variant_preprocessing": {
+            "scan": "rgb_center_or_stable_region",
+            "realshot_white_balance": config.stage2_realshot_white_balance,
+            "realshot_color_normalize": config.stage2_realshot_color_normalize,
+            "realshot_sample_mode": config.stage2_realshot_sample_mode,
+        },
         "classes": {},
         "sources": {},
     }

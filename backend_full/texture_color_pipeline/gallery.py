@@ -71,6 +71,16 @@ def load_source_feature_banks(config: PipelineConfig) -> Dict[str, Dict[str, Fea
     return banks
 
 
+def load_source_stage2_feature_banks(config: PipelineConfig) -> Dict[str, Dict[str, FeatureBank]]:
+    banks: Dict[str, Dict[str, FeatureBank]] = {}
+    for source in SOURCE_NAMES:
+        banks[source] = {
+            "vit": load_feature_dir(config.source_stage2_vit_feature_dir(source)),
+            "conv": load_feature_dir(config.source_stage2_conv_feature_dir(source)),
+        }
+    return banks
+
+
 def load_source_color_descriptors(config: PipelineConfig) -> Dict[str, Dict[str, dict]]:
     descriptors: Dict[str, Dict[str, dict]] = {}
     for source in SOURCE_NAMES:
@@ -243,7 +253,7 @@ def weighted_stage2_score(texture_score: float, variant_score: float, config: Pi
 
 
 def stage2_variant_feature_scores(item: Mapping[str, object]) -> Dict[str, float]:
-    source_scores = item.get("source_texture_scores")
+    source_scores = item.get("source_stage2_variant_scores") or item.get("source_texture_scores")
     if not isinstance(source_scores, Mapping):
         return {}
     scores: Dict[str, float] = {}

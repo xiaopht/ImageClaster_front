@@ -25,11 +25,12 @@ from texture_color_pipeline.gallery import (
     load_json,
     load_source_color_descriptors,
     load_source_feature_banks,
+    load_source_stage2_feature_banks,
     rerank_variants_with_color,
     restrict_to_ids,
     top_texture_families,
 )
-from texture_color_pipeline.image_ops import color_descriptor, load_rgb_image, query_texture_views
+from texture_color_pipeline.image_ops import color_descriptor, load_rgb_image, query_texture_views, stage2_variant_views
 from texture_color_pipeline.train_texture_metric import ProjectionHead
 
 
@@ -76,6 +77,7 @@ class TextureColorRecognizer:
         self.config = config
         self.manifest = load_json(config.manifest_path) if config.manifest_path.exists() else {}
         self.source_banks = load_source_feature_banks(config)
+        self.stage2_source_banks = load_source_stage2_feature_banks(config)
         self.color_descriptors_by_source = load_source_color_descriptors(config)
         self.extractor = DualDinoExtractor(config)
         self.metric_head = None
@@ -115,6 +117,8 @@ class TextureColorRecognizer:
                 "conv_classes": len(banks["conv"]),
                 "color_descriptors": len(self.color_descriptors_by_source.get(source, {})),
                 "metric_classes": len(self.metric_banks_by_source.get(source, {})),
+                "stage2_vit_classes": len(self.stage2_source_banks.get(source, {}).get("vit", {})),
+                "stage2_conv_classes": len(self.stage2_source_banks.get(source, {}).get("conv", {})),
             }
         return {
             "manifest_present": self.config.manifest_path.exists(),
@@ -162,6 +166,9 @@ class TextureColorRecognizer:
             source_results[source] = results
         return combine_texture_source_scores(source_results, config.texture_source_weights(), self.manifest)
 
+    def has_stage2_variant_banks(self) -> bool:
+        return any(banks["vit"] or banks["conv"] for banks in self.stage2_source_banks.values())
+
     def build_score_config(
         self,
         texture_scan_weight: float | None = None,
@@ -190,6 +197,8 @@ class TextureColorRecognizer:
         working_image: Image.Image,
         query_vit: torch.Tensor,
         query_conv: torch.Tensor,
+        stage2_query_vit: torch.Tensor | None,
+        stage2_query_conv: torch.Tensor | None,
         score_config: PipelineConfig,
         top_k: int = 10,
         texture_top_families: Optional[int] = None,
@@ -218,6 +227,31 @@ class TextureColorRecognizer:
                 score_config.texture_source_weights(),
                 self.manifest,
             )
+        if self.has_stage2_variant_banks() and stage2_query_vit is not None and stage2_query_conv is not None:
+            stage2_source_results = {}
+            for source, banks in self.stage2_source_banks.items():
+                if not banks["vit"] and not banks["conv"]:
+                    continue
+                stage2_source_results[source] = fused_pattern_scores(
+                    query_vit=stage2_query_vit,
+                    query_conv=stage2_query_conv,
+                    vit_bank=banks["vit"],
+                    conv_bank=banks["conv"],
+                    config=score_config,
+                    manifest=self.manifest,
+                )
+            stage2_scores = combine_texture_source_scores(
+                stage2_source_results,
+                score_config.stage2_variant_source_weights(),
+                self.manifest,
+            )
+            stage2_lookup = {item["pattern_id"]: item for item in stage2_scores}
+            for item in pattern_scores:
+                stage2_item = stage2_lookup.get(item["pattern_id"])
+                if not stage2_item:
+                    continue
+                item["stage2_variant_feature_score"] = stage2_item.get("texture_score")
+                item["source_stage2_variant_scores"] = stage2_item.get("source_texture_scores", {})
         pattern_scores = restrict_to_ids(pattern_scores, allowed_ids)
         pattern_scores = apply_category_filter(pattern_scores, category)
         if not pattern_scores:
@@ -283,6 +317,8 @@ class TextureColorRecognizer:
 
         prepared = []
         all_views: List[Image.Image] = []
+        all_stage2_views: List[Image.Image] = []
+        use_stage2_banks = self.has_stage2_variant_banks()
         for item in requests:
             score_config = self.build_score_config(
                 texture_scan_weight=item.get("texture_scan_weight"),
@@ -299,6 +335,19 @@ class TextureColorRecognizer:
             views = query_texture_views(working_image, multiscale=multiscale_query)
             start = len(all_views)
             all_views.extend(views)
+            stage2_start = len(all_stage2_views)
+            if use_stage2_banks:
+                stage2_views = stage2_variant_views(
+                    working_image,
+                    source="realshot",
+                    realshot_white_balance=score_config.stage2_realshot_white_balance,
+                    realshot_color_normalize=score_config.stage2_realshot_color_normalize,
+                    sample_mode=score_config.stage2_realshot_sample_mode,
+                )
+                all_stage2_views.extend(stage2_views)
+                stage2_count = len(stage2_views)
+            else:
+                stage2_count = 0
             prepared.append(
                 {
                     **item,
@@ -306,19 +355,34 @@ class TextureColorRecognizer:
                     "working_image": working_image,
                     "view_start": start,
                     "view_count": len(views),
+                    "stage2_view_start": stage2_start,
+                    "stage2_view_count": stage2_count,
                 }
             )
 
         query_vit_all, query_conv_all = self.extractor.extract_dual(all_views)
+        if all_stage2_views:
+            stage2_query_vit_all, stage2_query_conv_all = self.extractor.extract_dual(all_stage2_views)
+        else:
+            stage2_query_vit_all = None
+            stage2_query_conv_all = None
         results = []
         for item in prepared:
             start = item["view_start"]
             end = start + item["view_count"]
+            stage2_start = item["stage2_view_start"]
+            stage2_end = stage2_start + item["stage2_view_count"]
             results.append(
                 self.score_query_features(
                     working_image=item["working_image"],
                     query_vit=query_vit_all[start:end],
                     query_conv=query_conv_all[start:end],
+                    stage2_query_vit=None
+                    if stage2_query_vit_all is None
+                    else stage2_query_vit_all[stage2_start:stage2_end],
+                    stage2_query_conv=None
+                    if stage2_query_conv_all is None
+                    else stage2_query_conv_all[stage2_start:stage2_end],
                     score_config=item["score_config"],
                     top_k=item.get("top_k", 10),
                     texture_top_families=item.get("texture_top_families"),

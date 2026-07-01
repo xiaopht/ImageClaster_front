@@ -20,6 +20,13 @@ def env_path(name: str, default: Path) -> Path:
     return Path(value).expanduser().resolve() if value else default.resolve()
 
 
+def env_bool(name: str, default: bool) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 def default_scan_root() -> Path:
     explicit = os.getenv("XIAOTE_SCAN_ROOT")
     if explicit:
@@ -75,6 +82,13 @@ class PipelineConfig:
     stage2_texture_weight: float = float(os.getenv("XIAOTE_STAGE2_TEXTURE_WEIGHT", "0.3"))
     stage2_color_weight: float = float(os.getenv("XIAOTE_STAGE2_COLOR_WEIGHT", "0.7"))
 
+    # Stage 2 DINO variant feature preprocessing. Query photos are treated as
+    # realshot-like images. When no dedicated stage2 feature bank exists, the
+    # recognizer falls back to the regular texture feature scores.
+    stage2_realshot_white_balance: bool = env_bool("XIAOTE_STAGE2_REALSHOT_WHITE_BALANCE", True)
+    stage2_realshot_color_normalize: bool = env_bool("XIAOTE_STAGE2_REALSHOT_COLOR_NORMALIZE", False)
+    stage2_realshot_sample_mode: str = os.getenv("XIAOTE_STAGE2_REALSHOT_SAMPLE_MODE", "center").strip().lower()
+
     # Color score temperature. Smaller values make color differences matter more.
     color_temperature: float = 0.45
 
@@ -116,6 +130,12 @@ class PipelineConfig:
 
     def source_conv_feature_dir(self, source: str) -> Path:
         return self.output_root / "texture_features" / source / "dinov3_convnext_large"
+
+    def source_stage2_vit_feature_dir(self, source: str) -> Path:
+        return self.output_root / "stage2_variant_features" / source / "dinov3_vith16plus"
+
+    def source_stage2_conv_feature_dir(self, source: str) -> Path:
+        return self.output_root / "stage2_variant_features" / source / "dinov3_convnext_large"
 
     def source_color_descriptor_dir(self, source: str) -> Path:
         return self.output_root / "color_descriptors" / source
