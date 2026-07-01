@@ -64,13 +64,14 @@ class PipelineConfig:
     texture_scan_weight: float = float(os.getenv("XIAOTE_TEXTURE_SCAN_WEIGHT", "0.85"))
     texture_realshot_weight: float = float(os.getenv("XIAOTE_TEXTURE_REALSHOT_WEIGHT", "0.15"))
 
-    # Stage 2 source weights. They are used only inside the selected texture families.
-    # Scan and realshot color descriptors use the same processing pipeline.
+    # Stage 2 variant source weights. They are used only inside the selected
+    # texture families. The scan/realshot values now fuse DINOv3 variant
+    # similarities first; color descriptors are kept as diagnostics/fallback.
     color_scan_weight: float = float(os.getenv("XIAOTE_COLOR_SCAN_WEIGHT", "0.25"))
     color_realshot_weight: float = float(os.getenv("XIAOTE_COLOR_REALSHOT_WEIGHT", "0.75"))
 
     # Stage 2 final score weights. Texture uses the family-level texture score;
-    # color uses the available scan/realshot weighted average below.
+    # color uses the available scan/realshot weighted DINOv3 variant score below.
     stage2_texture_weight: float = float(os.getenv("XIAOTE_STAGE2_TEXTURE_WEIGHT", "0.3"))
     stage2_color_weight: float = float(os.getenv("XIAOTE_STAGE2_COLOR_WEIGHT", "0.7"))
 
@@ -93,6 +94,9 @@ class PipelineConfig:
             SOURCE_SCAN: self.color_scan_weight,
             SOURCE_REALSHOT: self.color_realshot_weight,
         }
+
+    def stage2_variant_source_weights(self) -> Dict[str, float]:
+        return self.color_source_weights()
 
     def stage2_score_weights(self) -> Dict[str, float]:
         return {

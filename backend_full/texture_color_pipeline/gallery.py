@@ -233,13 +233,25 @@ def minmax_texture_score(value: float, values: List[float]) -> float:
     return (value - lo) / (hi - lo)
 
 
-def weighted_stage2_score(texture_score: float, color_score: float, config: PipelineConfig) -> float:
+def weighted_stage2_score(texture_score: float, variant_score: float, config: PipelineConfig) -> float:
     texture_weight = max(0.0, float(config.stage2_texture_weight))
     color_weight = max(0.0, float(config.stage2_color_weight))
     total_weight = texture_weight + color_weight
     if total_weight <= 0:
         return float(texture_score)
-    return float((texture_weight * texture_score + color_weight * color_score) / total_weight)
+    return float((texture_weight * texture_score + color_weight * variant_score) / total_weight)
+
+
+def stage2_variant_feature_scores(item: Mapping[str, object]) -> Dict[str, float]:
+    source_scores = item.get("source_texture_scores")
+    if not isinstance(source_scores, Mapping):
+        return {}
+    scores: Dict[str, float] = {}
+    for source, score in source_scores.items():
+        if score is None:
+            continue
+        scores[str(source)] = float(score)
+    return scores
 
 
 def rerank_variants_with_color(
@@ -254,27 +266,38 @@ def rerank_variants_with_color(
     candidates = [item for item in pattern_scores if item["family_id"] in allowed_families]
     reranked: List[dict] = []
     for item in candidates:
-        source_color_scores: Dict[str, float] = {}
+        source_descriptor_scores: Dict[str, float] = {}
         for source, descriptors in color_descriptors_by_source.items():
             descriptor = descriptors.get(item["pattern_id"])
             if descriptor:
-                source_color_scores[source] = color_similarity(query_descriptor, descriptor, config.color_temperature)
-        color_score = weighted_available_average(source_color_scores, config.color_source_weights())
-        if color_score is None:
-            color_score = 0.0
+                source_descriptor_scores[source] = color_similarity(query_descriptor, descriptor, config.color_temperature)
+        descriptor_color_score = weighted_available_average(source_descriptor_scores, config.color_source_weights())
+
+        source_variant_scores = stage2_variant_feature_scores(item)
+        variant_score = weighted_available_average(source_variant_scores, config.stage2_variant_source_weights())
+        if variant_score is None:
+            variant_score = descriptor_color_score if descriptor_color_score is not None else 0.0
         family_texture_score = family_texture_scores.get(item["family_id"], item["texture_score"])
-        confidence = weighted_stage2_score(family_texture_score, color_score, config)
+        confidence = weighted_stage2_score(family_texture_score, variant_score, config)
         merged = dict(item)
         merged.update(
             {
-                "color_score": float(color_score),
+                "color_score": float(variant_score),
+                "stage2_variant_feature_score": float(variant_score),
+                "stage2_variant_feature_score_scan": source_variant_scores.get("scan"),
+                "stage2_variant_feature_score_realshot": source_variant_scores.get("realshot"),
+                "descriptor_color_score": None
+                if descriptor_color_score is None
+                else float(descriptor_color_score),
                 "confidence": float(confidence),
-                "score_type": "two_stage_family_texture_plus_color_not_probability",
-                "source_color_scores": source_color_scores,
-                "color_score_scan": source_color_scores.get("scan"),
-                "color_score_realshot": source_color_scores.get("realshot"),
+                "score_type": "two_stage_family_texture_plus_dino_variant_not_probability",
+                "source_color_scores": source_variant_scores,
+                "source_descriptor_color_scores": source_descriptor_scores,
+                "color_score_scan": source_variant_scores.get("scan"),
+                "color_score_realshot": source_variant_scores.get("realshot"),
                 "family_texture_score": family_texture_score,
                 "stage2_score_weights": config.stage2_score_weights(),
+                "stage2_variant_source_weights": config.stage2_variant_source_weights(),
             }
         )
         reranked.append(merged)
@@ -282,7 +305,7 @@ def rerank_variants_with_color(
         key=lambda item: (
             float(item.get("confidence") or 0.0),
             float(item.get("family_texture_score") or 0.0),
-            float(item.get("color_score") or 0.0),
+            float(item.get("stage2_variant_feature_score") or 0.0),
         ),
         reverse=True,
     )

@@ -124,7 +124,8 @@ class TextureColorRecognizer:
             "texture_top_families": self.config.texture_top_families,
             "source_weights": {
                 "texture": self.config.texture_source_weights(),
-                "color": self.config.color_source_weights(),
+                "stage2_variant": self.config.stage2_variant_source_weights(),
+                "descriptor_color": self.config.color_source_weights(),
                 "stage2": self.config.stage2_score_weights(),
             },
         }
@@ -257,13 +258,14 @@ class TextureColorRecognizer:
             "top_results": visible[:top_k],
             "all_top_results": all_results[:top_k],
             "threshold": self.config.display_threshold,
-            "score_type": "two_stage_family_texture_plus_color_not_probability"
+            "score_type": "two_stage_family_texture_plus_dino_variant_not_probability"
             if use_color
             else "texture_only_cosine_not_probability",
             "texture_stage": texture_stage,
             "source_weights": {
                 "texture": score_config.texture_source_weights(),
-                "color": score_config.color_source_weights(),
+                "stage2_variant": score_config.stage2_variant_source_weights(),
+                "descriptor_color": score_config.color_source_weights(),
                 "stage2": score_config.stage2_score_weights(),
             },
             "cropped_image_base64": image_to_base64(working_image),
