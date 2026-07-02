@@ -71,6 +71,13 @@ def load_source_feature_banks(config: PipelineConfig) -> Dict[str, Dict[str, Fea
     return banks
 
 
+def load_scan_family_feature_banks(config: PipelineConfig) -> Dict[str, FeatureBank]:
+    return {
+        "vit": load_feature_dir(config.scan_family_vit_feature_dir()),
+        "conv": load_feature_dir(config.scan_family_conv_feature_dir()),
+    }
+
+
 def load_source_stage2_feature_banks(config: PipelineConfig) -> Dict[str, Dict[str, FeatureBank]]:
     banks: Dict[str, Dict[str, FeatureBank]] = {}
     for source in SOURCE_NAMES:
@@ -157,6 +164,56 @@ def fused_pattern_scores(
                 "available_models": int(vit_score is not None) + int(conv_score is not None),
             }
         )
+    results.sort(key=lambda item: item["texture_score"], reverse=True)
+    return results
+
+
+def fused_family_scores(
+    query_vit: torch.Tensor,
+    query_conv: torch.Tensor,
+    vit_bank: FeatureBank,
+    conv_bank: FeatureBank,
+    config: PipelineConfig,
+    allowed_family_ids: set[str] | None = None,
+) -> List[dict]:
+    family_ids = sorted(set(vit_bank.keys()) | set(conv_bank.keys()))
+    if allowed_family_ids is not None:
+        family_ids = [family_id for family_id in family_ids if family_id in allowed_family_ids]
+    results: List[dict] = []
+    for family_id in family_ids:
+        total = 0.0
+        weight = 0.0
+        vit_score = None
+        conv_score = None
+        if family_id in vit_bank:
+            vit_score = aggregate_reference_score(
+                query_vit,
+                vit_bank[family_id],
+                config.templates_per_image,
+                config.local_top_k,
+            )
+            total += 0.5 * vit_score
+            weight += 0.5
+        if family_id in conv_bank:
+            conv_score = aggregate_reference_score(
+                query_conv,
+                conv_bank[family_id],
+                config.templates_per_image,
+                config.local_top_k,
+            )
+            total += 0.5 * conv_score
+            weight += 0.5
+        if weight:
+            results.append(
+                {
+                    "family_id": family_id,
+                    "texture_score": float(total / weight),
+                    "vit_score": vit_score,
+                    "convnext_score": conv_score,
+                    "available_models": int(vit_score is not None) + int(conv_score is not None),
+                    "score_type": "scan_family_part_prototype",
+                }
+            )
     results.sort(key=lambda item: item["texture_score"], reverse=True)
     return results
 

@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import argparse
+import gc
 import sys
 from datetime import datetime
 from pathlib import Path
 from typing import Dict, List
 
 import torch
+import torch.nn.functional as F
 
 if __package__ in (None, ""):
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -145,6 +147,64 @@ def build_source_gallery(
     return source_manifest
 
 
+def load_feature_tensor(path: Path) -> torch.Tensor:
+    tensor = torch.load(path, map_location="cpu")
+    if isinstance(tensor, dict):
+        tensor = tensor.get("features")
+    if not isinstance(tensor, torch.Tensor):
+        raise RuntimeError(f"Feature file is not a tensor: {path}")
+    if tensor.ndim != 2:
+        raise RuntimeError(f"Feature tensor must be [N, D], got {tuple(tensor.shape)}: {path}")
+    return F.normalize(tensor.float(), p=2, dim=1)
+
+
+def build_scan_family_prototypes(config: PipelineConfig) -> dict:
+    output_pairs = [
+        (config.source_vit_feature_dir("scan"), config.scan_family_vit_feature_dir()),
+        (config.source_conv_feature_dir("scan"), config.scan_family_conv_feature_dir()),
+    ]
+    summary: dict = {}
+    for source_dir, target_dir in output_pairs:
+        target_dir.mkdir(parents=True, exist_ok=True)
+        grouped: Dict[str, dict] = {}
+        for feature_path in sorted(source_dir.glob("*.pt")):
+            tensor = load_feature_tensor(feature_path)
+            if tensor.shape[0] % config.templates_per_image != 0:
+                print(f"[family-prototype] skip non-aligned feature count: {feature_path}")
+                continue
+            family_id = pattern_family_id(feature_path.stem)
+            templates = tensor.reshape(-1, config.templates_per_image, tensor.shape[1])
+            entry = grouped.setdefault(
+                family_id,
+                {
+                    "sum": torch.zeros(
+                        (config.templates_per_image, tensor.shape[1]),
+                        dtype=torch.float32,
+                    ),
+                    "count": 0,
+                },
+            )
+            entry["sum"] += templates.sum(dim=0)
+            entry["count"] += int(templates.shape[0])
+            del tensor, templates
+            gc.collect()
+
+        model_summary = {}
+        for family_id, entry in sorted(grouped.items()):
+            if entry["count"] <= 0:
+                continue
+            prototype = F.normalize(entry["sum"] / float(entry["count"]), p=2, dim=1)
+            torch.save(prototype.half().cpu(), target_dir / f"{family_id}.pt")
+            model_summary[family_id] = {
+                "source_patterns_or_images": int(entry["count"]),
+                "templates": int(prototype.shape[0]),
+            }
+            del prototype
+        summary[target_dir.name] = model_summary
+        print(f"[family-prototype] wrote {len(model_summary)} families to {target_dir}")
+    return summary
+
+
 def build_gallery(config: PipelineConfig, limit: int | None = None, skip_existing: bool = True) -> dict:
     extractor = DualDinoExtractor(config)
     source_classes = {source: discover_reference_images(config.source_root(source)) for source in SOURCE_NAMES}
@@ -197,6 +257,8 @@ def build_gallery(config: PipelineConfig, limit: int | None = None, skip_existin
                 },
             )
             item["sources"][source] = source_info
+
+    manifest["scan_family_prototypes"] = build_scan_family_prototypes(config)
 
     save_json(config.manifest_path, manifest)
     print(f"Manifest written: {config.manifest_path}")

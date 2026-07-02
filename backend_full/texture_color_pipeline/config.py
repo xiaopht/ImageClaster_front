@@ -131,6 +131,12 @@ class PipelineConfig:
     def source_conv_feature_dir(self, source: str) -> Path:
         return self.output_root / "texture_features" / source / "dinov3_convnext_large"
 
+    def scan_family_vit_feature_dir(self) -> Path:
+        return self.output_root / "family_texture_features" / SOURCE_SCAN / "dinov3_vith16plus"
+
+    def scan_family_conv_feature_dir(self) -> Path:
+        return self.output_root / "family_texture_features" / SOURCE_SCAN / "dinov3_convnext_large"
+
     def source_stage2_vit_feature_dir(self, source: str) -> Path:
         return self.output_root / "stage2_variant_features" / source / "dinov3_vith16plus"
 

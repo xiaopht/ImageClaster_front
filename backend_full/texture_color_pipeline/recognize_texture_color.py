@@ -21,8 +21,10 @@ from texture_color_pipeline.dinov3_features import DualDinoExtractor
 from texture_color_pipeline.gallery import (
     aggregate_reference_score,
     combine_texture_source_scores,
+    fused_family_scores,
     fused_pattern_scores,
     load_json,
+    load_scan_family_feature_banks,
     load_source_color_descriptors,
     load_source_feature_banks,
     load_source_stage2_feature_banks,
@@ -77,6 +79,7 @@ class TextureColorRecognizer:
         self.config = config
         self.manifest = load_json(config.manifest_path) if config.manifest_path.exists() else {}
         self.source_banks = load_source_feature_banks(config)
+        self.scan_family_banks = load_scan_family_feature_banks(config)
         self.stage2_source_banks = load_source_stage2_feature_banks(config)
         self.color_descriptors_by_source = load_source_color_descriptors(config)
         self.extractor = DualDinoExtractor(config)
@@ -124,6 +127,10 @@ class TextureColorRecognizer:
             "manifest_present": self.config.manifest_path.exists(),
             "metric_head_loaded": self.metric_head is not None,
             "sources": source_status,
+            "scan_family_prototypes": {
+                "vit_families": len(self.scan_family_banks.get("vit", {})),
+                "conv_families": len(self.scan_family_banks.get("conv", {})),
+            },
             "feature_root": str(self.config.output_root),
             "texture_top_families": self.config.texture_top_families,
             "source_weights": {
@@ -168,6 +175,9 @@ class TextureColorRecognizer:
 
     def has_stage2_variant_banks(self) -> bool:
         return any(banks["vit"] or banks["conv"] for banks in self.stage2_source_banks.values())
+
+    def has_scan_family_banks(self) -> bool:
+        return bool(self.scan_family_banks.get("vit") or self.scan_family_banks.get("conv"))
 
     def build_score_config(
         self,
@@ -264,7 +274,21 @@ class TextureColorRecognizer:
             }
 
         family_limit = texture_top_families or self.config.texture_top_families
-        family_candidates = top_texture_families(pattern_scores, family_limit)
+        allowed_family_ids = {item["family_id"] for item in pattern_scores}
+        if self.has_scan_family_banks():
+            family_candidates = fused_family_scores(
+                query_vit=query_vit,
+                query_conv=query_conv,
+                vit_bank=self.scan_family_banks["vit"],
+                conv_bank=self.scan_family_banks["conv"],
+                config=score_config,
+                allowed_family_ids=allowed_family_ids,
+            )[:family_limit]
+            texture_stage = f"{texture_stage}+scan_family_part_prototypes"
+            if not family_candidates:
+                family_candidates = top_texture_families(pattern_scores, family_limit)
+        else:
+            family_candidates = top_texture_families(pattern_scores, family_limit)
         if use_color:
             query_color = color_descriptor(working_image)
             all_results = rerank_variants_with_color(
